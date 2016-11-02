@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>新的好友</title>
+		<link rel="stylesheet" href="../../css/custyle.css">
+		<link rel="stylesheet" href="../../css/aui.2.0.css">
+		<link rel="stylesheet" href="../../css/addfriends.css">
+		<link rel="stylesheet" href="../../css/contact.css">
+	</head>
+	<body>
+		<div class="aui-content aui-margin-b-15">
+			<ul class="aui-list aui-list-in" id="listContent"></ul>
+		</div>
+		<script src="../../script/mui.js"></script>
+		<script src="../../script/api.js"></script>
+		<script src="../../script/template.js"></script>
+		<script src="../../script/common.js"></script>
+		<script id="ListLoad" type="text/html">
+			{{each list as value i}}
+			<li class="aui-list-item">
+			<div class="txBox">
+			<img src="{{(value.adver)!='' ? value.adver : '../../image/message/txltx.png'}}" alt="">
+			</div>
+			<div class="aui-list-item-inner flex flex-dir-row">
+			<div class="left">
+			<p>
+			{{value.user_name}}
+			</p>
+			<p>
+			手机联系人：{{value.from_user_mobile}}
+			</p>
+			</div>
+			{{if value.status == 0}}
+			<div class="right wtj" style="display: block" id="{{value.from_user_mobile}}" onclick="fnAgreeAdd({{value.message_id}},{{value.user_id}},{{value.from_user_mobile}})">
+			接受
+			</div>
+			{{else}}
+			<div class="right ytj" style="display: block">
+			已添加
+			</div>
+			{{/if}}
+			</div>
+			</li>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+			apiready = function() {
+                is_login(); //是否登陆
+				fnInit();
+				//接口 - 申请添加新好友的列表
+				funNewFriendList();
+			}
+			var _user_password, _user_info, _user_id;
+			function fnInit() {
+				_user_password = localStorage.getItem('password');
+				_user_info = JSON.parse(localStorage.getItem('user'));
+				_user_id = _user_info.data.user_id;
+			}
+
+			//接口 - 申请添加新好友的列表 
+			function funNewFriendList() {
+				var _data = {
+					'user_id' : _user_id,
+					'user_password' : _user_password
+				};
+                              // console.log(JSON.stringify(_data));
+				var listContent = '';
+				ajaxRequest(INTERFACE['APPLY_FRIEND_LIST'], _data, function(ret, err) {
+                                    console.log(INTERFACE['APPLY_FRIEND_LIST']);
+//					if (ret.result == 1 && ret.data != '') {
+                                      //  console.log(JSON.stringify(ret));
+                                    //     console.log(JSON.stringify(err));
+					if (ret.result == 1 && ret.data.length >0) {
+						_data = {
+							list : ret.data
+						};
+						var html = template('ListLoad', _data);
+						document.getElementById('listContent').innerHTML = html;
+					}
+				})
+			}
+
+			//接口 - 接受并同意对方加为好友
+			function fnAgreeAdd(_message_id, friend_id, _mobile) {
+				var _data = {
+					'user_id' : _user_id,
+					'user_password' : _user_password,
+					'message_id' : _message_id,
+					'friend_id' : friend_id
+				};
+				console.log(JSON.stringify(_data));
+				ajaxRequest(INTERFACE['ACCEPT_FRIEND'], _data, function(ret, err) {
+					console.log(JSON.stringify(ret));
+					if (ret.result == 1) {
+						api.toast({
+							msg : '添加成功',
+							duration : 1500,
+							location : 'middle'
+						});
+						var _phone = $api.byId(_mobile);
+						$api.removeCls(_phone, 'wtj');
+						$api.addCls(_phone, 'ytj');
+						$api.html(_phone, '已添加');
+					}
+				})
+			}
+		</script>
+	</body>
+</html>

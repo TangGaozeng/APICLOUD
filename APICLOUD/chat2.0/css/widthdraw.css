@@ -1,0 +1,122 @@
+.widthdraw .aui-bar{
+	background: #4877e7;
+}
+.widthdraw .aui-list .aui-list-item-inner{
+	height:45px;
+}
+.widthdraw .aui-list .aui-list-item-inner .jine{
+	color:#2f2f2f;
+	font-size: 14px;
+	margin-left: 10px;
+}
+.widthdraw .aui-list .aui-list-item-inner .jine span:nth-of-type(2){
+	width:100px;
+	font-size: 14px;
+	color:#4977e7;
+	margin-right:-1.5rem;
+}
+.widthdraw .aui-list .aui-list-item-inner .jine span:nth-of-type(1){
+	font-size: 14px;
+	color:#2f2f2f;
+}
+.widthdraw .aui-list .aui-list-item-inner .aui-list-item-left{
+	color:#2f2f2f;
+}
+.widthdraw .aui-list .aui-list-item-inner .aui-list-item-label{
+	color:#2f2f2f;
+}
+.widthdraw .aui-list .aui-list-item-inner .aui-list-item-right{
+	color:#2f2f2f;
+}
+.widthdraw .tx{
+	color:#fff;
+	background: #879efb;
+	width:285px;
+	height:44px;
+	position: relative;
+	left:50%;
+	right:0;
+	top:45px;
+	bottom:0;
+	font-size: 18px;
+	transform: translateX(-142.5px);
+	-webkit-transform: translateX(-142.5px);
+	padding-top: 10px;
+}
+
+/*密码输入框*/
+.widthdraw .password{
+	height:158px;
+	width:302px;
+	text-align:center;
+	margin: -70px auto 0 auto;
+	background: #fff;
+	position: relative;
+	display:none;
+	z-index:1500;
+}
+.widthdraw .password .del{
+	margin-right: 18px;
+	margin-top: 18px;
+	font-size: 17px;
+}
+.widthdraw .password .title{
+	line-height:62px;
+	color:#678af0;
+}
+.widthdraw .password .inputbox{
+	display: flex;
+	width: 100%;
+	max-width: 250px;
+	height: 44px;
+	border: 1.5px solid #d4d4d4;
+	margin: 0 auto;
+	margin-top:15px;
+	flex-direction: row;
+	border-radius: 2px;
+}
+.widthdraw .password .inputbox li{
+	flex: 1;
+	border-right: 1.5px solid #d4d4d4;
+}
+.widthdraw .password .inputbox li:last-child{
+	border-right: none;
+}
+.widthdraw .password input{
+	/*color: transparent;*/
+}
+.widthdraw .password li{
+	text-align: center;
+	margin-left: 5px;
+}
+.widthdraw .password .inputbox .active:after{
+	content: '';
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	background: #424242;
+	border-radius: 50%;
+	margin-top: 12px;
+}
+/*提现成功*/
+.widthdraw-succ .aui-content{
+	text-align: center;
+}
+.widthdraw-succ  .aui-content img{
+	width: 70px;
+	display: block;
+	margin: 45px auto 24px;
+}
+.widthdraw-succ .aui-content p,.widthdraw-succ .aui-content span{
+	width:100%;
+	font-size:18px;
+	color: #4e4e4e;
+}
+.widthdraw-succ  .aui-content .aui-btn{
+	width: 80%;
+	height: 45px;
+	line-height: 22px;
+	color: #eee;
+	background: #879efb;
+	margin: 53px auto 0;
+}

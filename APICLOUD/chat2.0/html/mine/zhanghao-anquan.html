@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>账号与安全</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="set zhanghao-anquan">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">账号与安全</div>
+    </header>
+    <ul class="aui-list ul-my2">
+        <li class="aui-list-item li-my1" id="goSafe">
+            <div class="aui-list-item-inner aui-list-item-arrow" id="go-username-safe">账号安全
+                <div class="aui-list-item-right aui-font-size-13">
+                    <img src="../../image/mine/protect.jpg" class="img-protect" alt="">
+                    已保护
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="aui-list">
+        <li class="aui-list-item li-my1" id="goAbout">
+            <div class="aui-list-item-inner aui-list-item-arrow" id="go-change-pnum">更换手机号
+            </div>
+        </li>
+        <li class="aui-list-item li-my1">
+            <div class="aui-list-item-inner aui-list-item-arrow" id="input-phonenum">修改手机密码
+
+            </div>
+        </li>
+    </ul>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+    };
+    $api.byId('go-username-safe').onclick = function () {
+        api.openWin({
+            name : 'username-safe',
+            url : '../mine/username-safe.html',
+            bounces : false,
+            vScrollBarEnabled : false
+        });
+        api.parseTapmode();
+    };
+    $api.byId('go-change-pnum').onclick = function () {
+        api.openWin({
+            name : 'replace-phonenumber1',
+            url : '../mine/replace-phonenumber1.html',
+            bounces : false,
+            vScrollBarEnabled : false
+        });
+        api.parseTapmode();
+    }
+    $api.byId('input-phonenum').onclick = function () {
+        api.openWin({
+            name : 'input-phonenum',
+            url : '../mine/input-phonenum.html',
+            bounces : false,
+            vScrollBarEnabled : false
+        });
+        api.parseTapmode();
+    }
+
+</script>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>我的群组</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="communication my_group">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">我的群组</div>
+        <a href="#" class="aui-btn aui-pull-right fs-15 pr-20">
+            发起群聊
+        </a>
+    </header>
+
+    <div class="aui-searchbar">
+        <div class="aui-searchbar-input aui-border-radius">
+            <i class="aui-iconfont aui-icon-search"></i>
+            <form action="">
+                <input type="search" placeholder="搜索我的群组">
+            </form>
+        </div>
+    </div>
+    <div class="nav">
+        <div class="nav-btn active">我创建的</div>
+        <div class="nav-btn">我加入的</div>
+    </div>
+    <div class="aui-content active">
+
+        <ul class="aui-list no-border-b no-border-t aui-media-list" id="iCreatedNormal">
+            <li class="aui-list-header">常用群组</li>
+
+        </ul>
+        <ul class="aui-list no-border-b no-border-t aui-media-list" id="iCreatedUnActive">
+            <li class="aui-list-header">30天内没消息的群组</li>
+            <!--<li class="aui-list-item aui-list-item-middle no-border">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media wechat-avatar">
+                        <div class="img-wrap"> <img src="../../image/message/avatar1.png" /></div>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title fs-15">深圳微旅旅行社有限公司（深圳福田）</div>
+                        </div>
+                        <div class="aui-list-item-text flex-start">
+                            <span class="group-num">1440人</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle no-border">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media wechat-avatar">
+                        <div class="img-wrap"> <img src="../../image/message/avatar2.png" /></div>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title fs-15">中国青年旅行社</div>
+                        </div>
+                        <div class="aui-list-item-text flex-start">
+                            <span class="group-num">1440人</span>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+    </div>
+    <div class="aui-content">
+        <ul class="aui-list no-border-b no-border-t aui-media-list" id="iJoinedNormal">
+            <li class="aui-list-header">常用群组</li>
+
+        </ul>
+        <ul class="aui-list no-border-b no-border-t aui-media-list" id="iJoinedUnActive">
+            <li class="aui-list-header">30天内没消息的群组</li>
+            <!--<li class="aui-list-item aui-list-item-middle no-border">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media wechat-avatar">
+                        <div class="img-wrap"> <img src="../../image/message/avatar1.png" /></div>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title fs-15">深圳微旅旅行社有限公司（深圳福田）</div>
+                        </div>
+                        <div class="aui-list-item-text flex-start">
+                            <span class="group-num">1440人</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle no-border">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media wechat-avatar">
+                        <div class="img-wrap"> <img src="../../image/message/avatar2.png" /></div>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title fs-15">中国青年旅行社</div>
+                        </div>
+                        <div class="aui-list-item-text flex-start">
+                            <span class="group-num">1440人</span>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+    </div>
+</body>
+</html>
+<script type="text/html" id="groupInfo2">
+    {{each data as value}}
+    <li class="aui-list-item aui-list-item-middle no-border">
+        <div class="aui-media-list-item-inner">
+            <div class="aui-list-item-media wechat-avatar">
+                <div class="img-wrap"> <img src="{{value.group_avatar}}" /></div>
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-title fs-15">{{value.group_name}}</div>
+                </div>
+                <div class="aui-list-item-text flex-start">
+                    <span class="group-num">{{value.count}}人</span>
+                </div>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+</script>
+<script type="text/html" id="groupInfo1">
+    {{each data as value}}
+    <li class="aui-list-item aui-list-item-middle no-border">
+        <div class="aui-media-list-item-inner">
+            <div class="aui-list-item-media wechat-avatar">
+                <div class="img-wrap"> <img src="{{value.group_avatar}}" /></div>
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-text">
+                    <div class="aui-list-item-title fs-15">{{value.group_name}}</div>
+                </div>
+                <div class="aui-list-item-text flex-start">
+                    <span class="group-num">{{value.count}}人</span>
+                </div>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+</script>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        api.ajax({
+            url: INTERFACE['MY_GROUP'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values:{user_id:user_id,user_password:password,type: 2}
+            },
+            timeout: AJAX.TIMEOUT,
+        }, function(ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret));
+                var html = template('groupInfo2',ret);
+                //var html1 = template('groupInfo1',ret);
+                $api.append($api.byId('iCreatedNormal'),html);
+                //$api.append($api.byId('iJoinedNormal'),html1);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+        api.ajax({
+            url: INTERFACE['MY_GROUP'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values:{user_id:user_id,user_password:password,type: 1}
+            },
+            timeout: AJAX.TIMEOUT,
+        }, function(ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret));
+
+                var html = template('groupInfo1',ret);
+                $api.append($api.byId('iJoinedNormal'),html);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+
+    var navBtn = document.getElementsByClassName('nav-btn');
+    var infoContent = document.getElementsByClassName('aui-content');
+    for(i=0;i<navBtn.length;i++){
+        navBtn[i].index = i;
+        navBtn[i].onclick = function () {
+            for(j=0;j<navBtn.length;j++){
+                removeClass(navBtn[j],'active');
+            }
+            addClass(this,'active');
+            var index = this.index;
+            for(j=0;j<infoContent.length;j++){
+                removeClass(infoContent[j],'active');
+            }
+            addClass(infoContent[index],'active');
+
+
+        }
+    }
+
+
+
+    function hasClass(obj, cls) {
+        return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+    }
+    function addClass(obj, cls) {
+        if (!this.hasClass(obj, cls)){
+            obj.className += " " + cls;
+        }
+    }
+    function removeClass(obj, cls) {
+        if (hasClass(obj, cls)) {
+            var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+            obj.className = obj.className.replace(reg, ' ');
+        }
+    }
+</script>

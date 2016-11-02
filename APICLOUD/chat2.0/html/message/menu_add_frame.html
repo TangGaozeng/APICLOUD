@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>菜单页</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <style>
+        html, body {
+            background: none;
+        }
+
+        header {
+            height: 45px;
+            -webkit-box-sizing: content-box;
+            box-sizing: content-box;
+        }
+
+        body {
+            display: none;
+        }
+
+        body.active {
+            display: block;
+        }
+
+        .body_shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        #menu_list {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            position: fixed;
+            right: 6px;
+            padding: 0 15px;
+            border-radius: 10px;
+            margin: 6px 0 0 0;
+            z-index: 2;
+            background-color: #4a4a4b;
+        }
+
+        #menu_list .item {
+            width: 113px;
+            height: 45px;
+            line-height: 45px;
+            list-style: none;
+            color: #FFFFFF;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            border-bottom: 1px solid #7e7e7e;
+        }
+
+        #menu_list .item a {
+            margin-left: 15px;
+            color: #fff;
+        }
+
+        #menu_list .item img {
+            width: 15px;
+            height: 15px;
+        }
+    </style>
+</head>
+<body>
+<header></header>
+<ul id="menu_list" class="pull-right">
+    <li class="item" tapmode="tap-active" onclick="createGroup()">
+        <img src="../../image/message/start_group_chat.png" alt="">
+        <a href="#">发起群聊</a>
+    </li>
+    <li class="item" tapmode="tap-active" onclick="addFriends();">
+        <img src="../../image/message/add_friend.png" alt="">
+        <a href="#">添加好友</a>
+    </li>
+    <li class="item" tapmode="tap-active" onclick="scanCode();">
+        <img src="../../image/message/scan_code.png" alt="">
+        <a href="#">扫一扫</a>
+    </li>
+    <li class="item" tapmode="tap-active" onclick="openMyCode();">
+        <img src="../../image/message/my_code.png" alt="">
+        <a href="#">我的二维码</a>
+    </li>
+</ul>
+<div class="body_shadow" tapmode onclick="hideThis();"></div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var header = $api.dom('header');
+    apiready = function () {
+        $api.fixStatusBar(header);
+        $api.addCls($api.dom('body'), 'active');
+    };
+
+    function hideThis() {
+        api.setFrameAttr({
+            name: 'menu_add_frame',
+            hidden: true
+        });
+    }
+
+    function addFriends() {
+        api.openWin({
+            name: 'addfriends',
+            url: './addfriends.html',
+            bounces: false,
+            vScrollBarEnabled: false
+        });
+        hideThis();
+    }
+
+    function createGroup() {
+        api.openWin({
+            name: 'create_group_index',
+            url: 'widget://html/message/create_group_index.html',
+            bounces: false
+        });
+        hideThis();
+    }
+    
+    function scanCode() {
+        hideThis();
+        var FNScanner = api.require('FNScanner');
+        FNScanner.openScanner({
+            autorotation: true
+        }, function(ret, err) {
+            scanCodeAjax(ret);
+        });
+    }
+
+    function openMyCode() {
+        api.openWin({
+            name: 'my_code',
+            url: 'widget://html/message/my_code.html',
+            bounces: false
+        });
+        hideThis();
+    }
+
+    function scanCodeAjax(ret) {
+        if(ret){
+            var mobile = ret.content;
+            var user_id = getSelfUserId();
+            var user_password = getSelfUserPwd();
+            api.ajax({
+                url: INTERFACE['SCAN_ADD_FRIEND'],
+                method: 'post',
+                dataType: 'json',
+                data: {
+                    values:{user_id: user_id,user_password: user_password,mobile: mobile}
+                },
+                timeout: AJAX.TIMEOUT,
+            }, function(ret, err) {
+                if (ret.result == 1 && ret.data != []) {
+                    var side_user_id = ret.data.user_id;
+                    api.openWin({
+                        name: 'friendinfo',
+                        url: 'widget://html/message/friendinfo.html',
+                        bounces: false,
+                        pageParam: {user_id:side_user_id}
+                    });
+                } else {
+                    AJAX.ERROR(err);
+                }
+            });
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,42 @@
+.group_members .aui-bar{
+            background:#4877e7
+}
+.group_members .aui-searchbar{
+    position: relative;
+    top: auto;
+    left: auto;
+    height: 46px;
+}
+.group_members .aui-list .aui-list-item-inner{
+      width: 100%;
+    height: 66px;
+    line-height: 66px;
+    background-color: #fff;
+    padding: 0 12.5px;
+}
+.group_members .aui-list .aui-list-item-inner .aui-list-item-left{
+    display: flex;
+    align-items: center;
+}
+.group_members .aui-list .aui-list-item-inner .aui-list-item-left div{
+    flex: 1;
+    width:40px;
+    height:40px;
+    background:#869efb;
+    text-align: center;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 15px;
+}
+.group_members .aui-list .aui-list-item-inner .aui-list-item-left span{
+    font-size: 15px;
+    color:#2f2f2f;
+   margin-left: 10px;
+}
+.group_members .aui-list .aui-list-item-inner .aui-list-item-right{
+    font-size: 15px;
+    color:#bcc0cb;
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>填写群名称</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="bg-white-color company_group_input_name">
+<header id="header" class="aui-bar aui-bar-nav">
+    <a class="aui-pull-left aui-btn back">
+        <span class="aui-iconfont aui-icon-left fs-22"></span>
+    </a>
+    <div class="aui-title fs-16">填写群名称</div>
+    <a class="aui-pull-right aui-btn fs-14" id="nextStep">
+        下一步
+    </a>
+</header>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var pageParam = api.pageParam;
+        console.log(JSON.stringify(pageParam));
+        fnReady();
+        fnReadyFrame();
+        $api.byId('nextStep').onclick = function () {
+            api.openWin({
+                name : 'company_group_chose_member',
+                url : './company_group_chose_member.html',
+                vScrollBarEnabled : false,
+                pageParam : pageParam,
+            });
+            api.parseTapmode();
+        }
+    }
+</script>
+</body>
+</html>

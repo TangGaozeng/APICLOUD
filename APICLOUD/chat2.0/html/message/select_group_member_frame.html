@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>创建聊天</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="bg-gray-color communication choose-group">
+<ul class="aui-list aui-select-list pt-10">
+    <li class="aui-list-item">
+        <div class="aui-list-item-inner">
+            <label class="fs-14 color-2f" id="selectAll">
+                <input class="aui-checkbox" type="checkbox" name="radio" id="selectAllInput">
+                <span class="name">全选</span>
+            </label>
+        </div>
+    </li>
+</ul>
+<section id="org_depart_staff" class="aui-content">
+    <script id="depart_staff_template" type="text/html">
+    {{if department_list != '' || department_list != []}}
+    <ul class="department aui-list no-border-b no-border-t">
+        {{each department_list as value}}
+        <li class="aui-list-item border-ml-20"  data-companyId={{value.company_id}} data-departmentId={{value.department_id}}  data-userType="department" data-totalStaff={{value.total_staff}} data-departName={{value.department_name}} data-sonDeprtNum={{value.total_son_department}}>
+            <div class="aui-list-item-inner">
+                <label class="fs-14 color-2f">
+                    {{if value.checked}}
+                    <input class="aui-checkbox" type="checkbox" name="radio" disabled>
+                    {{else}}
+                    <input class="aui-checkbox" type="checkbox" name="radio">
+                    {{/if}}
+                    <span class="name">{{value.department_name}}</span>
+                    <span class="num">({{value.total_staff}})</span>
+                </label>
+                <div class="aui-list-item-right aui-list-item-arrow blue next fs-14">下级</div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+    {{if staff_list != '' || staff_list != []}}
+    <ul class="singleitem aui-list no-border-b no-border-t mt-10">
+        {{each staff_list as value}}
+        <li class="aui-list-item border-ml-20" data-userId={{value.user_id}} data-userType="person" data-userMobile={{value.user_mobile}}>
+            <div class="aui-list-item-inner">
+                <label>
+                    {{if value.checked}}
+                    <input class="aui-checkbox" type="checkbox" name="radio" disabled>
+                    {{else}}
+                    <input class="aui-checkbox" type="checkbox" name="radio">
+                    {{/if}}
+                        <span class="friends img">
+                            <img src={{value.photo}} alt="">
+                        </span>
+
+                </label>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+    </script>
+</section>
+<script src="../../script/api.js"></script>
+<script src="../../script/then.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+
+    apiready = function () {
+        var pageParam = api.pageParam;
+        var company_id = pageParam.company_id;
+        var company_name = pageParam.company_name;
+        var department_id = pageParam.department_id;
+        var department_name = pageParam.department_name;
+        var user_id = getSelfUserId();
+        var user_password = getSelfUserPwd();
+        var type = 2;
+        var object_id = '';
+
+        getDepartmentList(user_id,user_password,company_id,department_id,type,object_id,getDepartmentListSucc);
+
+        //获取我所属公司的部门列表成功后的回调函数
+        function getDepartmentListSucc(ret) {
+            var data = ret.data;
+            if(ret.result == 1 && data != ''){
+
+                sentCompanyOrDepartName(company_id,company_name,department_id,department_name);
+
+                var department_list = data.department_list;
+                var staff_list = data.staff_list;
+                for(var i in department_list){
+                    var departmentId = department_list[i].department_id;
+                    var departmentName = department_list[i].department_name;
+                    var sql = "select * from chosenDepartList where department_id=" + departmentId + " and department_name=\'" + departmentName + "\'";
+                    var re = selectSqlSync('user',sql);
+                    if(departmentId && (re.data.length>0)){
+                        department_list[i].checked = true;
+                    }
+                }
+                for(var i in staff_list){
+                    var userId = staff_list[i].user_id;
+                    var sql = "select * from chosenPersonList where user_id=" + userId;
+                    var rq = selectSqlSync('user',sql);
+                    if(departmentId && (rq.data.length>0)){
+                        staff_list[i].checked = true;
+                    }
+                }
+
+                var html = template('depart_staff_template',data);
+                document.getElementById('org_depart_staff').innerHTML = html;
+
+                setNextBtnColor();
+                isNeedSelectAll();
+
+                department_click();
+                recordChosen('aui-list-item');
+                addSelectAllEvent();
+            }
+        }
+
+        //部门列表点击事件处理函数
+        function department_click() {
+            var department_items = $api.domAll($api.dom('.department'),'.next');
+            for(var i in department_items){
+                department_items[i].onclick = function () {
+                    var _this = this.parentNode.parentNode;
+                    company_id = _this.getAttribute('data-companyId');
+                    department_id = _this.getAttribute('data-departmentId');
+                    department_name = _this.getAttribute('data-departName');
+                    console.log($api.dom(_this,'.aui-checkbox').checked);
+                    if($api.dom(_this,'.aui-checkbox').checked){
+                        return ;
+                    }
+                    //将当前页选中的项记录到本地数据库
+                    dbCurrentPageChosen();
+
+                    getDepartmentList(user_id,user_password,company_id,department_id,type,object_id,getDepartmentListSucc);
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //全选
+        function addSelectAllEvent() {
+            document.getElementById('selectAll').addEventListener('change',function () {
+                var _this = $api.dom(this,'.aui-checkbox');
+                var items = document.getElementsByClassName('aui-checkbox');
+                for(var j=1,ln=items.length;j< ln;j++){
+                    var that = items[j];
+                    var next = $api.dom(that.parentNode.parentNode,'.next');
+                    if(that && _this.checked){
+                        that.checked = true;
+                        if(next){
+                            next.style.color = '#a5b6fb';
+                        }
+                    }else if(that && !_this.checked){
+                        that.checked = false;
+                        if(next){
+                            next.style.color = '#4877e7';
+                        }
+                    }
+                    that.parentNode.parentNode.parentNode.onchange();
+                }
+            },false);
+        }
+
+        //遍历下级按钮的颜色
+        function setNextBtnColor() {
+            var nextList = document.getElementsByClassName('next');
+            var len = nextList.length;
+            for(var i=0;i<len;i++){
+                var _this = $api.dom(nextList[i].parentNode,'.aui-checkbox');
+                if(_this.checked){
+                    nextList[i].style.color = '#a5b6fb';
+                }else{
+                    nextList[i].style.color = '#4877e7';
+                }
+            }
+        }
+
+        //将当前页选中项记录到本地数据库
+        function dbCurrentPageChosen() {
+            var list = document.getElementsByClassName('aui-list-item');
+            var len = list.length;
+            for(var i=1;i<len;i++){
+                var _this = list[i];
+                var _this_input = $api.dom(_this,'.aui-checkbox');
+                var userType = _this.getAttribute('data-userType');
+                if(_this_input.checked){
+                    if(userType == 'department'){
+                        var department_id = _this.getAttribute('data-departmentId');
+                        var company_id = _this.getAttribute('data-companyId');
+                        var total_staff = _this.getAttribute('data-totalStaff');
+                        var total_department = _this.getAttribute('data-sonDeprtNum');
+                        var department_name = _this.getAttribute('data-departName');
+                        sql = "insert into chosenDepartList (department_id,department_name,company_id,total_staff,total_department,user_type) values (" + department_id +",\'" + department_name + "\'," + company_id + ","+ total_staff + "," + total_department + ",'department');";
+                        executeSqlSync('user',sql);
+                    }
+                    if(userType == 'person'){
+                        var user_mobile = _this.getAttribute('data-userMobile');
+                        var user_id = _this.getAttribute('data-userId');
+                        sql = "insert into chosenPersonList (user_id,user_mobile,user_type) values (" + user_id + ",\'" + user_mobile + "\','person');";
+                        executeSqlSync('user',sql);
+                    }
+                }
+            }
+        }
+
+        api.addEventListener({
+            name: 'openOrganizationPage'
+        }, function(ret, err) {
+            company_id = ret.value.company_id;
+            department_id = ret.value.department_id;
+            department_name = ret.value.department_name;
+            getDepartmentList(user_id,user_password,company_id,department_id,type,object_id,getDepartmentListSucc);
+        });
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>phonebook</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+</head>
+<body>
+<div id="netSearchMobile" class="firstRow bg-white-color flex" onclick="netSearchMobile()">
+    <img src="../../image/message/searchIcon.png" alt="">
+
+    <p>网络查找手机号码：<span id="findMobile"></span></p>
+</div>
+<div class="secendRow">手机通讯录</div>
+<div id="spbl">
+
+
+    <ul class="aui-list aui-list-in" id="listContent">
+    </ul>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/template.js"></script>
+<script src="../../script/common.js"></script>
+<script id="ListLoad" type="text/html">
+    {{each list as value}}
+    <li class="aui-list-item" onclick="OnClickListItem({{value.contact_phone}})">
+        <div class="txBox">
+            <div class="tx trimStr {{value.css}}">{{value.user_name}}</div>
+        </div>
+        <div class="aui-list-item-inner flex flex-dir-row">
+            <div class="left">
+                <p>{{value.user_name}}</p>
+                <p>{{value.contact_phone}}</p>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    var needSearchMobile;
+
+
+    apiready = function () {
+        fnInit();
+        fnEventListenerr();//监听
+    };
+
+    var contacts;
+    var _user_password, _user_info, _user_id;
+    var _my_mobile;
+    var _needSearchMobile;
+    function fnInit() {
+        contacts = api.require('contacts');
+        //从缓存读取用户登陆 user_id
+        _user_password = localStorage.getItem('password');
+        _user_info = JSON.parse(localStorage.getItem('user'));
+        _user_id = _user_info.data.user_id;
+        _my_mobile = _user_info.data.user_mobile;
+
+        var userRow2 = selectSqlSync('user', 'SELECT count(1) FROM contact where user_id =' + _user_id );
+        console.log(JSON.stringify(userRow2));
+
+    }
+
+    //监听
+    function fnEventListenerr() {
+        api.addEventListener({
+            name: 'searchInputValue'
+        }, function (ret, err) {
+            needSearchMobile = ret.value;
+
+            //1.DB查找记录
+            var userRow = selectSqlSync('user', 'SELECT * FROM contact where user_id =' + _user_id + ' and contact_phone like \'' + needSearchMobile + '%\' limit 10');
+           console.log(JSON.stringify(userRow));
+
+            //2.对搜索的结果进行渲染
+            fuQueryByKeyword(userRow);
+
+            //localStorage.setItem('needSearchMobile', needSearchMobile);
+            _needSearchMobile = needSearchMobile;
+            $api.html($api.byId("findMobile"), needSearchMobile);
+
+            var trimStr = document.getElementsByClassName("trimStr");
+            for(var i in trimStr){
+                var _this = trimStr[i];
+                if(_this.innerHTML){
+                    _this.innerHTML = _this.innerHTML.substring(0,2);
+                }
+
+//                        = trimStr[i].innerHTML.substring(0,2);
+            }
+        });
+    }
+
+    //2.对搜索的结果进行渲染
+    function fuQueryByKeyword(arr) {
+            var _arr = arr.data;
+            for (var j = 0; j < _arr.length; j++) {
+                switch(_arr[j].contact_phone_id%4){
+                    case 0:
+                        _arr[j].css = 'bg-orange-color';break;
+                    case 1:
+                        _arr[j].css = 'bg-green-color';break;
+                    case 2:
+                        _arr[j].css = 'bg-purple-color';break;
+                    case 3:
+                        _arr[j].css = 'bg-rose-color';break;
+                }
+            }
+        _data = {
+            list:_arr
+        };
+        var html = template('ListLoad', _data);
+        document.getElementById('listContent').innerHTML = html;
+
+
+    }
+
+    //点击 - 通讯录列表页
+    function OnClickListItem(friend_mobile) {
+
+        //console.log("_my_mobile"+_my_mobile+"__friend_mobile:"+friend_mobile);
+        //未激活或不是好友的跳转到 checkuserinfo
+        //接口 - 手机号码搜索添加好友
+        var _data = {
+            'user_id' : _user_id,
+            'user_password' : _user_password,
+            'friend_mobile': friend_mobile,
+            'my_mobile': _my_mobile
+        };
+        var result='';
+        // console.log(JSON.stringify(_data));
+        ajaxRequest(INTERFACE['ADD_SEARCH_FRIENDS'], _data, function(ret, err) {
+         //  console.log(JSON.stringify(ret));
+           // console.log(JSON.stringify(err));
+            if (ret.result == 1) {
+                //console.log(JSON.stringify( ret.data.company.user_id));
+
+                if(typeof(ret.data.company) =='object' &&  ret.data.company.user_id!=''){
+                    //组织架构里的
+                    api.openWin({
+                        name: 'friendinfo',
+                        url: './friendinfo.html',
+                        pageParam: {
+                            data: ret.data
+                        },
+                        vScrollBarEnabled: false
+                    });
+
+                    api.parseTapmode();
+
+                }else if(ret.data.isMyFriend == 0 || ret.data.isreg == 1){
+                    //帐号未激活或是否好友
+                    api.openWin({
+                        name: 'checkuserinfo',
+                        url: './checkuserinfo.html',
+                        pageParam: {
+                            data: ret.data
+                        },
+                        vScrollBarEnabled: false
+                    });
+                    api.parseTapmode();
+                }
+
+            }
+        })
+
+    }
+
+    //点击 网络查找手机号码
+    function netSearchMobile() {
+
+        console.log(_needSearchMobile);
+
+        //过滤号码
+        if (!/^1[3|4|5|7|8]\d{9}$/.test(_needSearchMobile)) {
+            api.alert({
+                title: '该用户不存在',
+                msg: '无法找到该用户，请检查你填写的帐号是否正确'
+            }, function(ret, err) {
+
+            });
+            return false;
+        }
+        OnClickListItem(_needSearchMobile)
+//        api.openWin({
+//            name: 'nsmobilelist',
+//            url: './nsmobilelist.html',
+//            vScrollBarEnabled: false
+//        });
+//        api.parseTapmode();
+    }
+</script>
+</body>
+</html>

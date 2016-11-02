@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>实名认证</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <link rel="stylesheet" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/real-name.css">
+</head>
+<body class="bg-gray-color real-succ">
+<div class="main">
+    <img src="../../image/mine/real-name_1.png">
+    <p>恭喜你,个人实名认证成功</p>
+    <span>你提交的认证资料已经通过审核</span>
+
+</div>
+<div class="footer-btn" id="succ-btn"><p>完成</p></div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    apiready = function(){
+        fnReady();
+        $api.byId('succ-btn').onclick = function(){
+            api.openWin({
+                name:'mydata',
+                url:'./mydata.html',
+                bounces:false,
+                vScrollBarEnabled:false
+            });
+            api.parseTapmode();
+        };
+    };
+</script>
+</html>

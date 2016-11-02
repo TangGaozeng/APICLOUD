@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>修改密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="add-bankcard1 set-pw">
+<header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-btn aui-pull-left back" href="#">
+        <span class="aui-iconfont aui-icon-left ifs-22"></span>
+    </a>
+    <div class="aui-title fs-18">修改密码</div>
+</header>
+<section class="aui-content">
+    <div class="title">请输入支付密码，以验证身份</div>
+    <ul class="inputbox">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <input type="text">
+</section>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+
+        var oLi = document.getElementsByTagName("li");
+        var oInput = document.getElementsByTagName("input")[0];
+        oInput.focus();
+        for(i=0;i<oLi.length;i++){
+            oLi[i].onclick = function () {
+                oInput.focus();
+            };
+
+        }
+
+        oInput.oninput = function () {
+            var value = this.value;
+            var arr = value.split('');
+            for(i=0;i<oLi.length;i++){
+                removeClass(oLi[i],'active');
+                for(j=0;j<arr.length;j++){
+                    addClass(oLi[j],'active');
+                }
+
+            }
+            if(arr.length==6){
+                oInput.blur();
+                api.openWin({
+                    name : 'change-pw2',
+                    url : '../mine/change-pw2.html',
+                    bounces : false,
+                    vScrollBarEnabled : false
+                });
+                api.parseTapmode();
+            }
+        }
+
+    };
+
+
+
+    function hasClass(obj, cls) {
+        return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+    }
+    function addClass(obj, cls) {
+        if (!this.hasClass(obj, cls)){
+            obj.className += " " + cls;
+        }
+    }
+
+    function removeClass(obj, cls) {
+        if (hasClass(obj, cls)) {
+            var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+            obj.className = obj.className.replace(reg, ' ');
+        }
+    }
+
+</script>
+</html>

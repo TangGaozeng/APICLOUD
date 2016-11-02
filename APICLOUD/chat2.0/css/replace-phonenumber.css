@@ -1,0 +1,39 @@
+.phonenumber-one .aui-bar{
+	background:#4877e7;
+}
+.phonenumber-one{
+	text-align: center;
+}
+.phonenumber-one .aui-content img{
+	height:135px;
+	width:66px;
+	margin-top:59px;
+}
+.phonenumber-one .aui-content{
+	padding: 0 13px;
+}
+.phonenumber-one .aui-content .my-phone{
+	font-size: 24px;
+	color: #2f2f2f;
+	margin: 59px 0 30px;
+}
+.phonenumber-one .aui-content .my-phone span{
+	font-size: 18px;
+	color:#6f7378;
+}
+.phonenumber-one .aui-content div .aui-btn{
+	background: #879efa;
+	color: #fff;
+	height:50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+}
+.phonenumber-one .aui-content div span{
+	display: block;
+	margin-top: 24px;
+	color:#6f7378;
+	font-size: 15px;
+}
+

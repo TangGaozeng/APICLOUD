@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>群成员</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/group_members.css"/>
+</head>
+<body class="bg-gray-color group_members">
+<div class="aui-searchbar">
+    <div class="aui-searchbar-input aui-border-radius">
+        <i class="aui-iconfont aui-icon-search"></i>
+        <form action="javascript:search();">
+            <input type="text" placeholder="搜索群成员(文字或3位以上数字)" id="search-input">
+        </form>
+    </div>
+    <div class="aui-searchbar-cancel" tapmod>取消</div>
+</div>
+<ul id="group-member-list" class="aui-list aui-list-in"></ul>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript" src="../../script/rong_cloud.js"></script>
+<script type="text/javascript" src="../../script/delete_someone_dialog.js"></script>
+
+<script type="text/html" id="group-master-li">
+    <li class="au-list-item" onclick="openPersonInfo('{{ user_id}}')">
+        <div class="aui-list-item-inner">
+            <div class="aui-list-item-left">
+                <div><img src='{{ photo }}'/></div>
+                <span>{{ user_name }}</span>
+            </div>
+            <div class="aui-list-item-right">
+                群主
+            </div>
+        </div>
+    </li>
+</script>
+
+<script type="text/html" id="group-member-li">
+    <li class="au-list-item" onclick="openPersonInfo('{{ user_id}}','{{ user_name }}')">
+        <div class="aui-list-item-inner">
+            <div class="aui-list-item-left">
+                <div><img src='{{ photo }}'/></div>
+                <span>{{ user_name }}</span>
+            </div>
+        </div>
+    </li>
+</script>
+
+<script type="text/javascript">
+    var groupData;
+    var social_group_id;
+    var userInfo = localStorage.getItem('user');
+    var user_mobile = JSON.parse(userInfo).data.user_mobile;
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var globalMemberData;//将成员数据保存为全局变量，进入页面时赋值，搜索框失去焦点时要使用该数据。
+    var deleteSomeone;//是不是从删除人员页面跳转过来的
+    var deleteMemberDialog;//确定是不是删除
+    var deleteMyFriend;
+    var reallyDeleteSomeone;//全局标识符，标识对方是否真的删除过某人，如果删除了就要再点击返回的时候重新加载群信息。否则不用重新加载
+    apiready = function () {
+        groupData = api.pageParam;
+        social_group_id = groupData.groupId;
+        deleteSomeone = api.pageParam.deleteSomeone;
+        deleteMemberDialog = new deleteMemberDialog();
+
+        console.log(JSON.stringify(api.pageParam));
+
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '请求中...',
+            text: '请稍候...',
+            modal: false
+        });
+
+        //发送Ajax请求，将数据获取到，再追加到页面上。
+        api.ajax({
+            url: SERVER_API.groupMemberList,
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_mobile: user_mobile, user_password: password, group_id: groupData.groupId}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            api.hideProgress();
+            if (ret) {
+                console.log(JSON.stringify(ret));
+                if (ret.result != 1) {
+                    serverResponseMsg(ret);
+                    return;
+                }
+                globalMemberData = ret;
+                console.log(JSON.stringify(ret.data.length));
+                for (var i = 0; i < ret.data.length; i++) {
+                    if (i == 0) {//默认第一个值是群主的
+                        var html = template("group-master-li", ret.data[i]);
+                        $api.append($api.byId('group-member-list'), html);
+                    } else {
+                        var html = template("group-member-li", ret.data[i]);
+                        $api.append($api.byId('group-member-list'), html);
+                    }
+                }
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    };
+
+
+    function openPersonInfo(friend_id, user_name) {
+        //user_id == friend说明是本人,返回
+        if (user_id == friend_id) {
+            return;
+        }
+        if (deleteSomeone) {
+            console.log("删除某人 " + friend_id);
+            deleteMyFriend = friend_id;
+            deleteMemberDialog.show({msg: "确定删除成员: " + user_name + " 吗?"}, deleteMemberCallback);
+        } else {
+            api.openWin({
+                name: 'friendinfo',
+                url: './friendinfo.html',
+                vScrollBarEnabled: false,
+                pageParam: {
+                    user_id: friend_id
+                }
+            });
+        }
+        api.parseTapmode();
+    }
+
+    function deleteMemberCallback() {
+        console.log("删除成员: " + deleteMyFriend);
+        api.showProgress({
+            style: 'default',
+            animateType: "fade",
+            title: "更新数据中",
+            text: "马上就好了"
+        });
+        // 发一个请求，删除掉人员并重新加载列表
+        api.ajax({
+            url: SERVER_API.kickOutGroup,
+            method: 'post',
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password,
+                    social_group_id: social_group_id,
+                    kick_user_str: '' + deleteMyFriend
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            api.hideProgress();
+            if (ret.result != 1) {
+                serverResponseMsg(ret);
+            }
+            if (ret.result == 1 && ret.data != []) {
+                console.log(JSON.stringify(ret));
+                //重新走一遍加载这个页面的流程
+                api.ajax({
+                    url: SERVER_API.groupMemberList,
+                    method: "post",
+                    dataType: "json",
+                    data: {
+                        values: {
+                            user_mobile: user_mobile,
+                            user_password: password,
+                            group_id: groupData.groupId,
+                        }
+                    },
+                    timeout: AJAX.TIMEOUT
+                }, function (ret, err) {
+                    if (ret) {
+                        api.hideProgress();
+                        if (ret.result != 1) {
+                            serverResponseMsg(ret);
+                            return;
+                        }
+                        //确保再次请求的数据是有效的才开始重新渲染页面
+                        if (ret.data.length != 0) {
+                            console.log("删除人员后重新加载了页面");
+                            $api.byId('group-member-list').innerHTML = '';
+                            globalMemberData = ret;
+                            //更新当下的数据
+                            for (var i = 0; i < ret.data.length; i++) {
+                                console.log(ret.data.length);
+                                html = template("group-member-li", ret.data[i]);
+                                $api.append($api.byId('group-member-list'), html);
+                            }
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                        AJAX.ERROR(err);
+                    }
+                });
+            }
+        });
+        //如果是从删除人员页面进来的，点击返回键的时候还得重新请求群信息
+        reallyDeleteSomeone = true;
+
+    }
+
+    //用户在输入框输入时实时显示输入结果
+    //离开输入框则显示回成员列表
+    $api.byId("search-input").oninput = function () {
+        var SearchValue = $api.val(this);
+        setTimeout(function () {
+            //输入为数字,长度为3才开始搜索，有效减少服务器负载 其他情况则马上搜索吧
+            if (/^[0-9]*$/.test(SearchValue) && SearchValue.length <= 2) {
+                return;
+            } else {
+                api.ajax({
+                    url: SERVER_API.groupMemberList,
+                    method: "post",
+                    dataType: "json",
+                    data: {
+                        values: {
+                            user_mobile: user_mobile,
+                            user_password: password,
+                            group_id: groupData.groupId,
+                            keyword: SearchValue
+                        }
+                    },
+                    timeout: AJAX.TIMEOUT
+                }, function (ret, err) {
+                    if (ret) {
+                        if (ret.result != 1) {
+                            serverResponseMsg(ret);
+                            return;
+                        }
+                        //首先清空页面上所有元素
+                        $api.byId('group-member-list').innerHTML = '';
+                        //有结果就追加元素,没结果就提示无结果
+                        var html = '';
+                        if (ret.data.length != 0) {
+                            for (var i = 0; i < ret.data.length; i++) {
+                                console.log(JSON.stringify(ret.data[i]));
+                                html = template("group-member-li", ret.data[i]);
+                                $api.append($api.byId('group-member-list'), html);
+                            }
+                        } else {
+                            html = '<li>没有结果</li>';
+                            $api.append($api.byId('group-member-list'), html);
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                        AJAX.ERROR(err);
+                    }
+                });
+            }
+        }, 1000);
+
+    };
+
+
+    var searchBar = document.querySelector(".aui-searchbar-input");
+    if (searchBar) {
+        searchBar.onclick = function () {
+            document.querySelector(".aui-searchbar-cancel").style.marginRight = 0;
+        }
+    }
+    document.querySelector(".aui-searchbar-cancel").onclick = function () {
+        this.style.marginRight = "-" + this.offsetWidth + "px";
+        document.getElementById("search-input").value = '';
+        document.getElementById("search-input").blur();
+        if (globalMemberData.data.length) {
+            //首先清空页面上所有元素
+            $api.byId('group-member-list').innerHTML = '';
+            for (var i = 0; i < globalMemberData.data.length; i++) {
+                console.log(JSON.stringify(globalMemberData.data[i]));
+
+                if (i == 0) {//默认第一个值是群主的
+                    var html = template("group-master-li", globalMemberData.data[i]);
+                    $api.append($api.byId('group-member-list'), html);
+                } else {
+                    var html = template("group-member-li", globalMemberData.data[i]);
+                    $api.append($api.byId('group-member-list'), html);
+                }
+            }
+        }
+    }
+
+</script>
+</html>

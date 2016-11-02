@@ -1,0 +1,70 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>选择地区</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <link rel="stylesheet" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/mine.css">
+</head>
+<body class="bg-gray-color select-address">
+<header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-pull-left aui-btn back">
+        <span class="aui-iconfont aui-icon-left fs-22"></span>
+    </a>
+    <div class="aui-title fs-18">选择地区</div>
+</header>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in" id="content">
+    </ul>
+</div>
+<script id="sub_address_template" type="text/html">
+    {{each data as value}}
+    <li class="aui-list-item flex flex-dir-col address" >
+        <div class="aui-list-item-inner aui-list-item-arrow">
+            <div class="aui-list-item-title" >{{value.region_name}}</div>
+        </div>
+    </li>
+    <div class="sub-menu">
+
+    </div>
+    {{/each}}
+</script>
+<script id="area_address_template" type="text/html">
+    {{each data as value}}
+    <!--<div class="aui-list-item-inner">-->
+    <div class="fs-13 area aui-border-b" style="color:#6f7378">{{value.region_name}}</div>
+    <!--</div>-->
+    {{/each}}
+</script>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script>
+    apiready = function() {
+        fnReady();
+        fnReadyFrame();
+        var province;
+        var province_name;
+        api.addEventListener({
+            name:'address',
+        },function(ret,err){
+            if(ret){
+                province = ret.value.address;
+                province_name = ret.value.province;
+            }
+        });
+        setTimeout(function(){
+            api.sendEvent({
+                name:'province',
+                extra:{
+                    province_name:province_name,
+                    province:province
+                }
+            });
+        },500)
+    };
+</script>
+</html>

@@ -1,0 +1,931 @@
+/*!
+ * custyle.css
+ *
+ * Version:     V1.0.0
+ * Author:      Zhikuan Yu
+ * Dept:        Weilv, Shenzhen
+ * Date:        2016/07/19
+ * Include:     normalize, Common, Shortcut, Flex, Grid system
+ */
+
+/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+body {
+    margin: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+main,
+menu,
+nav,
+section,
+summary {
+    display: block;
+}
+audio,
+canvas,
+progress,
+video {
+    display: inline-block;
+    vertical-align: baseline;
+}
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+[hidden],
+template {
+    display: none;
+}
+a {
+    background-color: transparent;
+}
+a:active,
+a:hover {
+    outline: 0;
+}
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+b,
+strong {
+    font-weight: bold;
+}
+dfn {
+    font-style: italic;
+}
+h1 {
+    margin: .67em 0;
+    font-size: 2em;
+}
+mark {
+    color: #000;
+    background: #ff0;
+}
+small {
+    font-size: 80%;
+}
+sub,
+sup {
+    position: relative;
+    font-size: 75%;
+    line-height: 0;
+    vertical-align: baseline;
+}
+sup {
+    top: -.5em;
+}
+sub {
+    bottom: -.25em;
+}
+img {
+    border: 0;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+figure {
+    margin: 1em 40px;
+}
+hr {
+    height: 0;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+pre {
+    overflow: auto;
+}
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+    margin: 0;
+    font: inherit;
+    color: inherit;
+}
+button {
+    overflow: visible;
+}
+button,
+select {
+    text-transform: none;
+}
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+input {
+    line-height: normal;
+}
+input[type="checkbox"],
+input[type="radio"] {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+input[type="search"] {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    -webkit-appearance: textfield;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+fieldset {
+    padding: .35em .625em .75em;
+    margin: 0 2px;
+    border: 1px solid #c0c0c0;
+}
+legend {
+    padding: 0;
+    border: 0;
+}
+textarea {
+    overflow: auto;
+}
+optgroup {
+    font-weight: bold;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td,
+th {
+    padding: 0;
+}
+
+/* common styles
+ * 1.设置盒模型的方式
+ * 2.设置safari上点击链接或按钮时出现的覆盖高亮颜色
+ * 3.禁止选中文本（如无文本选择需求，此为必选项）
+ * 4.禁止长按链接与图片弹出菜单
+ */
+*,
+*:before,
+*:after{
+    -webkit-box-sizing: border-box; /* 1 */
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html{
+    font-size: 10px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 2 */
+}
+body{
+    font-family: "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
+    font-size: 14px;
+    line-height: 1.428;
+    color: #333;
+    background-color: #fff;
+}
+html,
+body{
+    height: 100%;
+    -webkit-user-select: none; /* 3 */
+    user-select: none;
+}
+input,
+button,
+select,
+textarea{
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+a{
+    color: #4877e7;
+    text-decoration: none;
+}
+a:hover,
+a:focus{
+    color: #4877e7;
+}
+figure{
+    margin: 0;
+}
+img{
+    vertical-align: middle;
+}
+.img-responsive{
+    display: block;
+    max-width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+a,
+img{
+    -webkit-touch-callout: none; /* 4 */
+}
+label {
+    display: inline-block;
+    max-width: 100%;
+    *font-weight: bold;
+}
+input[type="radio"],
+input[type="checkbox"] {
+    /*margin: 4px 0 0;*/
+    margin: 0;
+    margin-top: 1px \9;
+    line-height: normal;
+}
+input[type="file"] {
+    display: block;
+}
+/*input[placeholder], [placeholder], *[placeholder] {
+    font-size: 14px;
+    color:#b0b7c1 !important;
+}*/
+select[multiple],
+select[size] {
+    height: auto;
+}
+output {
+    display: block;
+    padding-top: 7px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+}
+
+/* Shortcut styles
+ * 字号设置 2 -- 40 之间的偶数
+ * 文字的对其方式
+ * margin,padding的常用值
+ * 常用颜色 #333 #666 #999 #ccc #ddd #eee
+ * 其他如：show hide float(left,right)
+ */
+.fs-11{
+    font-size: 11px !important;
+}
+.fs-12{
+    font-size: 12px !important;
+}
+.fs-13{
+    font-size: 13px !important;
+}
+.fs-14{
+    font-size: 14px !important;
+}
+.fs-15{
+    font-size: 15px !important;
+}
+.fs-16{
+    font-size: 16px !important;
+}
+.fs-18{
+    font-size: 18px !important;
+}
+.fs-20{
+    font-size: 20px !important;
+}
+.fs-22{
+    font-size: 22px !important;
+}
+.fs-24{
+    font-size: 24px !important;
+}
+.fs-26{
+    font-size: 26px !important;
+}
+.fs-28{
+    font-size: 28px !important;
+}
+.fs-30{
+    font-size: 30px !important;
+}
+.fs-32{
+    font-size: 32px !important;
+}
+.fs-34{
+    font-size: 34px !important;
+}
+.fs-36{
+    font-size: 36px !important;
+}
+.fs-38{
+    font-size: 38px !important;
+}
+.fs-40{
+    font-size: 40px !important;
+}
+.fs-42{
+    font-size: 42px !important;
+}
+.fs-44{
+    font-size: 44px !important;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+    text-align: right;
+}
+.text-center{
+    text-align: center;
+}
+.text-justify{
+    text-align: justify;
+}
+.text-nowrap{
+    white-space: nowrap;
+}
+.text-hide{
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+.mg-3{
+    margin: 3px !important;
+}
+.mg-5{
+    margin: 5px !important;
+}
+.mg-8{
+    margin: 8px !important;
+}
+.mg-10{
+    margin: 10px !important;
+}
+.mg-15{
+    margin: 15px !important;
+}
+.mg-20{
+    margin: 20px !important;
+}
+.mg-25{
+    margin: 25px !important;
+}
+.mg-30{
+    margin: 30px !important;
+}
+.mt-5{
+    margin-top: 5px !important;
+}
+.mt-10{
+    margin-top: 10px !important;
+}
+.mt-20{
+    margin-top: 20px !important;
+}
+.mr-5{
+    margin-right: 5px !important;
+}
+.mr-10{
+    margin-right: 10px !important;
+}
+.mr-20{
+    margin-right: 20px !important;
+}
+.mb-5{
+    margin-bottom: 5px !important;
+}
+.mb-10{
+    margin-bottom: 10px !important;
+}
+.mb-20{
+    margin-bottom: 20px !important;
+}
+.ml-5{
+    margin-left: 5px !important;
+}
+.ml-10{
+    margin-left: 10px !important;
+}
+.ml-20{
+    margin-left: 20px !important;
+}
+.pd-3{
+    padding: 3px !important;
+}
+.pd-5{
+    padding: 5px !important;
+}
+.pd-8{
+    padding: 8px !important;
+}
+.pd-10{
+    padding: 10px !important;
+}
+.pd-15{
+    padding: 15px !important;
+}
+.pd-20{
+    padding: 20px !important;
+}
+.pd-25{
+    padding: 25px !important;
+}
+.pd-30{
+    padding: 30px !important;
+}
+.pt-5{
+    padding-top: 5px !important;
+}
+.pt-10{
+    padding-top: 10px !important;
+}
+.pt-20{
+    padding-top: 20px !important;
+}
+.pr-5{
+    padding-right:5px !important;
+}
+.pr-10{
+    padding-right: 10px !important;
+}
+.pr-20{
+    padding-right: 20px !important;
+}
+.pb-5{
+    padding-bottom: 5px !important;
+}
+.pb-10{
+    padding-bottom: 10px !important;
+}
+.pb-20{
+    padding-bottom: 20px !important;
+}
+.pl-5{
+    padding-left: 5px !important;
+}
+.pl-10{
+    padding-left: 10px !important;
+}
+.pl-20{
+    padding-left: 20px !important;
+}
+.pl-30{
+    padding-left: 30px !important;
+}
+.center-block{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.pull-left{
+    float: left !important;
+}
+.pull-right{
+    float: right !important;
+}
+.hide{
+    display: none !important;
+}
+.hidden{
+    display: none !important;
+}
+.show{
+    display: block !important;
+}
+.invisible{
+    visibility: hidden;
+}
+.display-none{
+    display: none;
+}
+.color-3{
+    color: #333;
+}
+.color-6{
+    color: #666;
+}
+.color-9{
+    color: #999;
+}
+.color-c{
+    color: #ccc;
+}
+.color-d{
+    color: #ddd;
+}
+.color-e{
+    color: #eee;
+}
+.color-f{
+	color: #fff !important;
+}
+.color-2f{
+    color: #2f2f2f !important;
+}
+.color-86{
+    color: #868686 !important;
+}
+.color-blue{
+    color: #4877e7;
+}
+.bg-white-color{
+	background-color: #fff !important;
+}
+.bg-gray-color{
+	background-color: #f7f7f8 !important;
+}
+.bg-main-color{
+	background-color: #12adff !important;
+}
+.bg-blue-color{
+    background-color: #4977e7 !important;
+}
+.bg-orange-color{
+    background-color: #ff7e44 !important;
+}
+.bg-green-color{
+    background-color: #69c95f !important;
+}
+.bg-purple-color{
+    background-color: #879efa !important;
+}
+.bg-rose-color{
+    background-color: #fe798c !important;
+}
+/* Flexbox Styles
+ * 弹性伸缩盒模型布局
+ * 容器的 5 个属性
+ * 项目的 5 个属性
+ */
+.flex{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+/*    -webkit-box-direction: normal;
+    -webkit-box-orient: horizontal;
+    flex-direction: row;*/
+}
+.flex-dir-row{
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+}
+.flex-dir-col{
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+}
+.flex-wrap-yes{
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+}
+.jsf-con-start{
+    justify-content: flex-start;
+    -webkit-justify-content: flex-start;
+}
+.jsf-con-end{
+    justify-content: flex-end;
+    -webkit-justify-content: flex-end;
+}
+.jsf-con-center{
+    justify-content: center;
+    -webkit-justify-content: center;
+}
+.jsf-con-between{
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+}
+.jsf-con-around{
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
+}
+.alg-itm-start{
+    align-items: flex-start;
+    -webkit-align-items: flex-start;
+}
+.alg-itm-end{
+    align-items: flex-end;
+    -webkit-align-items: flex-end;
+}
+.alg-itm-center{
+    align-items: center;
+    -webkit-align-items: center;
+}
+.alg-itm-baseline{
+    align-items: baseline;
+    -webkit-align-items: baseline;
+}
+.alg-con-start{
+    align-content: flex-start;
+    -webkit-align-content: flex-start;
+}
+.alg-con-end{
+    align-items: flex-end;
+    -webkit-align-content: flex-end;
+}
+.alg-con-center{
+    align-content: center;
+    -webkit-align-content: center;
+}
+.alg-con-between{
+    align-content: space-between;
+    -webkit-align-content: space-between;
+}
+.alg-con-around{
+    align-content: space-around;
+    -webkit-align-content: space-around;
+}
+.item-full{
+    flex: 1;
+}
+.item-1{
+    order: 1;
+}
+.item-2{
+    order: 2;
+}
+.item-3{
+    order: 3;
+}
+.item-4{
+    order: 4;
+}
+.item-5{
+    order: 5;
+}
+.item-6{
+    order: 6;
+}
+.item-7{
+    order: 7;
+}
+.item-8{
+    order: 8;
+}
+.item-9{
+    order: 9;
+}
+.item-grow-1{
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+}
+.item-grow-2{
+    flex-grow: 2;
+    -webkit-flex-grow: 2;
+}
+.item-grow-3{
+    flex-grow: 3;
+    -webkit-flex-grow: 3;
+}
+.item-grow-4{
+    flex-grow: 4;
+    -webkit-flex-grow: 4;
+}
+.item-grow-5{
+    flex-grow: 5;
+    -webkit-flex-grow: 5;
+}
+.item-grow-6{
+    flex-grow: 6;
+    -webkit-flex-grow: 6;
+}
+.item-grow-7{
+    flex-grow: 7;
+    -webkit-flex-grow: 7;
+}
+.item-grow-8{
+    flex-grow: 8;
+    -webkit-flex-grow: 8;
+}
+.item-grow-9{
+    flex-grow: 9;
+    -webkit-flex-grow: 9;
+}
+.item-shrink-1{
+    flex-shrink: 1;
+    -webkit-flex-shrink: 1;
+}
+.item-shrink-2{
+    flex-shrink: 2;
+    -webkit-flex-shrink: 2;
+}
+.item-shrink-3{
+    flex-shrink: 3;
+    -webkit-flex-shrink: 3;
+}
+.item-shrink-4{
+    flex-shrink: 4;
+    -webkit-flex-shrink: 4;
+}
+.item-shrink-5{
+    flex-shrink: 5;
+    -webkit-flex-shrink: 5;
+}
+.item-shrink-6{
+    flex-shrink: 6;
+    -webkit-flex-shrink: 6;
+}
+.item-shrink-7{
+    flex-shrink: 7;
+    -webkit-flex-shrink: 7;
+}
+.item-shrink-8{
+    flex-shrink: 8;
+    -webkit-flex-shrink: 8;
+}
+.item-shrink-9{
+    flex-shrink: 9;
+    -webkit-flex-shrink: 9;
+}
+.item-flex-auto{
+    flex: auto; /* 1 1 auto */
+    -webkit-flex: auto;
+}
+.item-flex-none{
+    flex: none; /* 0 0 auto */
+    -webkit-flex: none;
+}
+.item-alg-self-start{
+    align-self: flex-start;
+    -webkit-align-self: flex-start;
+}
+.item-alg-self-end{
+    align-self: flex-end;
+    -webkit-align-self: flex-end;
+}
+.item-alg-self-center{
+    align-self: center;
+    -webkit-align-self: center;
+}
+.item-alg-self-baseline{
+    align-self: baseline;
+    -webkit-align-self: baseline;
+}
+.item-alg-self-stretch{
+    align-self: stretch;
+    -webkit-align-self: stretch;
+}
+
+/* Grid System
+ * 容器有两个 container,container-fluid
+ * row 为一行，占满屏幕全部宽度，其中共分为10列col
+ * 需配合flex使用，可快速方便实现布局
+ */
+.container{
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+@media (min-width: 768px) {
+    .container {
+        width: 750px;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        width: 970px;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.col-10{
+    flex: 0 0 10%;
+}
+.col-20{
+    flex: 0 0 20%;
+}
+.col-25{
+    flex: 0 0 25%;
+}
+.col-30{
+    flex: 0 0 30%;
+}
+.col-33{
+    flex: 0 0 33.333%;
+}
+.col-40{
+    flex: 0 0 40%;
+}
+.col-50{
+    flex: 0 0 50%;
+}
+.col-60{
+    flex: 0 0 60%;
+}
+.col-66{
+    flex: 0 0 66.666%;
+}
+.col-70{
+    flex: 0 0 70%;
+}
+.col-75{
+    flex: 0 0 75%;
+}
+.col-80{
+    flex: 0 0 80%;
+}
+.col-90{
+    flex: 0 0 90%;
+}
+.col-100{
+    flex: 0 0 100%;
+}
+/*****font-icon*****/
+@font-face {font-family: "iconfont";
+    src: url('../fonts-2/iconfont.eot?t=1473762252'); /* IE9*/
+    src: url('../fonts-2/iconfont.eot?t=1473762252#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts-2/iconfont.woff?t=1473762252') format('woff'), /* chrome, firefox */
+    url('../fonts-2/iconfont.ttf?t=1473762252') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+    url('../fonts-2/iconfont.svg?t=1473762252#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+    font-family:"iconfont" !important;
+    font-size:16px;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.fanhui:before { content: "\e604"; }
+.jiahao:before { content: "\e60d"; }
+.icon-qun:before { content: "\e682"; }
+.icon-jiantouzhedie:before { content: "\e658"; }
+.icon-iconfont13:before { content: "\e619"; }
+.icon-xiaogougou:before { content: "\e634"; }
+/*****font-icon*****/
+
+#header{
+    background-color: #4977e7;
+}
+#header .header{
+    width: 100%;
+    height: 46px;
+    line-height: 46px;
+    margin-top: -1px;
+}
+
+/*popup*/
+.popup{
+    position: relative;
+}
+.popup .mask{
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #000;
+    opacity: 0.5;
+}
+.popup .cont{
+    position: fixed;
+    z-index: 200;
+    left: 50%;
+    top: 50%;
+    width: auto;
+    min-width: 200px;
+    height: auto;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}

@@ -1,0 +1,81 @@
+#footer{
+    height: 50px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+#footer .icon{
+    position: relative;
+    z-index: 20;
+    top: 2px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0 auto;
+    width: 23px;
+    height: 23px;
+    display: block;
+}
+#footer span.mui-tab-label{
+    font-size: 12px;
+}
+#footer span.icon{
+    -webkit-background-size: contain;
+    background-size: contain;
+}
+#footer span.message{
+    background-image: url("../icon/xiaoxi.png");
+}
+#footer .mui-active span.message{
+    background-image: url("../icon/xiaoxi_active.png");
+}
+#footer span.application{
+    background-image: url("../icon/yingyong.png");
+}
+#footer .mui-active span.application{
+    background-image: url("../icon/yingyong_active.png");
+}
+#footer span.contact{
+    background-image: url("../icon/tongxunlu.png");
+}
+#footer .mui-active span.contact{
+    background-image: url("../icon/tongxunlu_active.png");
+}
+#footer span.mine{
+    background-image: url("../icon/wode.png");
+}
+#footer .mui-active span.mine{
+    background-image: url("../icon/wode_active.png");
+}
+#header .jiahao{
+    font-size: 22px;
+    line-height: 1;
+    margin-top: -35px;
+    margin-right: 25px;
+}
+#header .header{
+    display: none;
+    font-size: 18px;
+    background-color: #4977e7;
+}
+#header .header.active{
+    display: block;
+}
+.header p{
+    margin-bottom: 0;
+}
+
+.menu.mui-tab-item{
+    position: relative;
+}
+#total-unread{
+    position: absolute;
+    top: 0;
+    left: 51px;
+    z-index: 99;
+    background-color: #ff2600;
+    border-radius: 8px;
+    display: block;
+    padding: 0 3px;
+    min-width: 16px;
+}
+

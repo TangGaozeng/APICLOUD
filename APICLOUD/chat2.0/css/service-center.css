@@ -1,0 +1,38 @@
+.service-center .aui-bar{
+	background:#4877e7;
+}
+.service-center .aui-list-item .service-top{
+	height:100px;
+}
+.service-center .aui-list-item .service-top img{
+	width:56px;
+	height:56px;
+}
+.service-center .aui-list-item .service-top .aui-list-item-title span:nth-of-type(1){
+	font-size:13px;
+	color:#b9c3cf;
+	margin-left: 21px;
+}
+.service-center .aui-list-item .service-top .aui-list-item-title span:nth-of-type(2){
+	font-size:18px;
+	color:#4f4f4f;
+}
+.service-center section .hot{
+	height:50px;
+}
+.service-center section .hot p{
+	line-height: 50px;
+	color:#aeb4c2;
+	font-size: 14px;
+}
+.service-center section .problem .aui-list-item .aui-list-item-inner{
+	height:95px;
+}
+.service-center section .problem .aui-list-item .aui-list-item-inner .aui-list-item-title p{
+	font-size: 14px;
+	color:#515151;
+}
+.service-center section .problem .aui-list-item .aui-list-item-inner .aui-list-item-title span{
+	font-size:14px;
+	color:#aeb4c2;
+}

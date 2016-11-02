@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+        <title>设置</title>
+        <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+        <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+        <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+    </head>
+    <body class="set">
+        <ul class="aui-list ul-my2">
+            <li class="aui-list-item li-my1" id="goSafe">
+                <div class="aui-list-item-inner aui-list-item-arrow" tapmode id="go-zhanghao-anquan">账号与安全
+                    <div class="aui-list-item-right aui-font-size-13">
+                        <img src="../../image/mine/protect.png" class="img-protect" alt="">
+                        已保护
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list">
+            <li class="aui-list-item li-my1" id="goAbout">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-left">
+                        关于微旅
+                        <img src="../../image/mine/new.png" class="img-new" alt="">
+                    </div>
+                    <div class="aui-list-item-right aui-font-size-13">v1.1.0</div>
+                </div>
+            </li>
+            <li class="aui-list-item li-my1">
+                <div class="aui-list-item-inner aui-list-item-arrow" onclick="fnClearCache()">清除缓存
+                    <div class="aui-list-item-right aui-font-size-13" id="cache">128MB</div>
+                </div>
+            </li>
+        </ul>
+        <div class="aui-bar aui-bar-nav ul-my2 my-bg-white" id="exitLogin">
+            <div class="aui-title fs-16 my-color-red">退出登录</div>
+        </div>
+        <div class="shield"></div>
+        <div class="exitTips">
+            <div class="exitTit">确定要退出登录吗？</div>
+            <div class="exit">
+                <div class="exitBtn" id="exitY">确定</div>
+                <div class="borderH1"></div>
+                <div class="exitBtn" id="exitN">取消</div>
+            </div>
+
+        </div>
+    </body>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+        apiready = function () {
+           fnInit();
+            $api.byId('exitLogin').onclick = function () {
+                exitTip(loginOut);
+            };
+
+            $api.byId('go-zhanghao-anquan').onclick = function () {
+                api.openWin({
+                    name : 'zhanghao-anquan',
+                    url : '../mine/zhanghao-anquan.html',
+                    bounces : false,
+                    vScrollBarEnabled : false
+                });
+                api.parseTapmode();
+            }
+
+
+            $api.byId('goAbout').onclick = function () {
+                api.openWin({
+                    name : 'about',
+                    url : '../mine/about.html',
+                    bounces : false,
+                    vScrollBarEnabled : false
+                });
+                api.parseTapmode();
+            }
+
+            function loginOut(){
+                //如需退出清理localStorage，请到common.js里的cleanCache函数去配置
+                cleanCache();
+
+                api.openWin({
+                    name : 'login',
+                    url : '../mine/login.html',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    reload:true //登陆之后,main页必须强制刷新
+                });
+                api.parseTapmode();
+            
+            };
+            
+             fnGetCacheSize();
+        }
+        
+        function fnInit() {
+            cache = $api.byId('cache');
+        };
+        
+        function fnGetCacheSize() {
+            api.getCacheSize(function(ret, err) {
+                cache.innerHTML = parseInt(ret.size / 1024 / 1024 * 100) / 100 + ' MB'
+            });
+        };
+        
+            function fnClearCache() {
+            api.showProgress({
+                title: '清除缓存中...',
+                modal: true
+            });
+
+            api.clearCache(function() {
+                setTimeout(function() {
+                    api.hideProgress();
+                    fnGetCacheSize();
+                }, 500);
+            });
+        };
+    </script>
+</html>

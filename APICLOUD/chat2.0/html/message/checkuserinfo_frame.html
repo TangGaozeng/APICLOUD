@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>checkuserinfo</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+</head>
+<body>
+<div id="listContent">
+
+</div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/template.js"></script>
+<script src="../../script/common.js"></script>
+<script id="ListLoad" type="text/html">
+
+    <div class="userTxBox">
+        <div class="touxiang">
+            <img src="../../image/message/example.jpg" class="img-responsive" alt="">
+        </div>
+        <p class="userNc">{{ isreg == -1 ? '未激活':user_name}}</p>
+    </div>
+
+    <div class="userNumBox">
+        <p class="p1 fs-14" id="friend_mobile">{{user_mobile}}</p>
+
+        <p class="p2">手机联系人</p>
+    </div>
+
+    {{if isMyFriend == -1}}
+    <div id="wktts" class="userBtn">该用户尚未开通**<br/>消息将会以短信的形式送达对方</div>
+    <div id="faxiaoxi" class="userBtn" onclick="fnSendAdd({{user_mobile}})">发消息</div>
+    {{else}}
+    <div id="faxiaoxi" class="userBtn" onclick="fnOneTOne()">发消息</div>
+    {{/if}}
+    {{if isMyFriend != 1 && isMyFriend != -1}}
+    <div id="jiahaoyou" class="userBtn">加好友</div>
+    {{/if}}
+
+</script>
+<script type="text/javascript">
+
+    apiready = function () {
+        fnInit();
+    }
+
+    var _user_password, _user_info, _user_id;
+    var _my_mobile;
+    var _param_data;  //api.pageParam
+    function fnInit() {
+        //从缓存读取用户登陆 user_id
+        _user_password = localStorage.getItem('password');
+        _user_info = JSON.parse(localStorage.getItem('user'));
+        _user_id = _user_info.data.user_id;
+        _my_mobile = _user_info.data.user_mobile;
+
+        // console.log(JSON.stringify(api.pageParam));
+        //获取接口数据 手机号码搜索添加好友  'Search/addSearchFriends
+        _param_data = api.pageParam.data;
+
+        // console.log(JSON.stringify(_param_data));
+        _data = {
+            'isMyFriend': _param_data.isMyFriend && typeof (_param_data.isMyFriend) != 'undefined' ? _param_data.isMyFriend : -1,
+            'isreg': _param_data.isreg && typeof (_param_data.isreg) != 'undefined' ? _param_data.isreg : -1,
+            'user_mobile': _param_data.user_mobile,
+            'user_name': _param_data.user_name
+        };
+        //console.log(JSON.stringify(_data));
+        var html = template('ListLoad', _data);
+        document.getElementById('listContent').innerHTML = html;
+    }
+
+    //点击 - 单聊
+    function fnOneTOne() {
+        api.openWin({
+            name: 'onetoone',
+            url: '../message/onetoone.html',
+            vScrollBarEnabled: false,
+            pageParam: {
+                user_id: _user_id,
+                user_img: '',
+                user_name:_param_data.user_name
+            }
+        });
+    }
+
+    //点击 - 发信息（短信）
+    function fnSendAdd(_friend_phone) {
+        var _data = {
+            'user_id' : _user_info.data.user_id,
+            'user_password' : localStorage.getItem('password'),
+            'my_mobile' : _user_info.data.user_mobile,
+            'friend_mobile' : _friend_phone,
+            'type' : 1,
+            'content' : '我是'+_user_info.data.real_name
+        };
+        //console.log(JSON.stringify(_data));
+        ajaxRequest(INTERFACE['APPLY_ADD_FRIEND'], _data, function(ret, err) {
+            if (ret) {
+                api.toast({
+                    msg : ret.msg,
+                    duration : 3000,
+                    location : 'middle'
+                });
+            }
+            //console.log(JSON.stringify(ret));
+        })
+    }
+
+
+    //接口 - 申请添加新好友的列表
+    function funAddSearchFriends() {
+        var _data = {
+            'user_id': _user_id,
+            'user_password': _user_password,
+            'friend_mobile': _friend_mobile,
+            'my_mobile': _my_mobile
+        };
+        var listContent = '';
+        ajaxRequest(INTERFACE['ADD_SEARCH_FRIENDS'], _data, function (ret, err) {
+            if (ret.result == 1 && ret.data != '') {
+                _data = {
+                    list: ret.data
+                };
+                var html = template('ListLoad', _data);
+                document.getElementById('listContent').innerHTML = html;
+            }
+        })
+    }
+
+</script>
+
+
+</html>

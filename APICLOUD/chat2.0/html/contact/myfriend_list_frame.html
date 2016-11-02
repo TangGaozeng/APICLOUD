@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>phonebook</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/contact.css"/>
+</head>
+<body>
+<script src="../../script/api.js"></script>
+<script src="../../script/mui.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/then.js"></script>
+<script type="text/javascript" src="../../script/SHA1.js"></script>
+<script type="text/javascript">
+apiready = function () {
+
+    var userInfo = localStorage.getItem('user');
+    var _user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var key, index, item_obj;
+    var arr = [];
+    var _listContact = api.require('listContact');
+    //搜索输入的字符串
+    var SearchValue ='';
+
+    (function init() {
+        api.ajax({
+            url: INTERFACE['FRIEND_LIST'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values: {user_id: _user_id, user_password: password, sort_mode: 2}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+//                    console.log(JSON.stringify(ret));
+            //接口的结果生成SHA1
+            var SHAlMyFriendList = SHA1(JSON.stringify(ret.data) + _user_id);
+
+            //读出缓存里的SHA1
+            var SHA1StorageMyFriendList = localStorage.getItem('SHA1StorageMyFriendList');
+            if (SHA1StorageMyFriendList != SHAlMyFriendList) {
+                if (ret.result == 1) {
+                    //a1.获取接口数据成功后的回调
+                    getDataSucc(ret);
+                    localStorage.setItem('SHA1StorageMyFriendList', SHAlMyFriendList);
+                } else {
+                    AJAX.ERROR(err);
+                }
+            } else {
+                //b1 第二次读本地数据库
+                getLocalImgUrl(false);
+            }
+        });
+        fnEventListenerr();//监听
+    })();
+
+
+    //监听
+    function fnEventListenerr() {
+        api.addEventListener({
+            name: 'searchMyFriends'
+        }, function (ret, err) {
+            SearchValue = ret.value;
+            // console.log(JSON.stringify(SearchValue));
+            // alert(JSON.stringify(SearchValue));
+            //b1 第二次读本地数据库,因为有搜索功能，则会导致数据的刷新
+            getLocalImgUrl(true);
+        });
+    }
+
+    //b1 第二次读本地数据库
+    /**
+     *reload  列表页内容是否刷新，默认为alse
+     */
+    function getLocalImgUrl(reload) {
+
+        console.log('xxgetLocalImgUrl___xxxx');
+        var listContacts = {};
+        var _file_search = '';
+        if(SearchValue){
+            //数字搜索
+            if(/^[0-9]*$/.test(SearchValue)){
+                _file_search = ' and contact_phone like \'' + SearchValue + '%\'  limit 10';
+            }else{
+                //文字搜索
+                _file_search = ' and user_name like \'%' + SearchValue + '%\'  limit 10';
+            }
+        }
+        // 1.获取数据
+        var sql =  'SELECT * FROM contact where user_id =' + _user_id + ' and is_friend = 1' + _file_search;
+        console.log(_file_search);
+        console.log(sql);
+        var userRow = selectSqlSync('user',sql);
+        var _LocalContact = userRow.data;
+        console.log(JSON.stringify(userRow));
+
+        /* 联系人,按照拼音,升序排列. */
+        _LocalContact = _LocalContact.sort(function (contactA, contactB) {
+            if (contactA["firstChar"].toUpperCase() < contactB["firstChar"].toUpperCase()) {
+                return -1;
+            }
+            return 1;
+        });
+        /* 将联系人,按照拼音首字母分组. */
+        var listContacts = {};
+        for (var idx in _LocalContact) {
+            var contact = _LocalContact[idx];
+            var _img = contact.avatar_local ? contact.avatar_local : DEFAULT_AVATAR;
+            var listContact = {
+                phone_user_id: contact.phone_user_id,
+                img: _img,
+                title: contact.user_name,
+                phone: contact.contact_phone,
+                add: contact.is_friend
+            };
+            var firstChar = contact.firstChar.substring(0, 1).toUpperCase();
+            if ("无名氏" === contact.name || !firstChar.match(/[A-Z]/)) {
+                if ("undefined" === typeof listContacts["#"]) {
+                    listContacts["#"] = [];
+                }
+                listContacts["#"].push(listContact);
+                continue;
+            }
+            if ("undefined" === typeof listContacts[firstChar]) {
+                listContacts[firstChar] = [];
+            }
+            listContacts[firstChar].push(listContact);
+        }
+        //渲染到listContact组件
+        console.log("136:"+JSON.stringify(listContacts));
+
+        if(reload){
+            //搜索时刷新列表数据
+            updateDataContactList(listContacts)
+        }else{
+            //不刷新列表内容
+            setDataContactList(listContacts);
+        }
+
+    }
+
+
+    //a1.获取接口数据成功后的回调
+    function getDataSucc(data) {
+        var obj = data.data, p;
+        var jsonStr = JSON.stringify(obj);
+
+        for (p in obj) {
+            var ar = obj[p];
+            for (var i in ar) {
+                arr.push({user_id: ar[i].user_id, img: ar[i].img, title: ar[i].title, firstChar: ar[i].letter});
+            }
+        }
+        console.log(JSON.stringify(arr));
+        if (arr) {
+            //a2 数据入本地DB
+            getImageToLocalDb(arr);
+
+        }
+    }
+
+    //同步执行的任务
+    function task(value, callback) {
+        Thenjs.nextTick(function () {
+            callback(null, value);
+        });
+    }
+
+    //a2 数据入本地DB
+    function getImageToLocalDb(array) {
+        api.showProgress({
+            title: '初始化数据...',
+            modal: true
+        });
+        Thenjs.each(array, function (defer, value) {
+            var userRow = selectSqlSync('user', 'SELECT * FROM contact where  user_id=' + _user_id + ' and  contact_phone like \'' + value.title + '%\' limit 1');
+            //没有数据则插入
+            if (userRow.status == true && userRow.data.length == 0) {
+                console.log(JSON.stringify(value));
+                var img_url = value.img;
+                var _real_name = value.real_name ? value.real_name : value.title;
+                var _field = _user_id + ',' + 0 + ',\'' + value.title + '\',1,' + '\'' + _real_name + '\'' + ',\'' + value.firstChar + '\'' + ',\'' + value.img + '\'' + ',' + value.user_id;
+                var sql = 'INSERT INTO contact (user_id,contact_phone_id,contact_phone,is_friend,user_name,firstChar,avatar_remote,phone_user_id) values(' + _field + ')';
+                console.log(sql);
+                executeSqlSync('user', sql);
+
+            } else {
+                //更新
+                $sql = 'update contact set is_friend = 1  where user_id =' + _user_id + ' and contact_phone like \'' + value.title + '%\' limit 1';
+                var updateContactRow = executeSqlSync('user', $sql);
+                console.log(JSON.stringify(updateContactRow));
+            }
+            task(value, defer);
+        }).then(function (defer, result) {
+
+            Thenjs(function (cont) {
+                getAvatarDown();
+                task(10, cont);
+            })
+                    .then(function (cont, arg) {
+                        api.hideProgress();
+                        //a3.获取本地的图片地址
+                        getLocalImgUrl(false);
+                    })
+
+        });
+    }
+
+    //a3 头像更新到本地
+    function getAvatarDown() {
+        var userRow2 = selectSqlSync('user', 'SELECT * FROM contact where  user_id=' + _user_id + ' and  is_friend = 1 and avatar_local IS NULL');
+        // console.log(JSON.stringify(userRow2));
+        if (userRow2.data) {
+            Thenjs.each(userRow2.data, function (defer, value) {
+                var img_url = value.avatar_remote;
+                if (img_url.substring(0, 4) == "http") {
+                    api.download({
+                        url: img_url,
+                        cache: true
+                    }, function (ret, err) {
+                        if (ret.state == 1) {
+                            sql = 'update contact set avatar_local = \'' + ret.savePath + '\'  where user_id =' + _user_id + ' and phone_user_id =' + value.phone_user_id;
+                            var updateContactRow = executeSqlSync('user', sql);
+                            console.log(sql);
+                            executeSqlSync('user', sql);
+                        }
+
+                    });
+                }
+
+            })
+        }
+
+    }
+
+    //将数据渲染到listContact插件
+    function setDataContactList(data) {
+        console.log("listlist ....");
+        // console.log("245"+JSON.stringify(data));
+        if (data != '' && data != null && data != undefined) {
+
+            _listContact.open({
+                h: api.frameHeight,
+                borderColor: '#d8d9dd',
+                cellBgColor: '#ffffff',
+                cellSelectColor: '#ffffff',
+                cellHeight: 65,
+                imgHeight: 50,
+                imgWidth: 50,
+                indicator: {
+                    bgColor: 'rgba(255,255,255,0)',
+                    color: '#4877e7'
+                },
+                data: data,
+                fixedOn: api.frameName
+            }, function (ret, err) {
+                if (ret) {
+                    key = ret.key;
+                    index = ret.index;
+                } else {
+                    alert(JSON.stringify(err));
+                }
+                item_obj = data[key][index];
+                api.openWin({
+                    name: 'onetoone',
+                    url: '../message/onetoone.html',
+                    vScrollBarEnabled: false,
+                    pageParam: {
+                        user_id: item_obj.phone_user_id,
+                        user_img: item_obj.img,
+                        user_name: item_obj.title
+                    }
+                });
+            });
+        }
+    }
+
+    //搜索时刷新数据列表内容
+    function updateDataContactList(data) {
+        console.log("update ....");
+        // console.log("287"+JSON.stringify(data));
+        if (data != '' && data != null && data != undefined) {
+            _listContact.reloadData({
+                h: api.frameHeight,
+                borderColor: '#d8d9dd',
+                cellBgColor: '#ffffff',
+                cellSelectColor: '#ffffff',
+                cellHeight: 65,
+                imgHeight: 50,
+                imgWidth: 50,
+                indicator: {
+                    bgColor: 'rgba(255,255,255,0)',
+                    color: '#4877e7'
+                },
+                data: data,
+                fixedOn: api.frameName
+            }, function (ret, err) {
+                if (ret) {
+                    key = ret.key;
+                    index = ret.index;
+                } else {
+                    alert(JSON.stringify(err));
+                }
+                item_obj = data[key][index];
+                api.openWin({
+                    name: 'onetoone',
+                    url: '../message/onetoone.html',
+                    vScrollBarEnabled: false,
+                    pageParam: {
+                        user_id: item_obj.phone_user_id,
+                        user_img: item_obj.img,
+                        user_name: item_obj.title
+                    }
+                });
+            });
+        }
+    }
+}
+</script>
+</body>
+</html>

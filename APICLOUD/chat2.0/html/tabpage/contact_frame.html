@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>phonebook</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/contact.css"/>
+</head>
+<body class="bg-gray-color">
+<div class="aui-content" id="txlBox">
+    <!--搜索框-->
+    <div class="aui-searchbar">
+        <div class="aui-searchbar-input aui-border-radius">
+            <i class="aui-iconfont aui-icon-search"></i>
+
+            <form action="javascript:search();">
+                <input type="number" placeholder="搜索联系人" id="search-input">
+            </form>
+        </div>
+    </div>
+    <!--五个菜单-->
+    <div class="menu-table bg-white-color">
+        <div class="menu-table-tr flex flex-dir-row">
+            <div class="d1" id="goToPhoneBook">
+                <img src="../../image/contact/sjtxl.png" alt="">
+                <span>通讯录</span>
+            </div>
+            <div class="d2" id="goToMyGroup">
+                <img src="../../image/contact/wdqz.png" alt="">
+                <span>我的群组</span>
+            </div>
+            <div class="d1" id="wdhy">
+                <img src="../../image/contact/wdhy.png" alt="">
+                <span>我的好友</span>
+            </div>
+            <!--<div class="d3">
+                <img src="../../image/contact/yq.png" alt="">
+                <span>邀请</span>
+            </div>-->
+        </div>
+        <!--<div class="menu-table-tr flex flex-dir-row">
+            <div class="d1" id="wdhy">
+                <img src="../../image/contact/wdhy.png" alt="">
+                <span>我的好友</span>
+            </div>
+            <div class="d2">
+                <img src="../../image/contact/sjh.png" alt="">
+                <span>商家号</span>
+            </div>
+            <div class="d3"></div>
+        </div>-->
+    </div>
+    <!--组织架构-->
+    <div class="organizationBox">
+        <div class="organization_title fs-14 color-2f">组织架构</div>
+        <div id="org_Container">
+            <script id="myOrganizationList" type="text/html">
+                {{each data as value}}
+                <div class="organization_item bg-white-color">
+                    <div class="organization_outline flex">
+                        <div class="iconfont icon-jiantouzhedie"></div>
+                        <div class="organization_img">
+                            <img src={{value.company_logo}} class="img-responsive" alt="">
+                        </div>
+                        <div class="organization_desc">
+                            <p class="fs-14 color-2f">{{value.company_name}}</p>
+
+                            <div class="rzbox flex">
+                                <div class="fs-13 color-86">{{value.rganization.rganization_name}}</div>
+                                <img src="../../image/message/qyrzicon.png" class="img-responsive" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="aui-list aui-list-in display-none">
+                        <li class="aui-list-item aui-list-item-middle click_org_btn" data-companyId={{value.company_id}}
+                            data-companyName={{value.company_name}} data-departmentId={{value.rganization.parent_id}}>
+                            <div class="aui-list-item-inner aui-list-item-arrow">
+                                <div class="aui-list-item-title color-2f">{{value.rganization.rganization_name}}</div>
+                            </div>
+                        </li>
+                        <li class="aui-list-item click_dep_btn" data-companyId={{value.company_id}}
+                            data-companyName={{value.company_name}} data-departmentId={{value.department.parent_id}}>
+                            <div class="aui-list-item-inner aui-list-item-arrow">
+                                <div class="aui-list-item-title color-2f">{{value.department.department_name}}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                {{/each}}
+            </script>
+        </div>
+    </div>
+    <!--常用联系人-->
+    <div class="oftenContact bg-white-color">
+        <p class="title" id="oftenContactTit"><span id="sjx" class="iconfont icon-jiantouzhedie dow"></span><span
+                class="txt fs-14">常用联系人</span></p>
+        <ul class="aui-list aui-media-list" id="oftenContactList">
+            <script id="oftenContactBox" type="text/html">
+                {{each data as value}}
+                <li class="aui-list-item aui-list-item-middle ofn_con_list_item" data-userId={{value.user_id}}>
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media" style="width: 3rem;">
+                            <img src={{value.photo}} class="aui-img-round aui-list-img-sm">
+                        </div>
+                        <div class="aui-list-item-inner aui-list-item-arrow">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-14">{{value.real_name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {{/each}}
+            </script>
+        </ul>
+    </div>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+
+        var user_id = getSelfUserId();
+        var user_password = getSelfUserPwd();
+
+        //向后台请求我的常用联系人列表
+        api.ajax({
+            url: INTERFACE['OFTEN_CONTACT_LIST'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values: {user_id: user_id, user_password: user_password, limit1: 0, limit2: 10}
+            },
+            timeout: AJAX.TIMEOUT,
+        }, function (ret, err) {
+            if (ret) {
+                getContactSuccess(ret);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+
+        //向后台请求组织架构
+        api.ajax({
+            url: INTERFACE['MY_ORGANIZATION'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values: {user_id: user_id, user_password: user_password}
+            },
+            timeout: AJAX.TIMEOUT,
+        }, function (ret, err) {
+            if (ret) {
+                getMyOrganizationSucc(ret);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+
+        //获取我的常用联系人的成功回调
+        function getContactSuccess(ret) {
+            console.log(JSON.stringify(ret));
+            if (ret.result == 1 && ret.data != []) {
+                var html = template('oftenContactBox', ret);
+                document.getElementById('oftenContactList').innerHTML = html;
+                oftenContact_zhedie();
+                clickOftenContact();
+            } else {
+                if (ret.msg) {
+                    api.alert({
+                        title: '错误提示',
+                        msg: ret.msg
+                    });
+                }
+
+            }
+        }
+
+        //获取我的组织架构的成功回调
+        function getMyOrganizationSucc(ret) {
+            if (ret.result == 1 && ret.data != '') {
+                var html = template('myOrganizationList', ret);
+                document.getElementById('org_Container').innerHTML = html;
+                organiz_zhedie();
+                clickOrganization();
+                clickDepartment();
+            } else {
+                if (ret.msg) {
+                    api.alert({
+                        title: '错误提示',
+                        msg: ret.msg
+                    });
+                }
+
+            }
+        }
+
+        //我的好友菜单
+        $api.byId("wdhy").onclick = function () {
+            api.openWin({
+                name: 'myfriend',
+                url: '../contact/myfriend.html',
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+        
+       //点击搜索跳转到 "消息"-》"查找手机通讯录"
+        $api.byId("search-input").onclick = function () {
+            api.openWin({
+                name: 'addformobile',
+                url: '../message/addformobile.html',
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+
+        //我的群组菜单
+        $api.byId("goToMyGroup").onclick = function () {
+            api.openWin({
+                name: 'my_group',
+                url: '../contact/my_group.html',
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+
+        //常用联系人折叠
+        function oftenContact_zhedie() {
+            $api.byId("oftenContactTit").onclick = function () {
+                $api.toggleCls($api.byId('sjx'), 'dow');
+                $api.toggleCls($api.byId('oftenContactList'), 'display-none');
+                api.parseTapmode();
+            };
+        }
+
+        //组织架构的折叠与展开
+        function organiz_zhedie() {
+            var organization_item_list = document.getElementsByClassName('organization_outline');
+            for (var i in organization_item_list) {
+                organization_item_list[i].onclick = function () {
+                    var _this = this;
+                    $api.toggleCls($api.dom(_this, '.icon-jiantouzhedie'), 'dow');
+                    $api.toggleCls($api.dom(_this.parentNode, '.aui-list'), 'display-none');
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //点击组织架构的事件处理函数
+        function clickOrganization() {
+            var org_btn = document.getElementsByClassName('click_org_btn');
+            for (var i in org_btn) {
+                org_btn[i].onclick = function () {
+                    var company_id = this.getAttribute('data-companyId');
+                    var department_id = this.getAttribute('data-departmentId');
+                    var company_name = this.getAttribute('data-companyName');
+                    api.openWin({
+                        name: 'organization',
+                        url: '../contact/organization.html',
+                        vScrollBarEnabled: false,
+                        pageParam: {
+                            company_id: company_id,
+                            department_id: department_id,
+                            company_name: company_name,
+                            department_name: ''
+                        }
+                    });
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //点击所属部门的事件处理函数
+        function clickDepartment() {
+            var dep_btn = document.getElementsByClassName('click_dep_btn');
+            for (var i in dep_btn) {
+                dep_btn[i].onclick = function () {
+                    var company_id = this.getAttribute('data-companyId');
+                    var department_id = this.getAttribute('data-departmentId');
+                    var company_name = this.getAttribute('data-companyName');
+                    api.openWin({
+                        name: 'organization',
+                        url: '../contact/organization.html',
+                        vScrollBarEnabled: false,
+                        pageParam: {
+                            company_id: company_id,
+                            department_id: department_id,
+                            company_name: company_name,
+                            department_name: ''
+                        }
+                    });
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //点击常用联系人列表的事件处理函数
+        function clickOftenContact() {
+            var ofn_list = document.getElementsByClassName('ofn_con_list_item');
+            for (var i in ofn_list) {
+                ofn_list[i].onclick = function () {
+                    var user_id_friend = this.getAttribute('data-userId');
+                    api.openWin({
+                        name: 'friendinfo',
+                        url: '../message/friendinfo.html',
+                        vScrollBarEnabled: false,
+                        pageParam: {
+                            user_id: user_id_friend
+                        }
+                    });
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //绑定跳转到手机通讯录的事件handle
+        (function () {
+            $api.byId("goToPhoneBook").onclick = function () {
+                api.openWin({
+                    name: 'phonebook',
+                    url: '../message/phonebook.html',
+                    vScrollBarEnabled: false,
+                });
+                api.parseTapmode();
+            }
+        })();
+    }
+</script>
+</body>
+</html>

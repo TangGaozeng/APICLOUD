@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>checkuserinfo</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+</head>
+<body>
+<header id="header" class="aui-bar aui-bar-nav userInfoHeader">
+    <a class="aui-pull-left aui-btn back" tapmode>
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">个人资料</div>
+</header>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        fnReady();
+        fnReadyFrame();
+        var statusBarAppearance = api.statusBarAppearance;
+        if(statusBarAppearance){
+            api.setStatusBarStyle({
+                style: 'light',
+                color: '#879efa'
+            });
+        }
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            if(statusBarAppearance){
+                api.setStatusBarStyle({
+                    style: 'light',
+                    color: '#4977e7'
+                });
+            }
+            api.closeWin({
+                duration : 0
+            });
+        });
+    };
+</script>
+</body>
+</html>

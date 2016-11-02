@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>提现（未绑定银行卡）</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/widthdraw.css">
+</head>
+<body class="bg-gray-color widthdraw">
+<div>
+    <ul class="aui-list aui-list-in">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner flex flex-dir-row alg-itm-center">
+                <div class="aui-list-item-label fs-14">
+                    可用余额
+                </div>
+                &nbsp;<div class="aui-list-item-input jine flex flex-dir-row alg-itm-center" id="balance">
+                0
+            </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label fs-14">
+                    提现银行卡
+                </div>
+                &nbsp;<div class="aui-list-item-input jine flex flex-dir-row alg-itm-center" >
+                <span id="band"></span><span id="band_number"></span>
+            </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label fs-14">
+                    提现金额
+                </div>
+                <div class="aui-list-item-input jine flex flex-dir-row alg-itm-center">
+                    <span>￥</span>&nbsp;&nbsp;<input type="text" placeholder="输入金额" onkeyup="retainDecimal(this)" id="Tx"><span id="all_widthdrae">全部提现</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="aui-btn tx" id="confirm_tx">确认提现</div>
+
+<section class="aui-content password" id="password">
+    <div>
+        <span class="title">请输入支付密码</span><i class="aui-iconfont aui-icon-close del fs-17 aui-pull-right" id="del"></i>
+    </div>
+    <ul class="inputbox">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <form>
+        <input type="text" class="pass" id="pass" onkeyup="pay_password(this)">
+        <input type="hidden" id="rsa_modulus" value="D15AA98C75B32630C8191CDF9156F55091053C101C58965B2A1A00C3404553B8D953E81BEB22A46200911BE4BDE7A9BB839D01F6819379B60C68725AA479CF1C081E300F1D5DE197FCDE3CADF68F5A5CCC97BEA93F0B2C857691BBE9E28D2BC1F25B7BEBA950D3507376C442B8E6E163018C4800A2B33CE28A53863713AFA133">
+        <input type="hidden" id="rsa_exponent" value="10001">
+        <input type="hidden" id="rsa_maxDigits" value="130">
+    </form>
+</section>
+<div class="aui-mask" id="mask"></div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/rsa.min.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var bank_card_id;
+    var is_realName;
+    var mask = $api.byId('mask');
+    apiready =function(){
+        fnReady();
+        //获取余额
+        api.ajax({
+            url: INTERFACE['MINE_INDEX'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        },function(ret,err){
+            console.log(JSON.stringify(ret));
+            if(ret&&ret.data!=0){
+                $api.byId('balance').innerText = ret.data.leave_amount;
+            }else{
+                AJAX.ERROR(err);
+            };
+        });
+        //获取银行卡列表
+        api.ajax({
+            url: INTERFACE['GET_BANK_CARD_LIST'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id,user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        },function(ret,err){
+            if(ret&&ret.data.length != 0){
+                console.log(JSON.stringify(ret));
+                $api.byId('band').innerText = ret.data[0].bank_name;
+                $api.byId('band_number').innerText = "("+"****"+ret.data[0].bank_number.substr(15)+")";
+                bank_card_id = ret.data[0].bank_card_id;
+            }else {
+                //AJAX.ERROR(err);
+            };
+        });
+        //是否实名认证
+        api.ajax({
+            url: INTERFACE['IS_NAME_AUTHENTICATION'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        },function(ret,err){
+            if(ret.result == 1){
+                console.log(JSON.stringify(ret));
+                is_realName = ret.result;
+            }else {
+                api.alert({
+                    title:'信息提示',
+                    msg:'还未实名认证'
+                },function(){
+                    //跳转到实名认证页面
+                    api.openWin({
+                        name:'real-name',
+                        url:'./real-name.html',
+                        bounces:false,
+                        vScrollBarEnabled:false
+                    });
+                });
+            };
+        });
+        //点击全部提现
+        $api.byId('all_widthdrae').onclick =function(){
+            $api.byId('Tx').value = $api.byId('balance').innerText;
+        };
+
+        //密码输入框
+        var password_list = document.getElementById('password');
+        var oLi = password_list.getElementsByTagName("li");
+        var oInput = document.getElementById('pass');
+
+        $api.byId('confirm_tx').onclick = function(){
+            //是否设置了支付密码
+            api.ajax({
+                url:INTERFACE['CHECK_IS_PAYPASS'],
+                method:'post',
+                dataType:'json',
+                data:{
+                    values:{user_id: user_id,user_password:password}
+                },
+                timeout:AJAX.TIMEOUT
+            },function(ret,err){
+                if(ret.result == 1){
+                    //只有设置了支付密码才能执行判断函数
+                    judge_widthdraw();
+                }else{
+                    api.alert({
+                        title:'信息提示',
+                        msg:'请先设置支付密码'
+                    },function(){
+                        api.openWin({
+                            name : 'setting-pw',
+                            url : './setting-pw.html',
+                            bounces : false,
+                            vScrollBarEnabled : false
+                        });
+                    });
+                }
+            });
+            api.parseTapmode();
+        };
+        //判断函数
+        function judge_widthdraw(){
+            if($api.byId('band').innerText != ""&& $api.byId('balance').innerText != "" &&
+                    $api.byId('balance').innerText > 0 && $api.byId('Tx').value != ""&&
+                    is_realName == 1){
+                $api.addCls(mask,"aui-mask-in");
+                $api.css(password_list,'display:block');
+                setTimeout(function(){
+                    oInput.focus();
+                },500);
+                for(i=0;i<oLi.length;i++){
+                    oLi[i].onclick = function () {
+                        oInput.focus();
+                    };
+                };
+                oInput.oninput = function () {
+                    var value = this.value;
+                    var arr = value.split('');
+                    for(i=0;i<oLi.length;i++){
+                        removeClass(oLi[i],'active');
+                        for(j=0;j<arr.length;j++){
+                            addClass(oLi[j],'active');
+                        };
+
+                    };
+                    if(arr.length==6){
+                        oInput.blur();
+                        console.log($api.byId('pass').value);
+                        var pay_password = UtilService.doEncrypt($api.byId('pass').value);
+                        api.ajax({
+                            url:INTERFACE['WIDTHDRAW_MONEY'],
+                            method: 'post',
+                            dataType: 'json',
+                            data: {
+                                values:{user_id: user_id,
+                                    user_password: password,
+                                    bank_card_id:bank_card_id,
+                                    money:$api.byId('Tx').value,
+                                    pay_password:pay_password
+                                }
+                            },
+                            timeout:AJAX.TIMEOUT
+                        },function(ret,err){
+                            console.log(JSON.stringify(ret));
+                            if(ret.result == 1){
+                                api.openWin({
+                                    name:'widthdraw-succ',
+                                    url:'./widthdraw-succ.html',
+                                    bounces:false,
+                                    vScrollBarEnabled:false
+                                });
+                                $api.removeCls(mask,"aui-mask-in")
+                            }else{
+                                api.alert({
+                                    title:'提现提示',
+                                    msg:ret.msg
+                                },function(){
+                                    //提示错误后同时 清空input的value值
+                                    $api.byId('pass').value = "";
+                                    console.log(oInput.value);
+                                    for(i=0;i<oLi.length;i++){
+                                        removeClass(oLi[i],'active');
+                                    };
+                                });
+                            };
+                        });
+                    };
+                };
+            }else if($api.byId('band').innerText == ""){
+                api.alert({
+                    title:'信息提示',
+                    msg:"没有绑定银行卡"
+                },function(){
+                    api.openWin({
+                        name : 'bind_bankCard',
+                        url : './bind_bankCard.html',
+                        bounces : false,
+                        vScrollBarEnabled : false
+                    });
+                });
+            }else if($api.byId('balance').innerText == "" || $api.byId('balance').innerText < 0){
+                api.alert({
+                    title:'提现提示',
+                    msg:"余额不足"
+                });
+            }else if($api.byId('Tx').value == ""){
+                api.alert({
+                    title:'提现提示',
+                    msg:"请输入提现金额"
+                });
+            }else if($api.byId('Tx').value <= 0){
+                api.alert({
+                    title:'提现提示',
+                    msg:"提现金额不能大于可用余额"
+                });
+            } else if(typeof($api.byId('Tx').value) != number ){
+                api.alert({
+                    title:'提现提示',
+                    msg:"请输入正确的提现金额"
+                });
+            };
+        };
+        document.getElementById('del').onclick = function(){
+            $api.css(password_list,'display:none');
+            $api.removeCls(mask,"aui-mask-in");
+            oInput.value = "";
+            for(i=0;i<oLi.length;i++){
+                removeClass(oLi[i],'active');
+            }
+        }
+    };
+    //输入框
+    function hasClass(obj, cls) {
+        return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+    };
+
+    function addClass(obj, cls) {
+        if (!this.hasClass(obj, cls)){
+            obj.className += " " + cls;
+        };
+    };
+
+    function removeClass(obj, cls) {
+        if (hasClass(obj, cls)) {
+            var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+            obj.className = obj.className.replace(reg, ' ');
+        };
+    };
+    //输入金额只能保留两位小数
+    function retainDecimal(obj){
+        if(obj.value <= parseFloat($api.byId('balance').innerText)){
+            obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符
+            obj.value = obj.value.replace(/^\./g,""); //验证第一个字符是数字而不是
+            obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+            obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3'); //只能输入两个小数
+        }else{
+            obj.value = "";
+        };
+    };
+
+    function pay_password(obj){
+        obj.value = obj.value.replace(/^[0-9a-zA-Z]{6}$/g,"");
+    };
+
+</script>
+</html>

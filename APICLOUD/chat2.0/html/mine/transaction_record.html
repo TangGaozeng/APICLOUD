@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+	<title>交易记录</title>
+	<link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+	<link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+	<link rel="stylesheet" href="../../css/transaction-record.css">
+</head>
+<body class="bg-gray-color transaction-record">
+<header class="aui-bar aui-bar-nav" id="header">
+	<a class="aui-pull-left aui-btn back">
+		<span class="aui-iconfont aui-icon-left fs-22"></span>
+	</a>
+	<div class="aui-title fs-18">交易记录</div>
+	<a class="aui-pull-right aui-btn fs-16" tapmode id="choose" >
+		筛选
+	</a>
+</header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script>
+	apiready = function() {
+		fnReady();
+		fnReadyFrame();
+		var flag;
+		var door = true;
+		//监听frame页面的筛选状态
+		api.addEventListener({
+			name:'sub_text',
+		},function(ret,err){
+			$api.byId('choose').innerText = ret.value.sub_text;
+			door = true;
+		})
+		//点击筛选
+		$api.byId('choose').onclick = function () {
+			console.log('ok');
+			if (door) {
+				this.innerText = '收起';
+				flag = this.innerText;
+				api.sendEvent({
+					name:'texts',
+					extra:{
+						texts:flag
+					}
+				});
+				door = false;
+			} else {
+				this.innerText = '筛选';
+				flag = this.innerText;
+				api.sendEvent({
+					name:'texts',
+					extra:{
+						texts:flag
+					}
+				});
+				door = true;
+			};
+			api.parseTapmode();
+		};
+	};
+
+</script>
+</html>

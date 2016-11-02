@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>选择群聊类型</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="bg-gray-color">
+<div class="create_group_index">
+    <div class="main">
+        <div class="chat open-win" tapmode win="create_groupchat_normal">
+            <div class="chat-left">
+                <img src="../../image/message/create_group_chat_normal.png" >
+            </div>
+            <div class="chat-top"></div>
+            <div class="chat-right">
+                <div>创建聊天</div>
+                <p>快速发起临时讨论组，群成员不限于同事。</p>
+            </div>
+        </div>
+        <div class="company-chat" tapmode id="choseComList">
+            <div class="company-chat-left">
+                <img src="../../image/message/create_group_chat_company.png" >
+            </div>
+            <div class="company-chat-top"></div>
+            <div class="company-chat-right">
+                <div>创建企业群</div>
+                <p>企业内部安全沟通，群成员仅限于同事、有安全水印等特征。</p>
+            </div>
+        </div>
+    </div>
+    <!--请选择目标企业-->
+    <div class="popup display-none">
+        <div class="mask"></div>
+        <div class="cont aui-content">
+            <ul class="aui-list aui-select-list" id="my_org_list_ul">
+                <li class="aui-list-header text-center fs-16 color-2f">请选择目标企业</li>
+                <script id="my_com_list" type="text/html">
+                    {{each data as value}}
+                    <li class="aui-list-item my_org_list" data-companyId={{value.company_id}} data-companyName={{value.company_name}} data-companyLogo={{value.company_logo}}>
+                        <div class="aui-list-item-inner">
+                            <label class="fs-16 color-2f "><input class="aui-radio" type="checkbox" name="radio">{{value.company_name}}</label>
+                        </div>
+                    </li>
+                    {{/each}}
+                </script>
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+    var user_id = getSelfUserId();
+    var user_password = getSelfUserPwd();
+    apiready = function () {
+        fnReady();
+        getMyCompanyList();
+
+        var opendb = openDatabaseSync('user');
+        if(opendb.status){
+            //选择的用户
+            var sql1 = "create table if not exists chosenPersonList (ID integer primary key autoincrement not null,user_id int(11),user_mobile varchar(32) unique,user_type varchar(32))";
+            executeSqlSync('user',sql1);
+            //选择的部门
+            var sql2 = "create table if not exists chosenDepartList (ID integer primary key autoincrement not null,department_id int(11) unique,department_name varchar(128),company_id int(11),total_staff int(11),total_department int(11),user_type varchar(32))";
+            executeSqlSync('user',sql2);
+        }
+
+    };
+
+    //请求我的公司列表
+    function getMyCompanyList() {
+        api.ajax({
+            url: INTERFACE['MY_ORGANIZATION'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values: {user_id: user_id, user_password: user_password}
+            },
+            timeout: AJAX.TIMEOUT,
+        }, function (ret, err) {
+            if (ret) {
+                getMyCompanyListSucc(ret);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    //获取我的公司列表成功回调
+    function getMyCompanyListSucc(ret) {
+        console.log(JSON.stringify(ret));
+        if(ret.result == 1 && ret.data.length != 0){
+            var html = template('my_com_list', ret);
+        }else{
+            var html = '<li class="aui-list-item"><div class="aui-list-item-inner fs-16 color-2f text-center">您还没有加入任何企业</div></li>';
+        }
+        document.getElementById('my_org_list_ul').innerHTML += html;
+
+        openPopup();
+    }
+
+    //弹框
+    function openPopup() {
+        var choseList = document.getElementById('choseComList');
+        var popup = document.getElementsByClassName('popup')[0];
+        var mask = document.getElementsByClassName('mask')[0];
+        var org_list = document.getElementsByClassName('my_org_list');
+        if(choseList && popup){
+            choseList.addEventListener('click',function () {
+                popup.style.display = 'block';
+                api.parseTapmode();
+            },false);
+        }
+        if(mask){
+            mask.addEventListener('click',function () {
+                popup.style.display = 'none';
+                api.parseTapmode();
+            },false);
+        }
+        if(org_list){
+            for(var i in org_list){
+                org_list[i].onchange = function () {
+                    var company_id = this.getAttribute('data-companyId');
+                    var company_name = this.getAttribute('data-companyName');
+                    var company_logo = this.getAttribute('data-companyLogo');
+                    api.openWin({
+                        name : 'company_group_select_photo',
+                        url : './company_group_select_photo.html',
+                        vScrollBarEnabled : false,
+                        pageParam : {
+                            company_id:company_id,
+                            company_name:company_name,
+                            company_logo:company_logo
+                        }
+                    });
+                    $api.dom(this, '.aui-radio').checked = false;
+                    popup.style.display = 'none';
+                    api.parseTapmode();
+                }
+            }
+        }
+    }
+
+</script>
+</body>
+</html>

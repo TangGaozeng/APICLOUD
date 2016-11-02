@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/template.js"></script>
+    <script type="text/javascript" src="../../script/rong_cloud.js"></script>
+    <script type="text/javascript" src="../../script/mui.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+<ul id="content">
+    <!--将可用的人显示出来，用于创建群聊-->
+</ul>
+
+
+<div class="aui-btn-row">
+    <p>
+        <button id="btn" class="aui-btn aui-bar-dark aui-btn-block aui-btn-outlined" tapmode=""
+                onclick="createChatGroup()">
+            创建群聊
+        </button>
+    </p>
+</div>
+</body>
+
+<script id="contact-list-li" type="text/html">
+    <li class="aui-list-item">
+        <div class="aui-list-item-inner">
+            <label><input class="aui-radio" type="radio" tapmode onclick="toggleCheck(this,'{{ user_mobile }}')">
+                {{if real_name != "" }}
+                <span>{{  real_name }}</span>
+                {{else}}
+                <span>无名氏</span>
+                {{/if}}
+            </label>
+        </div>
+    </li>
+</script>
+
+<script type="text/javascript">
+    //1.通过接口获取好友列表
+    //2.将好友列表用模板引擎渲染到模板中
+    //3.选择目标好友,发送创建群聊请求
+    //4.创建成功后,进入群聊
+    var chatGroupMember = [];
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    apiready = function () {
+        getFriendList();
+    };
+
+
+    function getFriendList() {
+        api.ajax({
+            url: INTERFACE["FRIEND_LIST"],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password, sort_mode: 1}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                processFriendListData(ret);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    function processFriendListData(data) {
+        for (var i = 0; i < data.data.length; i++) {
+            appendToHTML("contact-list-li", data.data[i]);
+        }
+    }
+
+    function toggleCheck(el, phone_number) {
+        if ($api.hasCls(el, 'checked')) {
+            $api.removeCls(el, 'checked');
+            chatGroupMember.pop(parseInt(phone_number));
+        } else {
+            $api.addCls(el, 'checked');
+            chatGroupMember.push(parseInt(phone_number));
+        }
+        console.log(JSON.stringify(chatGroupMember.join(",").toString()));
+    }
+
+    function createChatGroup() {
+        api.ajax({
+            url: INTERFACE["CREATE_GROUP"],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password,
+                    user_mobile_str: chatGroupMember.join(','),
+                    group_name: "群聊群:聊群聊",
+                    group_identify: 1
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret));
+                openGroupChat(ret);//创建成功，直接进入群聊
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+
+    function openGroupChat(groupData) {
+        console.log(JSON.stringify(groupData));
+        var pageParam = {
+            groupId: groupData.data.social_group_id,
+//      groupSize:groupData.data.member_list.length,
+            justCreate: true//创建群聊后，用户可能马上进入群聊设置页面，将该群置顶。但此时app本地数据库该群聊消息，所以无法保存群的设置，
+                            //为了处理这种情况，创建成功马上自动发一条消息，让本地数据库有记录，方便存储群设置。
+        };
+
+        api.openWin({
+            name: "groupchat",
+            url: "widget://html/message/groupchat.html",
+            pageParam: pageParam
+        });
+        api.closeWin();
+    }
+
+    function appendToHTML(templateId, data) {
+        var html = template(templateId, data);
+        return $api.append($api.byId('content'), html);
+    }
+</script>
+</html>

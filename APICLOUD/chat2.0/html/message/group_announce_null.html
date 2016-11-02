@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>群公告</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="group_announce">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">群公告</div>
+        <a href="#" class="aui-btn aui-pull-right fs-15 pr-20" id="reWrite">
+            <img src="../../image/message/group_announce_write.png" alt="">
+        </a>
+    </header>
+    <section class="aui-content">
+        <img src="../../image/message/group_announce.png" alt="">
+    </section>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/rsa.min.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+
+    apiready = function () {
+        fnReady();
+        groupData = api.pageParam;
+        $api.byId('reWrite').onclick = function () {
+            api.openWin({
+                name : 'group_announce_write',
+                url : '../message/group_announce_write.html',
+                pageParam: groupData,
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        };
+
+    };
+
+   /* {
+        "data"
+    :
+        {
+            "total_group_member"
+        :
+            "2", "group_member_list"
+        :
+            [{
+                "user_name": "15014600031",
+                "photo": "http://dev.nawanr.com/uploads/app/userAdver/thumb/20160908/20160908170538a.png"
+            }, {
+                "user_name": "18770008349",
+                "photo": "http://dev.nawanr.com/uploads/company/photo/test.png"
+            }], "group_info"
+        :
+            {
+                "group_name"
+            :
+                "??起来??", "social_group_id"
+            :
+                "165", "user_name"
+            :
+                "15014600031", "group_notice"
+            :
+                "呵呵呵！", "create_date"
+            :
+                "2016-09-17 09:11:58", "group_master"
+            :
+                "15", "group_avatar"
+            :
+                "http://dev.nawanr.com/uploads/app/groupAdver/thumb/20160917/20160917091158.jpg", "group_name_ry"
+            :
+                "??起来??", "group_identify"
+            :
+                "2"
+            }
+        }
+    ,
+        "msg"
+    :
+        "", "result"
+    :
+        1
+    }
+  */
+
+
+
+</script>

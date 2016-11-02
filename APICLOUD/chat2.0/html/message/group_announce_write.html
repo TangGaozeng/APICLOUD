@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>群公告</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="group_announce">
+<header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-btn aui-pull-left back">
+        <span class="aui-iconfont aui-icon-left ifs-22"></span>
+    </a>
+    <div class="aui-title fs-18">群公告</div>
+    <a href="#" class="aui-btn aui-pull-right fs-15 pr-20" id="confirm">确定</a>
+</header>
+<section class="aui-content">
+    <div class="announce-tit fs-14">
+        发布后将以聊天消息发送到群里
+        <span class="announce-tit-tips"></span>
+    </div>
+    <textarea name="" cols="30" rows="10" placeholder="输入文字..." id="writePad"></textarea>
+</section>
+
+</body>
+</html>
+
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript">
+
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+
+    apiready = function () {
+        fnReady();
+        groupData = api.pageParam;
+        console.log(JSON.stringify(groupData));
+        $api.byId('confirm').onclick = function () {
+            var groupAnnounce = $api.byId('writePad').value;
+            api.ajax({
+                url: INTERFACE['MDF_GROUP_NOTICE'],
+                method: "post",
+                dataType: "json",
+                data: {
+                    values: {
+                        user_id: user_id,
+                        user_password: password,
+                        social_group_id: groupData.groupId,
+                        group_notice: groupAnnounce
+                    }
+                },
+                timeout: AJAX.TIMEOUT
+            }, function (ret, err) {
+                if (ret) {
+                    console.log(JSON.stringify(ret));
+                    if(ret.result==1){
+                        api.sendEvent({
+                            name: 'group_notice_change'
+                        })
+                        api.alert({
+                            title: '添加群消息成功！'
+                        });
+                        api.openWin({
+                            name : 'group_announce',
+                            url : '../message/group_announce.html',
+                            pageParam: groupData,
+                            bounces : false,
+                            vScrollBarEnabled : false
+                        });
+                        api.parseTapmode();
+                    }
+
+                } else {
+                    console.log(JSON.stringify(err));
+                    AJAX.ERROR(err);
+                }
+            });
+        }
+
+
+
+    };
+
+
+
+</script>

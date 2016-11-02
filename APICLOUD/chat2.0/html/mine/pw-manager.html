@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>密码管理</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="pw-manager">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left" href="#" id="goBack">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">密码管理</div>
+    </header>
+    <section class="aui-content">
+        <ul class="aui-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow" id="change-pw">
+                    修改支付密码
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow" id="find-pw">
+                    找回支付密码
+                </div>
+            </li>
+        </ul>
+    </section>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    apiready = function () {
+        fnReady();
+        $api.byId('change-pw').onclick = function () {
+            api.openWin({
+                name : 'change_pw_new',
+                url : '../mine/change_pw_new.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+        $api.byId('find-pw').onclick = function () {
+            checkRealName();
+        }
+        $api.byId('goBack').onclick = function () {
+            api.openWin({
+                name : 'myasset',
+                url : '../mine/myasset.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+    }
+
+    //建议是否实名认证
+    function checkRealName(){
+        api.ajax({
+            url: INTERFACE['IS_NAME_AUTHENTICATION'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret));
+            if (ret) {
+                if(ret.result!=0){
+                    api.openWin({
+                        name : 'resetting1-pw',
+                        url : '../mine/resetting1-pw.html',
+                        bounces : false,
+                        vScrollBarEnabled : false
+                    });
+                    api.parseTapmode();
+                }
+                else{
+                    api.openWin({
+                        name : 'setting-pw',
+                        url : '../mine/setting-pw.html',
+                        bounces : false,
+                        vScrollBarEnabled : false
+                    });
+                    api.parseTapmode();
+                }
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+</script>
+</html>

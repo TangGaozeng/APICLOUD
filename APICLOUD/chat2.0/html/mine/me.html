@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>个人资料</title>
+	<link rel="stylesheet" href="../../css/custyle.css">
+	<link rel="stylesheet" href="../../css/aui.2.0.css">
+	<link rel="stylesheet" href="../../css/mine.css">
+</head>
+<body class="bg-gray-color me">
+<header class="aui-bar aui-bar-nav" id="header">
+	<a class="aui-pull-left aui-btn back">
+		<span class="aui-iconfont aui-icon-left fs-22"></span>
+	</a>
+	<div class="aui-title fs-18">二维码名片</div>
+</header>
+<div class="content">
+	<div class="head-img">
+		<img src="" id="head_img">
+	</div>
+	<p class="name" id="name">中风的猪~</p>
+	<p class="here" id="address">冰岛</p>
+	<div class="two-img">
+		<img src="../../image/mine/two.png" id="code_card">
+	</div>
+	<button id="save_img">我要保存二维码</button>
+</div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+	apiready = function(){
+		console.log('ok');
+		fnReady();
+		var data;
+		api.addEventListener({
+			name:'real_name'
+		},function(ret,err){
+			$api.attr($api.byId('head_img'),'src',ret.value.head_img),
+					$api.byId('address').innerText = ret.value.address,
+					$api.byId('name').innerText = ret.value.real_name,
+					console.log(JSON.stringify(ret));
+			data = ret.value.head_img
+		});
+		$api.byId('save_img').onclick = function(){
+			api.download({
+				url:data,
+				report: true,
+				cache: true,
+				allowResume: true
+			}, function(ret, err) {
+				if (ret.state == 1) {
+					console.log(JSON.stringify(ret));
+					api.alert({
+						title: '保存路径',
+						msg: "照片保存在："+ret.savePath
+					});
+				} else {
+					console.log(JSON.stringify(err))
+				}
+			});
+
+		};
+	};
+</script>
+</html>

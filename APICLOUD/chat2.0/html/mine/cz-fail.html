@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>充值失败</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="cz-fail">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back" href="#">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">充值失败</div>
+    </header>
+    <section class="aui-content">
+        <img src="../../image/mine/cz-fail.png" alt="">
+        <p id="tips">很抱歉，充值失败！</p>
+        <div class="aui-btn aui-btn-block" id="reTry">重新充值</div>
+    </section>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        var data = api.pageParam;
+        $api.byId('tips').innerHTML = data.statusMessage;
+
+        $api.byId('reTry').onclick = function () {
+            api.closeWin();
+//            api.openWin({
+//                name: 'chongzhi',
+//                url: '../mine/chongzhi.html',
+//                bounces: false,
+//                vScrollBarEnabled: false
+//            });
+//            api.parseTapmode();
+        };
+    }
+</script>

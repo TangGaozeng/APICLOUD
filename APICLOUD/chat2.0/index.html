@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>微旅地接APP</title>
+    <!--<link rel="stylesheet" type="text/css" href="./css/custyle.css" />-->
+</head>
+<body></body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+        //引导打开主页
+        fnOpenMain();
+    };
+    function fnOpenMain() {
+        var welcomeShowed = $api.getStorage('welcomeShowed');
+        var isLogined = localStorage.getItem('user');
+        var name,url;
+        if (welcomeShowed) {
+            if(isLogined){
+                name = 'main';
+                url = './html/main.html';
+            }else{
+                name = 'login';
+                url = './html/mine/login.html';
+            }
+            api.openWin({
+                name : name,
+                url : url,
+                bounces : false,
+                slidBackEnabled : false,
+                animation : {
+                    type : 'none'
+                }
+            });
+        } else {
+            api.openFrameGroup({
+                name : 'welcomeFrames',
+                scrollEnabled : true,
+                rect : {
+                    x : 0,
+                    y : 0,
+                    w : 'auto',
+                    h : 'auto'
+                },
+                index : 0,
+                frames : [{
+                    name : 'welcome_frame_1',
+                    url : './html/welcome/welcome_frame_1.html',
+                    bgColor : './image/welcome/1.png',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    hScrollBarEnabled : false
+                }, {
+                    name : 'welcome_frame_2',
+                    url : './html/welcome/welcome_frame_2.html',
+                    bgColor : './image/welcome/2.png',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    hScrollBarEnabled : false
+                }, {
+                    name : 'welcome_frame_3',
+                    url : './html/welcome/welcome_frame_3.html',
+                    bgColor : './image/welcome/3.png',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    hScrollBarEnabled : false
+                }, {
+                    name : 'welcome_frame_4',
+                    url : './html/welcome/welcome_frame_4.html',
+                    bgColor : './image/welcome/4.png',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    hScrollBarEnabled : false
+                }, {
+                    name : 'welcome_frame_5',
+                    url : './html/welcome/welcome_frame_5.html',
+                    bgColor : './image/welcome/5.png',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    hScrollBarEnabled : false
+                }]
+            }, function(ret, err) {
+                var name = ret.name;
+                var index = ret.index;
+            });
+            $api.setStorage('welcomeShowed', '1');
+        }
+    };
+</script>
+</html>

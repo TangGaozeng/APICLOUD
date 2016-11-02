@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>添加银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="add-bankcard">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back" href="#">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">添加银行卡</div>
+    </header>
+
+    <section class="aui-content">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        开户名称
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="个人账户填写个人姓名，对公账户填写企业名称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        银行账户
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="只支持提现到借记卡，不支持信用卡和存折">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        卡类型
+                    </div>
+                    <div class="aui-list-item-input">
+                        <span class="li-input">中国光大银行</span>
+                        <span class="li-input">储蓄卡</span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        开户地区
+                    </div>
+                    <div class="aui-list-item-input aui-list-item-arrow">
+                        <select name="" id="">
+                            <option>选择地区</option>
+                            <option>深圳</option>
+                            <option>广州</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        支行名称
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="输入开户网点">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-font-size-14">
+                    短信验证码
+                    <div class="aui-list-item-right aui-font-size-14 yzm">获取验证码</div>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <footer class="aui-bar aui-bar-tab" id="goNext">下一步</footer>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        $api.byId('goNext').onclick = function () {
+            api.openWin({
+                name : 'set-pw',
+                url : '../mine/set-pw2.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+    }
+</script>
+</html>

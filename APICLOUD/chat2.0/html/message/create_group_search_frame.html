@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no"/>
+    <title>建群搜索成员</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/group_search.css"/>
+</head>
+<body>
+<ul class="aui-list aui-select-list">
+    <li class="aui-list-header bg-gray-color fs-14 color-2f pl-10">搜索结果</li>
+    <div id="content"></div>
+    <script id="searchResultList" type="text/html">
+        {{each data as value}}
+        <li class="aui-list-item" data-userId={{value.user_id}} data-userType="person" data-userMobile={{value.user_mobile}}>
+            <div class="aui-list-item-inner flex">
+                <label><input class="aui-checkbox" type="checkbox" name="radio"></label>
+                <img class="user_tx" src={{value.photo}} alt="">
+                {{if value.real_name != ''}}
+                <div class="user_pet fs-14 color-2f">{{value.real_name}}</div>
+                {{else}}
+                <div class="user_pet fs-14 color-2f">{{value.user_name}}</div>
+                {{/if}}
+            </div>
+        </li>
+        {{/each}}
+    </script>
+</ul>
+<script src="../../script/api.js"></script>
+<script src="../../script/then.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var company_id = api.pageParam.company_id;
+        var user_id = getSelfUserId();
+        var user_password = getSelfUserPwd();
+        var type = 1;
+        
+        //监听keywords事件
+        api.addEventListener({
+            name: 'keywords'
+        },function (ret,err) {
+            if(ret){
+                var param ={user_id:user_id,user_password:user_password,keyWord:ret.value.keywords,type:type,company_id:company_id};
+                api.ajax({
+                    url: INTERFACE['CREATE_GROUP_SEARCH'],
+                    method: 'post',
+                    dataType: 'json',
+                    data: {values: param},
+                    timeout: AJAX.TIMEOUT,
+                }, function (ret, err) {
+                    if (ret) {
+                        ranData(ret);
+                    } else {
+                        AJAX.ERROR(err);
+                    }
+                });
+            }
+        });
+
+        //渲染数据
+        function ranData(ret) {
+            var html = template('searchResultList', ret);
+            document.getElementById('content').innerHTML = html;
+            recordChosen('aui-list-item');
+        }
+
+    }
+</script>
+</body>
+</html>

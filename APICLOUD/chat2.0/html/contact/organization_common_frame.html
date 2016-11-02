@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>organization</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/organization.css" />
+</head>
+<body class="org_temp_1 bg-gray-color">
+<!--搜索框-->
+<div class="aui-searchbar" id="search">
+    <div class="aui-searchbar-input aui-border-radius" tapmode>
+        <i class="aui-iconfont aui-icon-search"></i>
+        <form action="javascript:search();">
+            <input type="search" placeholder="请输入搜索内容" id="search-input">
+        </form>
+    </div>
+</div>
+<!--导航菜单栏-->
+<div class="linkMenu bg-white-color" id="linkMenu">
+    <span class="fir fs-15 color-86" id="fircon">联系人</span>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    var linkMenu = document.getElementById('linkMenu');
+    apiready = function () {
+        api.addEventListener({
+            name: 'navChangeEvent'
+        }, function(ret, err) {
+            var val = ret.value;
+            var company_id = val.company_id;
+            var company_name = val.company_name;
+            var department_id = val.department_id;
+            var department_name = val.department_name;
+            console.log(company_id+','+company_name+','+department_id+','+department_name);
+            if(department_id == 0){
+                linkMenu.innerHTML += '<span class="iconfont icon-iconfont13 color-c"></span>' + '<span class="sec fs-15 color-blue" data-companyId=' + company_id + ' data-departId=' + department_id + ' data-departName=' + department_name + '>' + company_name + '</span>';
+
+            }else{
+                linkMenu.innerHTML += '<span class="iconfont icon-iconfont13 color-c"></span>' + '<span class="sec fs-15 color-blue" data-companyId=' + company_id + ' data-departId=' + department_id + ' data-departName=' + department_name + '>' + department_name + '</span>';
+            }
+            openOrganizationPage();
+        });
+    };
+    function openOrganizationPage() {
+        var list = document.getElementsByClassName('sec');
+        for(var i in list){
+            list[i].onclick = function () {
+                var department_name = this.getAttribute('data-departName');
+                var company_id = this.getAttribute('data-companyId');
+                var department_id = this.getAttribute('data-departId');
+                console.log(company_id+','+department_id+','+department_name);
+                while (this.nextSibling)
+                {
+                    $api.remove(this.nextSibling);
+                }
+                $api.remove(this.previousSibling);
+                $api.remove(this);
+                api.sendEvent({
+                    name: 'openOrganizationPage',
+                    extra: {
+                        company_id: company_id,
+                        department_id: department_id,
+                        department_name: department_name
+                    }
+                });
+            }
+        }
+    }
+</script>
+</body>
+</html>

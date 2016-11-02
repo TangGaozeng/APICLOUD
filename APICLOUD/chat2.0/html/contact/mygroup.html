@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的群组</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="bg-gray-color">
+<header id="header" class="aui-bar aui-bar-nav">
+    <a class="aui-pull-left aui-btn back">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">我的群组</div>
+</header>
+<div id="list"></div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        var user_id = getSelfUserId();
+        var user_password = getSelfUserPwd();
+        api.ajax({
+            url: INTERFACE['MY_GROUP'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values:{user_id:user_id,user_password:user_password}
+            },
+            timeout: AJAX.TIMEOUT,
+        }, function(ret, err) {
+            if (ret) {
+                var list = ret.data;
+                for(var i in list){
+                    document.getElementById('list').innerHTML += list[i].group_name + '<br />';
+                }
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    }
+</script>
+</body>
+</html>

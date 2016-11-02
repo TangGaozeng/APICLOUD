@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css"/>
+</head>
+<body class="mine">
+<section class="aui-content bg-blue-color pb30" id="myData">
+    <div class="my_tx_wrap">
+        <div class="my_tx_inner">
+            <img class="my-tx" src="" alt="菠萝菠萝蜜" id="headImg"><!--src="../../image/mine/tx-big.png" -->
+        </div>
+    </div>
+    <div class="text-center fs-16 color-f" id="userName">
+        雷锋
+        <img class="myimg1" src="../../image/mine/ewm.png" alt="">
+    </div>
+</section>
+<div class="money flex">
+    <div class="item-full" id="differenceClick">
+        <span class="num" id="leave_amount">0.00</span>
+        <span class="txt">余额</span>
+    </div>
+    <div class="bdh1"></div>
+    <div class="item-full" id="rewardRecordClick" tapmode>
+        <span class="num" id="reward">0.00</span>
+        <span class="txt">奖励</span>
+    </div>
+</div>
+
+<ul class="aui-list ul-my1">
+    <li class="aui-list-item" tapmode id="goToMyasset">
+        <div class="aui-media-list-item-inner aui-list-item-arrow">
+            <div class="aui-list-item-media wechat-avatar">
+                <img src="../../image/mine/mymoney.png" alt="">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-left fs-14">
+                    资金账户
+                </div>
+            </div>
+        </div>
+    </li>
+    <!--<li class="aui-list-item">
+        <div class="aui-media-list-item-inner aui-list-item-arrow">
+            <div class="aui-list-item-media wechat-avatar">
+                <img src="../../image/mine/myyaoqing.png" alt="">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-left fs-14">
+                    邀请
+                </div>
+            </div>
+        </div>
+    </li>-->
+</ul>
+
+<ul class="aui-list ul-my1">
+    <li class="aui-list-item" tapmode id="goToSetting">
+        <div class="aui-media-list-item-inner aui-list-item-arrow">
+            <div class="aui-list-item-media wechat-avatar">
+                <img src="../../image/mine/mysetting.png" alt="">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-left fs-14">
+                    设置
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="aui-list-item" tapmode onclick="exitTip()">
+        <div class="aui-media-list-item-inner aui-list-item-arrow">
+            <div class="aui-list-item-media wechat-avatar">
+                <img src="../../image/mine/mykefu.png" alt="">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-left fs-14">
+                    客服中心
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+<div class="shield"></div>
+<div class="exitTips">
+    <div class="alert-tit">
+        拨打客服电话
+    </div>
+    <div class="alert-num" id="phoneNum">
+        010-1123456
+    </div>
+    <div class="exit">
+        <div class="exitBtn" id="makeCall">确定</div>
+        <div class="borderH1"></div>
+        <div class="exitBtn" id="exitN">取消</div>
+    </div>
+</div>
+
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript">
+
+    apiready = function () {
+        fnInitListener();
+        fnReady();
+        fnChangeLogin();
+        if($api.byId('goToMyasset')){
+            ClickGoPage();
+        }
+        api.showProgress({
+            title: '数据加载中...',
+            text: '请稍候...'
+        })
+    }
+
+
+    function fnChangeLogin() {
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        console.log(user_id);
+        console.log(password);
+        api.ajax({
+            url: INTERFACE['MINE_INDEX'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                if(ret.data!=''&&ret.data!=undefined){
+                    $api.byId('headImg').setAttribute("src", ret.data.photo);
+                    $api.byId('leave_amount').innerHTML = Math.ceil(ret.data.leave_amount)!=0 ? (ret.data.leave_amount+'').substr(0,4) : '0.00';
+                    $api.byId('reward').innerHTML = Math.ceil(ret.data.reward)!=0 ? (ret.data.reward+'').substr(0,4) : '0.00';
+
+                    api.hideProgress();
+                    if(JSON.parse(userInfo).data.real_name){
+                        $api.byId('userName').innerHTML = JSON.parse(userInfo).data.real_name + '<img class="myimg1" src="../../image/mine/ewm.png" alt="">'
+                    }else{
+                        $api.byId('userName').innerHTML = ret.data.user_name.substr(0,3);
+                    }
+                }
+
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+
+    //页面跳转
+    function ClickGoPage() {
+
+        $api.byId('goToMyasset').onclick = function () {
+            api.openWin({
+                name: 'myasset',
+                url: '../mine/myasset.html',
+                bounces: false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+        $api.byId('goToSetting').onclick = function () {
+            api.openWin({
+                name: 'setting',
+                url: '../mine/setting.html',
+                bounces: false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+        $api.byId('rewardRecordClick').onclick = function () {
+            api.openWin({
+                name: 'rewardlist',
+                url: '../mine/rewardlist.html',
+                bounces: false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+        $api.byId('differenceClick').onclick = function () {
+            api.openWin({
+                name: 'difference',
+                url: '../mine/difference.html',
+                bounces: false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+        $api.byId("myData").onclick = function () {
+            api.openWin({
+                name: 'mydata',
+                url: "../mine/mydata.html",
+                bounces: false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        }
+        $api.byId('makeCall').onclick = function () {  //拨打电话
+            document.querySelector(".shield").style.display = 'none';
+            document.querySelector(".exitTips").style.display = 'none';
+            api.call({
+                type: 'tel_prompt',
+                number: $api.byId('phoneNum').innerText
+            })
+        }
+
+    };
+
+    //监听
+    function fnInitListener() {
+        api.addEventListener({
+            name: 'event_login'
+        }, function (ret, err) {
+            fnChangeLogin();
+
+        });
+        api.addEventListener({
+            name: 'money_change'
+        }, function (ret, err) {
+            fnChangeLogin();
+
+        });
+        api.addEventListener({
+            name: 'myData_change'
+        }, function (ret, err) {
+            fnChangeLogin();
+
+        });
+    }
+
+
+
+</script>
+</body>
+</html>

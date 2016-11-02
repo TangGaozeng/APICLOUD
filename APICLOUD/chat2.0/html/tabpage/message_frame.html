@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+  <title>消息列表</title>
+  <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+  <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+  <link rel="stylesheet" type="text/css" href="../../css/chat.css"/>
+
+</head>
+<body class="bg-gray-color">
+<div class="aui-content" id="msgListBox">
+  <div class="aui-searchbar" id="search">
+    <div class="aui-searchbar-input aui-border-radius" tapmode>
+      <i class="aui-iconfont aui-icon-search"></i>
+      <form action="javascript:search();">
+        <input type="search" placeholder="搜索" id="search-input">
+      </form>
+    </div>
+  </div>
+  <ul id="content" class="mui-table-view msgListUl">
+  </ul>
+  <ul id="OA_task_1" class="mui-table-view msgListUl">
+    <!--<li class="mui-table-view-cell mui-transitioning msg-list-item">
+      <div class="mui-slider-right mui-disabled slider-right-box">
+        <a class="mui-btn mui-btn-red del-btn">删除</a>
+      </div>
+      <div class="mui-slider-handle msg-item-content flex">
+        <div class="userphoto bg-green-color color-f fs-15">妮妮</div>
+        <div class="name_lastmsg">
+          <p class="friname fs-15 color-2f">胡妮妮</p>
+          <p class="lastmsg fs-14 color-86">大学室友阿党下周要结婚啦，咱去不？</p>
+        </div>
+        <div class="time_redot">
+          <p class="datetime fs-13 color-86">11月20日</p>
+          <p class="reddot fs-13 color-f">8</p>
+        </div>
+      </div>
+    </li>
+    <li class="mui-table-view-cell mui-transitioning msg-list-item">
+      <div class="mui-slider-right mui-disabled slider-right-box">
+        <a class="mui-btn mui-btn-red del-btn">删除</a>
+      </div>
+      <div class="mui-slider-handle msg-item-content flex">
+        <div class="userphoto bg-purple-color color-f fs-15">小猫</div>
+        <div class="name_lastmsg">
+          <p class="friname fs-15 color-2f">毛小猫</p>
+          <p class="lastmsg fs-14 color-86">我今天工作内容给安排下呗！</p>
+        </div>
+        <div class="time_redot">
+          <p class="datetime fs-13 color-86">10:23</p>
+          <p class="reddot fs-13 color-f">12</p>
+        </div>
+      </div>
+    </li>
+    <li class="mui-table-view-cell mui-transitioning msg-list-item">
+      <div class="mui-slider-right mui-disabled slider-right-box">
+        <a class="mui-btn mui-btn-red del-btn">删除</a>
+      </div>
+      <div class="mui-slider-handle msg-item-content flex">
+        <img class="quntouxiang" src="../../image/message/jiedantongzhi.png" alt="">
+        <div class="name_lastmsg">
+          <p class="friname fs-15 color-2f">系统公告</p>
+          <p class="lastmsg fs-14 color-86">经过我们的不懈努力，微旅管家全新</p>
+        </div>
+        <div class="time_redot">
+          <p class="datetime fs-13 color-86">8月20日</p>
+          <p class="xit_reddot"></p>
+        </div>
+      </div>
+    </li>
+    <li class="mui-table-view-cell mui-transitioning msg-list-item group">
+      <div class="mui-slider-right mui-disabled slider-right-box">
+        <a class="mui-btn mui-btn-red del-btn">删除</a>
+      </div>
+      <div class="mui-slider-handle msg-item-content flex">
+        <img class="quntouxiang" src="../../image/message/quntouxiang1.png" alt="">
+        <div class="name_lastmsg">
+          <p class="friname fs-15 color-2f">微叮项目-设计文件共享</p>
+          <p class="lastmsg fs-14 color-86">欢迎加入微叮组部门群，群里都是</p>
+        </div>
+        <div class="time_redot">
+          <p class="datetime fs-13 color-86">8月20日</p>
+          <p class="xit_reddot"></p>
+        </div>
+      </div>
+    </li>
+    <li class="mui-table-view-cell mui-transitioning msg-list-item">
+      <div class="mui-slider-right mui-disabled slider-right-box">
+        <a class="mui-btn mui-btn-red del-btn">删除</a>
+      </div>
+      <div class="mui-slider-handle msg-item-content flex">
+        <img class="quntouxiang" src="../../image/message/xitonggonggao.png" alt="">
+        <div class="name_lastmsg">
+          <p class="friname fs-15 color-2f">系统公告</p>
+          <p class="lastmsg fs-14 color-86">经过我们的不懈努力，微旅管家全新</p>
+        </div>
+        <div class="time_redot">
+          <p class="datetime fs-13 color-86">8月20日</p>
+          <p class="xit_reddot"></p>
+        </div>
+      </div>
+    </li>
+    <li class="mui-table-view-cell mui-transitioning msg-list-item">
+      <div class="mui-slider-right mui-disabled slider-right-box">
+        <a class="mui-btn mui-btn-red del-btn">删除</a>
+      </div>
+      <div class="mui-slider-handle msg-item-content flex">
+        <div class="userphoto bg-green-color color-f fs-15">小姐</div>
+        <div class="name_lastmsg">
+          <p class="friname fs-15 color-2f">陈小姐</p>
+          <p class="lastmsg fs-14 color-86">明天一起回家吧？</p>
+        </div>
+        <div class="time_redot">
+          <p class="datetime fs-13 color-86">11月20日</p>
+          <p class="reddot fs-13 color-f">8</p>
+        </div>
+      </div>
+    </li>-->
+  </ul>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/mui.js"></script>
+<script type="text/javascript" src="../../script/rong_cloud.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript" src="../../script/ui_chat_box.js"></script>
+
+<script id="single-chat-list-li" type="text/html">
+  <li class="mui-table-view-cell mui-transitioning msg-list-item"
+      onclick="openSingleChat('{{data.targetId }}')">
+    <div class="mui-slider-right mui-disabled slider-right-box">
+      <a class="mui-btn mui-btn-red del-btn">删除</a>
+    </div>
+
+    <div class="mui-slider-handle msg-item-content flex">
+      <div class="userphoto bg-green-color color-f fs-15">头像</div>
+      <div class="name_lastmsg">
+        <p class="friname fs-15 color-2f">{{ data.targetId }}</p>
+        <p class="lastmsg fs-14 color-86">
+          {{ if data.objectName == 'RC:TxtMsg'}}
+          {{ data.latestMessage.text }}
+          {{else if data.objectName == 'RC:ImgMsg'}}
+          [图片]
+          {{else if data.objectName == "RC:VcMsg"}}
+          [语音]
+          {{else if data.objectName == "RC:LBSMsg" }}
+          [位置]
+          {{else if data.objectName == "RC:CmdMsg" }}
+          [自定义命令]
+          {{else if data.objectName == "RC:CmdNtf" }}
+            {{if data.latestMessage.name == "business_card" }}
+              [名片]
+            {{/if}}
+          {{/if}}
+        </p>
+      </div>
+      <div class="time_redot">
+        <p class="datetime fs-13 color-86">{{convertTime data.sentTime}}</p>
+        {{if !(data.unreadMessageCount == 0) }}
+        <p class="reddot fs-13 color-f">{{ data.unreadMessageCount }}</p>
+        {{/if}}
+      </div>
+    </div>
+  </li>
+</script>
+
+
+<script id="group-chat-list-li" type="text/html">
+  <li class="mui-table-view-cell mui-transitioning msg-list-item" onclick="openGroupChat('{{ data.targetId }}')">
+    <div class="mui-slider-right mui-disabled slider-right-box">
+      <a class="mui-btn mui-btn-red del-btn">删除</a>
+    </div>
+
+    <div class="mui-slider-handle msg-item-content flex">
+      <div class="userphoto bg-green-color color-f fs-15">头像</div>
+      <div class="name_lastmsg">
+        <p class="friname fs-15 color-2f">{{ data.targetId }}</p>
+        <p class="lastmsg fs-14 color-86">
+          {{ if data.objectName == 'RC:TxtMsg'}}
+          {{ data.latestMessage.text }}
+          {{else if data.objectName == 'RC:ImgMsg'}}
+          [图片]
+          {{else if data.objectName == "RC:VcMsg"}}
+          [语音]
+          {{else if data.objectName == "RC:LBSMsg" }}
+          [位置]
+          {{else if data.objectName == "RC:CmdMsg" }}
+          [自定义命令]
+          {{else if data.objectName == "RC:CmdNtf" }}
+            {{if data.latestMessage.name == "business_card" }}
+                [名片]
+            {{/if}}
+          {{/if}}
+        </p>
+      </div>
+      <div class="time_redot">
+        <p class="datetime fs-13 color-86">{{convertTime data.sentTime}}</p>
+        {{if !(data.unreadMessageCount == 0) }}
+        <p class="reddot fs-13 color-f">{{ data.unreadMessageCount }}</p>
+        {{/if}}
+      </div>
+    </div>
+
+  </li>
+</script>
+<script type="text/javascript">
+  var rongInstance;
+  apiready = function () {
+    api.addEventListener({
+      name: "receivedMessage"
+    }, function (ret) {
+      // 3.更新后台接收到的消息，更新UI
+      console.log(JSON.stringify(ret));
+      getConverastionList();
+    });
+
+    api.addEventListener({
+      name: "sendMessage"
+    }, function (ret) {
+      console.log(JSON.stringify(ret));
+      getConverastionList();
+    });
+
+    api.addEventListener({
+      name: "freshConversationList"
+    }, function (ret) {
+      getConverastionList();
+    });
+
+    api.addEventListener({
+      name:"updateConversationList" //用户通过读取localStorage进入页面时更新聊天列表
+    },function(ret){
+      console.log("updateConversationList");
+      getConverastionList();
+    })
+  };
+
+  function getConverastionList() {
+
+    rongInstance = api.require('rongCloud2');
+    rongInstance.getConversationList(function (ret, err) {
+      if (ret) {
+        var totalUnreadCount = 0;
+
+        console.log(JSON.stringify(ret));
+        var hadChatList = ret.result;
+        $api.byId('content').innerHTML = '';
+        for (var con in hadChatList) {
+          totalUnreadCount = totalUnreadCount + hadChatList[con].unreadMessageCount;
+          if (hadChatList[con].conversationType == "PRIVATE") {
+            appendToHTML("single-chat-list-li", processConversationListData(hadChatList[con]));
+          } else if (hadChatList[con].conversationType == "GROUP") {
+            appendToHTML("group-chat-list-li", processConversationListData(hadChatList[con]))
+          }
+        }
+        //处理一下数据在发送吧
+        if (totalUnreadCount > 99){
+          totalUnreadCount = 99;
+          api.sendEvent({
+            name:"freshTotalUnreadCount",
+            extra:{
+              count:'99+'
+            }
+          });
+        }else {
+          api.sendEvent({
+            name:"freshTotalUnreadCount",
+            extra:{
+              count:'' + totalUnreadCount
+            }
+          });
+        }
+      }
+    });
+
+  }
+
+  function processConversationListData(data) {
+    return {
+      data: data
+    }
+  }
+
+  function openSingleChat(user_id) {
+    //清除消息条数 未读状态
+    rongInstance.clearMessagesUnreadStatus({
+      conversationType: 'PRIVATE',
+      targetId: '' + user_id
+    }, function (ret, err) {
+      if (ret) {
+        api.sendEvent({
+          name: "freshConversationList"
+        })
+      }
+    });
+    api.openWin({
+      name: "onetoone",
+      url: "widget://html/message/onetoone.html",
+      pageParam: {
+        user_id: user_id
+      }
+    });
+  }
+
+  function openGroupChat(data) {
+    console.log(JSON.stringify(data));
+    var pageParam = {
+      groupId: data
+    };//将数据封装成chat_win能正确获取的数据格式
+    //清除消息条数 未读状态
+    rongInstance.clearMessagesUnreadStatus({
+      conversationType: 'GROUP',
+      targetId: '' + data
+    }, function (ret, err) {
+      if (ret) {
+        api.sendEvent({
+          name: "freshConversationList"
+        })
+      }
+    });
+
+    api.openWin({
+      name: "groupchat",
+      url: "widget://html/message/groupchat.html",
+      pageParam: pageParam
+    });
+  }
+
+
+  function appendToHTML(templateId, data) {
+    var html = template(templateId, data);
+    return $api.append($api.byId('content'), html);
+  }
+
+  function convertTime(sentTime) {
+    var nowTime = new Date();
+    var passTime = new Date(sentTime);
+
+    //天数未超过一天 passTime.getDate() == nowTime.getDate()就按发送时间显示，否则按日期显示。
+//    if (nowTime - sentTime < 86400000) { //时间戳差值不超过 60*60 * 24 * 1000
+    if(nowTime.getDate() == passTime.getDate()){
+      var hour = passTime.getHours();
+      var min = "0" + passTime.getMinutes();
+      var time = hour + ":" + min.substr(-2);
+      return time;
+    }
+    //大于一天，直接显示月日
+    var month = passTime.getMonth() + 1 + "月";
+    var date = passTime.getDate();
+    return month + " " + date + "日"
+  }
+
+  template.helper("convertTime", function (sentTime) {
+    return convertTime(sentTime);
+  });
+
+  //  template.helper("processUnreadCount",function(count){
+  //    if (count == 0) return "";
+  //    return count;
+  //  })
+
+</script>
+</body>
+</html>

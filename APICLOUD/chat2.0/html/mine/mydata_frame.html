@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>个人资料</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <link rel="stylesheet" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/mine.css">
+</head>
+<body class="bg-gray-color mydata">
+<div id="content"></div>
+<script id="my_data_template" type="text/html">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-list-in ul-one">
+            <li class="aui-list-item" id="camera" tapmode onclick="upload_pic()">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">头像</div>
+                    <div class="aui-list-item-right ">
+                        <img src="{{userInfo.photo}}" id="header_pic">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="myData_open('amend_name')">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">昵称</div>
+                    <div class="aui-list-item-right ">
+                        <p id="nickname">{{userInfo.user_name}}</p>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode onclick="myData_open('me')" id="me">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">二维码名片</div>
+                    <div class="aui-list-item-right ">
+                        <!--<img src="../img/two-1.png">-->
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" id="selectSex">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">性别</div>
+                    <div class="aui-list-item-right" id="sexs">
+                        {{if userInfo.sex == "1"}}
+                            <p>男</p>
+                        {{else if userInfo.sex == "0"}}
+                            <p>女</p>
+                        {{else}}
+                           <p>未知</p>
+                        {{/if}}
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode id="selectBirthday">
+                <div class="aui-list-item-inner aui-list-item-arrow" id="birthday" tapmode onclick="select_birthday()">
+                    <div class="aui-list-item-title">生日</div>
+                    <div class="aui-list-item-right ">
+                        <p id="birthday_succ"></p>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" id="address" tapmode onclick="myData_open('selectAddress')">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">地区</div>
+                    <div class="aui-list-item-right ">
+                        <p id="selected_address">{{userInfo.address}}</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in ul-two">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow" tapmode onclick="rzName()">
+                    <div class="aui-list-item-title" tapmode id="rz-name">实名认证</div>
+                    <div class="aui-list-item-right ">
+                        {{if userInfo.is_validate == "1"}}
+                            <img src="../../image/mine/real-name.png">
+                        {{/if}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list aui-list-in ul-three">
+            {{each company as value}}
+            {{if value.company_id == "1"}}
+            <li class="aui-list-item" tapmode id="selectCompany" >
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title" id="companyName">{{value.company_name}}</div>
+                    <div class="aui-list-item-right ">
+                        <div class="item-botton"></div>
+                    </div>
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">姓名</div>
+                    <div class="aui-list-item-right ">
+                        <p>{{userInfo.real_name}}</p>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner ">
+                    <div class="aui-list-item-title">电话</div>
+                    <div class="aui-list-item-right ">
+                        <p>{{userInfo.user_mobile}}</p>
+                    </div>
+                </div>
+            </li>
+            {{each company as value}}
+            {{if value.company_id == "1"}}
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner ">
+                    <div class="aui-list-item-title">职位</div>
+                    <div class="aui-list-item-right ">
+                        <p id="position_name">{{value.position_name}}</p>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">部门</div>
+                    <div class="aui-list-item-right ">
+                        <p id="department">{{value.department[0].department_name}}</p>
+                    </div>
+                </div>
+            </li>
+            {{/if}}
+            {{/each}}
+        </ul>
+    </div>
+    <div class="select-company" id="company">
+        <div>
+            <p>请选择公司</p>
+        </div>
+        {{each company as value}}
+        <div tapmode class="subCompany">
+            <p>{{value.company_name}}</p>
+        </div>
+        {{/each}}
+    </div>
+    <div class="select-head" id="select_head">
+        <div>
+            <p>设置头像</p>
+        </div>
+        <div class="header_img">
+            <p>修改头像</p>
+        </div>
+        <div class="header_img">
+            <p>恢复默认头像</p>
+        </div>
+    </div>
+    <div class="sex" id="sexer">
+        <div>
+            <p>性别</p>
+        </div>
+        <div class="select_sex">
+            <p>男</p>
+        </div>
+        <div class="select_sex">
+            <p>女</p>
+        </div>
+    </div>
+</script>
+<div class="aui-mask" id="mask"></div>
+<img src="../../image/mine/no_data.png" id="no-data" class="no-data">
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+var datas;
+var sex;
+apiready = function () {
+    fnReady();
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+//   var password = localStorage.getItem('password');
+    var password = getSelfUserPwd();
+    var province = localStorage.getItem('province');
+    var city = localStorage.getItem('city');
+    var area = localStorage.getItem('area');
+  console.log(password);
+    api.showProgress({
+        title : '加载中...',
+        modal : true
+    });
+    //向后台请求个人资料数据
+    api.ajax({
+        url: INTERFACE['MY_DATA'],
+        method: 'post',
+        dataType: 'json',
+        data: {
+            values:{user_id: user_id,user_password: password}
+        },
+        timeout: AJAX.TIMEOUT,
+    }, function(ret, err) {
+        api.hideProgress();
+        if (ret && ret.data.length != 0) {
+            var myList = JSON.stringify(ret);
+            var html = template('my_data_template',ret.data);
+            document.getElementById('content').innerHTML = html;
+            console.log(myList);
+            myData_click_company(ret);
+            myData_click_sex();
+//                myData_click_address();
+            datas = ret.data;//把数据赋值给datas
+            //把获取到的生日进行截取
+            var all_birthday = ret.data.userInfo.birthday;
+            var index = all_birthday.indexOf(" ");
+            var birthday = all_birthday.substring(0,index);
+            $api.byId('birthday_succ').innerText = birthday;
+            //监听win页面传过来的数据,提交所有数据
+            api.addEventListener({
+                name:'mydata_back'
+            },function(ret){
+                if(ret.value.mydata_back == 1){
+                    real_data(province,city,area);
+                }
+            });
+            //数据为空时显示
+            if(ret.data == ""){
+                $api.css($api.byId('no-data'),'display:block');
+            };
+        } else {
+            AJAX.ERROR(err);
+            $api.css($api.byId('no-data'),'display:block');
+        }
+    });
+    //监听地区
+    api.addEventListener({
+        name:'two_all_address'
+    },function(ret,err){
+        if(ret){
+            console.log(JSON.stringify(ret));
+            province = ret.value.province;
+            city = ret.value.city;
+            area = ret.value.area;
+            console.log(JSON.stringify(ret));
+            $api.byId('selected_address').innerText = ret.value.all_name;
+            //提交修改数据
+            localStorage.setItem("province",province);
+            localStorage.setItem('city',city);
+            localStorage.setItem('area',area)
+            real_data(province,city,area,sex);
+        };
+    });
+    //监听修改昵称的页面
+    api.addEventListener({
+        name:'real_name_succ'
+    },function(ret,err){
+        if(ret != ""){
+            $api.byId('nickname').innerText = ret.value.real_name_succ
+        };
+    });
+};
+//实名认证
+function rzName(){
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    api.ajax({
+        url: INTERFACE['MY_DATA'],
+        method: 'post',
+        dataType: 'json',
+        data: {
+            values:{user_id: user_id,user_password: password}
+        },
+        timeout: AJAX.TIMEOUT
+    },function(ret,err){
+        if(ret){
+            var  user_validate = ret.data.userInfo.is_validate.user_validate;
+            if(user_validate == 3){
+                api.openWin({
+                    name:'real-name',
+                    url:'./real-name.html',
+                    bounces:false,
+                    vScrollBarEnabled: false
+                });
+            }else if(user_validate ==2){
+                api.alert({
+                    title: '信息提示',
+                    msg: "认证暂未通过"
+                });
+            } else{
+                api.alert({
+                    title:'信息提示',
+                    msg:'已认证'
+                });
+            };
+        }else{
+            AJAX.ERROR(err);
+        }
+    });
+    api.parseTapmode();
+};
+//选择生日
+function select_birthday(){
+    api.openPicker({
+        type: 'date',
+        date: '2016-10-01',
+        title: '选择生日'
+    }, function(ret,err) {
+        if (ret) {
+            if(ret){
+                var year = ret.year;
+                var month = ret.month;
+                var day = ret.day;
+                var birthday = year+"-"+ten_string(month)+"-"+ten_string(day);
+                $api.byId('birthday_succ').innerHTML = birthday;
+            }
+        } else {
+            alert(JSON.stringify(err));
+        }
+    });
+    api.parseTapmode();
+};
+//调用相机或相册设置头像
+function upload_pic(){
+
+    var header_img = $api.domAll('.header_img');
+    var select_head = $api.byId('select_head');
+    $api.addCls(mask,"aui-mask-in");
+    $api.css(select_head,'display:block');
+    api.parseTapmode();
+    header_img[0].onclick = function(){
+        $api.removeCls(mask,"aui-mask-in");
+        $api.css(select_head,'display:none');
+        api.actionSheet({
+            title:'选择图片来源',
+            buttons:['拍照','从手机相册选择']
+        },function(ret,err){
+            var index = ret.buttonIndex;
+            switch (index){
+                case 1:
+                    api.getPicture({
+                        sourceType:'camera',
+                        encodingType: 'jpg',
+                        mediaValue: 'pic',
+                        destinationType: 'url',
+                        allowEdit: true,
+                        quality:50,
+                        targetWidth:300,
+                        targetHeight:300,
+                        saveToPhotoAlbum: false
+                    },function(ret,err){
+                        if(ret.data){
+                            pic(ret.data);
+
+                            console.log(JSON.stringify(ret));
+                        };
+                    });
+                    break;
+                case 2:
+                    api.getPicture({
+                        sourceType: 'library',
+                        encodingType: 'jpg',
+                        mediaValue: 'pic',
+                        destinationType: 'url',
+                        allowEdit: true,
+                        quality:100,
+                        targetWidth:300,
+                        targetHeight:300,
+                        saveToPhotoAlbum: false
+                    },function(ret,err){
+                        if(ret.data){
+                            pic(ret.data);
+                        }
+                    });
+                    break;
+            };
+        });
+    };
+    header_img[1].onclick = function(){
+        $api.removeCls(mask,"aui-mask-in");
+        $api.css(select_head,'display:none');
+        pic(DEFAULT_AVATAR);
+    };
+    global_click(select_head);
+};
+//把选中的照片设为头像
+function pic(data){
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var header_pic = $api.byId('header_pic');
+
+    //头像地址缓存到本地
+    localStorage.setItem('Photo'+user_id,data);
+
+    console.log(user_id);
+    $api.attr(header_pic,'src',data);
+    api.ajax({
+        url:INTERFACE['UPLOAD_USER_FACE'],
+        method:"post",
+        dataType:'json',
+        report:true,
+        data:{
+            values:{user_id:user_id,user_password:password},
+            files:{adver:data}
+        }
+    },function(ret,err){
+        if (ret) {
+            console.log(JSON.stringify(ret));
+            api.sendEvent({
+                name: "myData_change"
+            })
+        } else {
+            AJAX.ERROR(err);
+        };
+    });
+}
+//选择性别
+function myData_click_sex(){
+    var selectSex = $api.domAll(".select_sex");
+    var sexer = $api.byId("sexer");
+    $api.byId('selectSex').onclick = function(){
+        $api.addCls(mask,"aui-mask-in");
+        $api.css($api.byId("sexer"),"display:block");
+        api.parseTapmode();
+    };
+    for(var i=0;i<selectSex.length;i++){
+        selectSex[i].index = i;
+        selectSex[i].onclick = function(){
+            var index = this.index;
+            $api.removeCls(mask,"aui-mask-in");
+            $api.css(sexer,"display:none");
+            $api.byId('sexs').innerHTML = this.innerHTML;
+            api.parseTapmode();
+            //传给服务器
+            sex = [1,0][index];
+            localStorage.setItem('sex',sex)
+        };
+    };
+    global_click(sexer);
+};
+//选择公司
+function myData_click_company(data){
+    var subCompanys = $api.domAll(".subCompany");
+    if(subCompanys.length != 0){
+        $api.byId('selectCompany').onclick = function () {
+            $api.addCls(mask,"aui-mask-in");
+            $api.css($api.byId("company"),"display:block");
+            api.parseTapmode();
+        };
+        for(var i=0;i<subCompanys.length;i++){
+            subCompanys[i].index = i;
+            subCompanys[i].onclick = function(){
+                var suo = this.index;
+                $api.removeCls(mask,"aui-mask-in");
+                $api.css(company,"display:none");
+                $api.byId('companyName').innerHTML = this.innerHTML;
+                //根据公司名切换部门、职位
+                (function (data){
+                    var company_list = data.data.company[suo];
+                    console.log(JSON.stringify(company_list));
+                    $api.byId("position_name").innerHTML = company_list.position_name;
+                    //判断部门的数据是否为空
+                    if(company_list.department == ""){
+                        return false;
+                    }else{
+                        $api.byId('department').innerHTML = company_list.department[0].department_name;
+                    }
+                })(data);
+                api.parseTapmode();
+            };
+        };
+        global_click(company);
+    };
+};
+//封装的跳转页面函数
+function myData_open(names) {
+    var real_name = $api.byId('nickname').innerText;
+    var address = $api.byId('selected_address').innerText;
+    var sex = $api.byId('sexs').value;
+    setTimeout(function(){
+        api.sendEvent({
+            name:'real_name',
+            extra:{
+                real_name:real_name,
+                address:address,
+                sex:sex,
+                head_img:$api.attr($api.byId('header_pic'),'src')
+            }
+        });
+        console.log(JSON.stringify(datas.userInfo.real_name));
+    },500);
+    api.openWin({
+        name : names,
+        url : './'+names+'.html',
+        bounces : false,
+        vScrollBarEnabled : false
+    });
+    api.parseTapmode();
+};
+//封装的提交所有已经修改好的数据
+function real_data(province,city,area){
+    if($api.byId('nickname').innerText != ""){
+        var sex = localStorage.getItem('sex');
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        var real_name = $api.byId('nickname').innerText;
+        var birthday = $api.byId('birthday_succ').innerText;
+        api.ajax({
+            url:INTERFACE['AMEND_MY_DATA'],
+            method:'post',
+            dataType:'json',
+            data:{
+                values:{user_id:user_id,user_password: password,userName:real_name,
+                    userSex:sex,province:province,city:city,area:area,birthday:birthday}
+            }
+        },function(ret,err){
+            if(ret){
+                console.log(JSON.stringify(ret));
+            }else{
+                AJAX.ERROR(err);
+            }
+        });
+    }else{
+        return false;
+    }
+    //历史记录后退一步
+    api.historyBack({
+        frameName: 'mine'
+    }, function(ret, err) {
+        if (!ret.status) {
+            api.closeWin();
+        }
+    });
+};
+//生日函数
+function ten_string(num){
+    if(num<10){
+        return 0+""+num;
+    }else{
+        return num;
+    }
+};
+//全局点击事件
+function global_click(current_dom){
+    $api.addEvt(mask,'click',function(){
+        $api.removeCls(mask,"aui-mask-in");
+        $api.css(current_dom,"display:none");
+    });
+};
+</script>
+
+</body>
+</html>

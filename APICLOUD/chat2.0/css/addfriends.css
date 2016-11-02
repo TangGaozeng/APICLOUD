@@ -1,0 +1,239 @@
+.tiptitle{
+    height: 48px;
+    line-height: 48px;
+    font-size: 15px;
+    color: #868686;
+    padding: 0 12.5px;
+}
+.aui-content .listBox{
+    background-color: #fff;
+    padding: 0 0 0 12.5px;
+}
+.aui-content .listBox .item{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: 50px;
+    line-height: 50px;
+}
+.aui-content .listBox .item img{
+    width: 37.5px;
+    height: 37.5px;
+    margin-top: 6.25px;
+}
+.aui-content .listBox .item div{
+    flex: 1;
+    margin-left: 12.5px;
+    padding-right: 12.5px;
+    border-bottom: 0.5px solid #d8d9dd;
+}
+.aui-content .listBox .item:last-child div{
+    border-bottom: none;
+}
+.aui-content .listBox .item .tt{
+    font-size: 14px;
+    color: #2f2f2f;
+}
+.aui-content .listBox .item .aui-iconfont{
+    font-weight: bold;
+    color: #abb4bc;
+}
+.aui-list .aui-list-item{
+    height: 64px;
+    line-height: 64px;
+    padding-left: 12.5px;
+}
+.aui-list .aui-list-item .txBox{
+    width: 64px;
+    margin-right: 12.5px;
+}
+.aui-list .aui-list-item .txBox img{
+    max-width: 100%;
+}
+.aui-list-item-inner .left{
+    flex: 79;
+}
+.aui-list-item-inner .right{
+    display: none;
+    flex: 21;
+}
+.aui-list-item-inner .right.wtj{
+    display: block;
+}
+.aui-list-item-inner .right.ytj{
+    display: block;
+}
+.aui-list-item-inner .left p:first-child{
+    height: 36px;
+    line-height: 36px;
+    font-size: 15px;
+    color: #2f2f2f;
+}
+.aui-list-item-inner .left p:last-child{
+    height: 25px;
+    line-height: 25px;
+    margin-top: -2px;
+    font-size: 14px;
+    color: #868686;
+}
+.aui-list-item-inner .right.ytj{
+    font-size: 14px;
+    color: #999999;
+}
+.aui-list-item-inner .right.wtj{
+    width: 58px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 15px;
+    border: 1px solid #60b5f6;
+    font-size: 14px;
+    color: #60b5f6;
+}
+.aui-bar-nav.aui-bar-light .aui-iconfont{
+    color: #ffffff;
+}
+.aui-bar-nav .aui-title{
+    color: #ffffff;
+}
+.validTip{
+    height: 50px;
+    line-height: 50px;
+    padding-left: 12.5px;
+    font-size: 14px;
+    color: #7d7d7f;
+}
+#validmessage{
+    padding-left: 12.5px;
+    background-color: #ffffff;
+}
+.clearInput{
+    color: #ffffff;
+    line-height: 1;
+    margin-top: -30px;
+    margin-right: 12.5px;
+    border-radius: 50%;
+    background-color: #cad3e8;
+}
+.aui-searchbar{
+    height: 46px;
+    line-height: 46px;
+    position: relative;
+    top: auto;
+    left: auto;
+    background-color: #4977e7;
+}
+.aui-searchbar .aui-searchbar-cancel{
+    color: #ffffff;
+}
+.firstRow{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+}
+.firstRow img{
+    width: 42px;
+    height: 50px;
+    margin-left: 11px;
+    margin-right: 9px;
+}
+.firstRow p{
+    font-size: 14px;
+    color: #868686;
+}
+.firstRow p #findMobile{
+    color: #4877e7;
+}
+.secendRow{
+    height: 45px;
+    line-height: 45px;
+    font-size: 14px;
+    color: #868686;
+    margin-left: 11px;
+}
+#spbl .aui-list-item .txBox .tx{
+    width: 43px;
+    height: 43px;
+    line-height: 43px;
+    text-align: center;
+    border-radius: 50%;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+}
+#header.userInfoHeader{
+    background-color: #879efa;
+}
+.userTxBox{
+    width: 100%;
+    height: 180px;
+    padding-top: 16px;
+    background-color: #879efa;
+}
+.userTxBox .touxiang img{
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 5px solid #fff;
+}
+.userTxBox .userNc{
+    height: 21px;
+    line-height: 21px;
+    margin-top: 16px;
+    text-align: center;
+    font-size: 17px;
+    color: #fff;
+}
+.userNumBox{
+    height: 61px;
+    line-height: 61px;
+    padding-left: 20px;
+    background-color: #fff;
+}
+.userNumBox .p1{
+    height: 36px;
+    line-height: 36px;
+    color: #2f2f2f;
+}
+.userNumBox .p2{
+    height: 11px;
+    line-height: 11px;
+    font-size: 11px;
+    color: #6f7378;
+}
+.userBtn{
+    width: 278px;
+    height: 47px;
+    line-height: 47px;
+    border-radius: 3px;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    margin-left: -139px;
+    font-size: 18px;
+}
+#faxiaoxi{
+    border: 1px solid #879efa;
+    color: #879efa;
+    bottom: 100px;
+    background-color: #fff;
+}
+#jiahaoyou{
+    background-color: #4877e7;
+    color: #fff;
+    bottom: 40px;
+}
+#wktts{
+    background-color: #fff;
+    line-height: 16px;
+    bottom: 161px;
+    font-size: 11px;
+    color: #6f7378;
+    padding-top: 7px;
+}
+
+.aui-searchbar .aui-searchbar-cancel{
+    margin-right: 0;
+}

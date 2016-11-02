@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>regist_1</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+</head>
+<body class="bg-gray-color">
+<div class="aui-content">
+    <p class="tiptitle">更多人脉，更多商机</p>
+    <div class="listBox">
+        <a class="item">
+            <img src="../../image/message/wdewm.png" alt="">
+            <div>
+                <span class="tt">我的二维码</span>
+                <span class="aui-iconfont aui-icon-right aui-pull-right"></span>
+            </div>
+        </a>
+        <a class="item">
+            <img src="../../image/message/sysjhy.png" alt="">
+            <div>
+                <span class="tt">扫一扫加好友</span>
+                <span class="aui-iconfont aui-icon-right aui-pull-right"></span>
+            </div>
+        </a>
+        <a class="item" id="phoneBook" tapmode>
+            <img src="../../image/message/sjtxl.png" alt="">
+            <div>
+                <span class="tt">手机通讯录</span>
+                <span class="aui-iconfont aui-icon-right aui-pull-right"></span>
+            </div>
+        </a>
+        <a class="item" id="fromMobile" tapmode>
+            <img src="../../image/message/sjhtj.png" alt="">
+            <div>
+                <span class="tt">手机号码添加</span>
+                <span class="aui-iconfont aui-icon-right aui-pull-right"></span>
+            </div>
+        </a>
+    </div>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        document.getElementById("phoneBook").onclick = function(){
+            api.openWin({
+                name : 'phonebook',
+                url : './phonebook.html',
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+        document.getElementById("fromMobile").onclick = function(){
+            api.openWin({
+                name : 'addformobile',
+                url : './addformobile.html',
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+    }
+</script>
+</body>
+</html>

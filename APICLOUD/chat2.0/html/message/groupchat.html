@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+  <title>群聊</title>
+  <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+  <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+  <link rel="stylesheet" type="text/css" href="../../css/chat.css"/>
+</head>
+<body>
+<header id="header" class="aui-bar aui-bar-nav">
+  <a class="aui-pull-left aui-btn back">
+    <span class="aui-iconfont aui-icon-left"></span>
+  </a>
+  <div class="aui-title">群聊</div>
+  <a class="aui-pull-right aui-btn" id="openGroupInfo">
+    <i class="iconfont icon-qun"></i>
+  </a>
+</header>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/business_card_dialog.js"></script>
+<script src="../../script/ui_chat_box.js"></script>
+<script src="../../script/rong_cloud.js"></script>
+
+<script type="text/javascript">
+  var headerHeight;
+  var targetId;
+  var rongInstance;
+  apiready = function () {
+    var header = $api.byId("header");
+    $api.fixStatusBar(header);
+    var statusBarAppearance = api.statusBarAppearance;
+    if(statusBarAppearance){
+      api.setStatusBarStyle({
+        style: 'light',
+      });
+    }
+    headerHeight = $api.offset(header).h;
+
+    targetId = api.pageParam.groupId;
+    rongInstance = api.require('rongCloud2');
+
+    listenCloseWin();
+    openUIChatBox();
+    openChatFrame();
+
+    api.addEventListener({
+      name:"keyback"
+    },function(ret){
+      rongInstance.clearMessagesUnreadStatus({
+        conversationType: 'GROUP',
+        targetId: '' + targetId
+      }, function (ret, err) {
+        if (ret) {
+          api.sendEvent({
+            name: "freshConversationList"
+          })
+        }
+      });
+      api.closeWin({
+        duration : 500
+      });
+    });
+
+    $api.byId('openGroupInfo').onclick = function () {
+      api.openWin({
+        name: 'groupinfo',
+        url: './groupinfo.html',
+        pageParam:api.pageParam
+      });
+      api.parseTapmode();
+    }
+  };
+
+  function listenCloseWin(){
+    var buttons = $api.domAll('.back');
+    for (var i = 0; i < buttons.length; i++) {
+      $api.attr(buttons[i], 'tapmode', 'active');
+      buttons[i].onclick = function() {
+        //离开当前聊天页面的时候，清除message_frame.html消息列表 消息未读状态
+        rongInstance.clearMessagesUnreadStatus({
+          conversationType: 'GROUP',
+          targetId: '' + targetId
+        }, function (ret, err) {
+          if (ret) {
+            api.sendEvent({
+              name: "freshConversationList"
+            })
+          }
+        });
+        api.closeWin({
+          duration : 500
+        });
+      };
+    }
+
+    api.parseTapmode();
+  }
+
+  function openUIChatBox(){
+    var chatBox = api.require("UIChatBox");
+    UIChatBox.open(chatBox, targetId, "GROUP");
+    UIChatBox.record(chatBox, targetId, "GROUP");
+    UIChatBox.adjustFrame(api,chatBox,headerHeight,"groupchat_frame");
+  }
+
+  function openChatFrame(){
+    api.openFrame({
+      name : api.winName + '_frame',
+      url : './' + api.winName + '_frame.html',
+      bounces : false,
+      vScrollBarEnabled : false,
+      rect : {
+        x : 0,
+        y : headerHeight,
+        w : 'auto',
+        h : api.winHeight - headerHeight * 1.5
+      },
+      pageParam : api.pageParam
+    });
+  }
+</script>
+</body>
+</html>

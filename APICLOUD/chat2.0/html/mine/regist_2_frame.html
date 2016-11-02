@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>regist_2</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/mui.css">
+    <link rel="stylesheet" type="text/css" href="../../css/regist.css">
+</head>
+<body class="bg-gray-color">
+    <div class="mui-content">
+        <p class="regTip fs-14">设置密码后,可用手机号和密码登录电脑版和手机版。</p>
+        <p class="regTip fs-14 tip2 color-2f">手机号码<span class="color-2f" id="mobileNum"></span></p>
+        <form class="mui-input-group">
+            <div class="mui-input-row">
+                <label class="fs-14 color-2f">登录密码</label>
+                <input type="password" id="password1" placeholder="请输6-20位密码">
+            </div>
+            <div class="mui-input-row">
+                <label class="fs-14 color-2f">确认密码</label>
+                <input type="password" id="password2" placeholder="请再次输入密码">
+            </div>
+        </form>
+        <input type="hidden" id="rsa_modulus" value="D15AA98C75B32630C8191CDF9156F55091053C101C58965B2A1A00C3404553B8D953E81BEB22A46200911BE4BDE7A9BB839D01F6819379B60C68725AA479CF1C081E300F1D5DE197FCDE3CADF68F5A5CCC97BEA93F0B2C857691BBE9E28D2BC1F25B7BEBA950D3507376C442B8E6E163018C4800A2B33CE28A53863713AFA133">
+        <input type="hidden" id="rsa_exponent" value="10001">
+        <input type="hidden" id="rsa_maxDigits" value="130">
+        <div id="regist-1-Btn" tapmode class="fs-18 color-f text-center">进入应用</div>
+        <p class="xyTip fs-14 text-center">注册即代表你同意<a>《微旅用户注册协议》</a></p>
+    </div>
+    <script src="../../script/mui.js"></script>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/rsa.min.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+
+        var _password = '';
+        var mobileNum;
+        apiready = function(){
+             mobileNum = localStorage.getItem("registGetCodeMobile");
+            if(mobileNum){
+                document.getElementById("mobileNum").innerText = mobileNum;
+            }
+            var enterBtn = $api.byId("regist-1-Btn");
+            //点击进入应用按钮
+            enterBtn.onclick = function(){
+                var password1 = $api.byId("password1").value;
+                var password2 = $api.byId("password2").value;
+                var pwd1length = password1.toString().length;
+                var pwd2length = password2.toString().length;
+                if(password1 != password2){
+                    api.alert({
+                        title: '错误提示',
+                        msg: '两次密码不一致，请重新输入'
+                    });
+                }else if(pwd1length < 6 || pwd1length > 20){
+                    api.alert({
+                        title: '错误提示',
+                        msg: '密码长度为6—20位'
+                    });
+                }else if(pwd2length < 6 || pwd2length > 20){
+                    api.alert({
+                        title: '错误提示',
+                        msg: '密码长度为6—20位'
+                    });
+                }else{
+                     _password = password2;
+                    var validcode = localStorage.getItem("registValidCodeNum");
+                    api.ajax({
+                        url: INTERFACE['REGISTER'],
+                        method: 'post',
+                        dataType: 'json',
+                        data: {
+                            values:{user_mobile: mobileNum,user_password: _password,sms_verify_code:validcode}
+                        },
+                        timeout: AJAX.TIMEOUT,
+                    }, function(ret, err) {
+                        if (ret) {
+                            success(ret);
+                        } else {
+                            AJAX.ERROR(err);
+                        }
+                    });
+
+                }
+            };
+
+            //请求成功的回调函数
+            function success(data){
+                api.toast({
+                    msg : data.msg,
+                    duration : 1500,
+                    location : 'bottom'
+                });
+                if(data.result == 1){
+                    //将返回的用户信息存储在本地
+                    localStorage.setItem('user', JSON.stringify(data));
+                    localStorage.setItem('password',UtilService.doEncrypt(_password));
+                    localStorage.setItem('mobile', mobileNum);
+
+                    api.openWin({
+                        name : 'main',
+                        url : '../main.html',
+                        bounces : false,
+                        vScrollBarEnabled : false,
+                        reload:true //登陆之后,main页必须强制刷新
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

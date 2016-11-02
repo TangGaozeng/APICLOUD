@@ -1,0 +1,121 @@
+
+.charge .aui-bar,
+.order-pay .aui-bar,
+.refund .aui-bar,
+.shouzhimingxi .aui-bar
+{
+	background: #4877e7;
+}
+
+.order-pay .aui-list-item-inner,
+.aui-list-item-inner,
+.widthdraw-record .aui-list-item-inner,
+.aui-list-item-inner{
+	height: 65px;
+}
+.widthdraw-record .aui-list-item-inner .aui-list-item-left div,
+.widthdraw-record .aui-list-item-inner .aui-list-item-right div,
+.transaction-record .aui-list-item-inner .aui-list-item-left div,
+.transaction-record .aui-list-item-inner .aui-list-item-right div,
+.shouzhimingxi .aui-list-item-inner .aui-list-item-left div,
+.shouzhimingxi .aui-list-item-inner .aui-list-item-right div,
+.refund .aui-list-item-inner .aui-list-item-left div,
+.refund .aui-list-item-inner .aui-list-item-right div,
+.other .aui-list-item-inner .aui-list-item-left div,
+.other .aui-list-item-inner .aui-list-item-right div,
+.charge .aui-list-item-inner .aui-list-item-left div,
+.charge .aui-list-item-inner .aui-list-item-right div,
+.widthdraw-record .inner-top div,
+.widthdraw-record .inner-top p,
+.beiyongjin .aui-list-item-inner .aui-list-item-left div,
+.beiyongjin .aui-list-item-inner .aui-list-item-right div,
+.order-pay .aui-list-item-inner .aui-list-item-left div,
+.order-pay .aui-list-item-inner .aui-list-item-right div{
+	font-size: 15px;
+	color:#2f2f2f;
+}
+.widthdraw-record .aui-list-item-inner .aui-list-item-left p,
+.widthdraw-record .aui-list-item-inner .aui-list-item-right p,
+.transaction-record .aui-list-item-inner .aui-list-item-left p,
+.transaction-record .aui-list-item-inner .aui-list-item-right p,
+.shouzhimingxi .aui-list-item-inner .aui-list-item-left p,
+.shouzhimingxi .aui-list-item-inner .aui-list-item-right p,
+.refund .aui-list-item-inner .aui-list-item-left p,
+.refund .aui-list-item-inner .aui-list-item-right p,
+.other .aui-list-item-inner .aui-list-item-left p,
+.other .aui-list-item-inner .aui-list-item-right p,
+.charge .aui-list-item-inner .aui-list-item-left p,
+.charge .aui-list-item-inner .aui-list-item-right p,
+.beiyongjin .aui-list-item-inner .aui-list-item-left p,
+.beiyongjin .aui-list-item-inner .aui-list-item-right p,
+.order-pay .aui-list-item-inner .aui-list-item-left p,
+.order-pay .aui-list-item-inner .aui-list-item-right p{
+	font-size: 12px;
+	color:#6f7378;
+}
+.widthdraw-record .aui-list-item-right,
+.transaction-record .aui-list-item-right,
+.shouzhimingxi .aui-list-item-right,
+.refund .aui-list-item-right,
+.other .aui-list-item-right,
+.charge .aui-list-item-right,
+.beiyongjin .aui-list-item-right{
+	display: flex;
+	-webkit-display:flex;
+	justify-content: flex-start;
+	flex-direction:column;
+}
+.widthdraw-record  .aui-list-item-inner .aui-list-item-right p,
+.widthdraw-record .aui-list-item-inner .aui-list-item-right div,
+.other  .aui-list-item-inner .aui-list-item-right p,
+.other .aui-list-item-inner .aui-list-item-right div,
+.beiyongjin  .aui-list-item-inner .aui-list-item-right p,
+.beiyongjin .aui-list-item-inner .aui-list-item-right div,
+.charge  .aui-list-item-inner .aui-list-item-right p,
+.charge .aui-list-item-inner .aui-list-item-right div,
+.refund  .aui-list-item-inner .aui-list-item-right p,
+.refund .aui-list-item-inner .aui-list-item-right div,
+.shouzhimingxi  .aui-list-item-inner .aui-list-item-right p,
+.shouzhimingxi .aui-list-item-inner .aui-list-item-right div,
+.transaction-record  .aui-list-item-inner .aui-list-item-right p,
+.transaction-record .aui-list-item-inner .aui-list-item-right div{
+	align-self:flex-end;
+}
+
+.beiyongjin .aui-content .aui-list .aui-list-item .aui-list-item-inner,
+.other .aui-content .aui-list .aui-list-item .aui-list-item-inner,
+.order-pay .aui-content .aui-list .aui-list-item .aui-list-item-inner{
+ 	height:95px;
+ }
+
+.widthdraw-record .inner-top {
+	height:28px;
+	background:#fff;
+}
+.widthdraw-record .inner-top div,.order-pay .inner-top div{
+	width:92%;
+	margin: 0 auto;
+	height:100%;
+}
+.widthdraw-record .inner-top div div,.widthdraw-record .inner-top div p{
+	line-height: 28px;
+
+}
+.order-pay .inner-top{
+	height:35px;background:#fff;
+}
+.order-pay .inner-top div div,.order-pay .inner-top div p{
+	line-height: 35px;
+	font-size: 15px;
+	color:#2f2f2f;
+}
+.widthdraw-record .inner-two,.order-pay .inner-two{
+	margin-top:12.5px;
+}
+.aui-list .aui-list-item-inner .aui-list-item-left .waring,
+.aui-list .aui-list-item-inner .aui-list-item-right .waring{
+	color: #ff4a12;
+}
+.jine{
+	color:#ff6b50;
+}

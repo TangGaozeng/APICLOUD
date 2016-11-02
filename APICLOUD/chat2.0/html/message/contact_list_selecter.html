@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>手机通讯录</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+</head>
+<body>
+<header id="header" class="aui-bar aui-bar-nav back">
+    <a class="aui-pull-left aui-btn">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">添加好友</div>
+</header>
+<div class="aui-searchbar bg-gray-color">
+    <div class="aui-searchbar-input aui-border-radius">
+        <i class="aui-iconfont aui-icon-search"></i>
+        <form action="javascript:search();">
+            <input type="number" placeholder="输入电话号码进行搜索" id="search-input">
+        </form>
+    </div>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var header = $api.byId('header');
+        fnReady();
+        api.openFrame({
+            name: 'contact_list_selecter_frame',
+            url: 'contact_list_selecter_frame.html',
+            rect: {
+                x: 0,
+                y: $api.offset(header).h + 46,
+                w: 'auto',
+                h: api.winHeight - $api.offset(header).h - 91
+            },
+            bounces: false,
+            vScrollBarEnabled: false
+        });
+        api.openFrame({
+            name: 'count_chosen_frame',
+            url: './count_chosen_frame.html',
+            rect: {
+                x : 0,
+                y : api.winHeight - 45,
+                w : 'auto',
+                h : 45
+            },
+            bounces: false,
+            vScrollBarEnabled: false,
+            hScrollBarEnabled: false
+        });
+        $api.byId("search-input").oninput = function(){
+            api.sendEvent({
+                name: 'searchInputValue',
+                extra: this.value
+            });
+        }
+    }
+</script>
+</body>
+</html>

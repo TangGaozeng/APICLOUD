@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>验证支付密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="add-bankcard validation-pw">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back" href="#">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">验证支付密码</div>
+    </header>
+
+    <section class="aui-content">
+        <ul class="aui-list aui-form-list no-border-b no-border-t">
+
+            <li class="aui-list-item no-border">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="输入真实姓名">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item no-border">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        证件类型
+                    </div>
+                    <div class="aui-list-item-input aui-list-item-arrow">
+                        <select name="" id="">
+                            <option>身份证</option>
+                            <option>驾驶证</option>
+                            <option>学生证</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item no-border">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">
+                        证件号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="输入身份证号">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list no-border-b no-border-t pbt-12">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-font-size-14">
+                    短信验证码
+                    <div class="aui-list-item-right aui-font-size-14 yzm">获取验证码</div>
+                </div>
+            </li>
+        </ul>
+        <div class="aui-bar">
+            <div class="aui-bar-btn" id="validation">验证</div>
+        </div>
+    </section>
+    <div class="shield"></div>
+    <div class="alert-box validation-succ" id="validation-succ">
+        恭喜您！验证成功~
+    </div>
+
+    <div class="alert-box validation-fail" id="validation-fail">
+        <div class="alert-tit">
+            验证失败！请重新验证
+        </div>
+        <div class="alert-select">
+            <div class="alert-btn">重新验证</div>
+            <div class="alert-btn">取消</div>
+        </div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        $api.byId('validation').onclick = function () {
+            if(1){
+                $api.domAll('.shield')[0].style.display = 'block';
+                $api.byId('validation-succ').style.display = 'block';
+            }else{
+
+            }
+        }
+        $api.byId('validation-succ').onclick = function () {
+            $api.domAll('.shield')[0].style.display = 'none';
+            $api.byId('validation-succ').style.display = 'none';
+        }
+
+    }
+
+
+
+</script>
+</html>

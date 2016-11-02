@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1,minimum-scale=1,user-scalable=0,width=device-width,initial-scale=1">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>实名认证</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <link rel="stylesheet" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/real-name.css">
+</head>
+<body class="bg-gray-color real_name">
+<div class="content">
+    <ul class="aui-list aui-list-in">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label name">
+                    真实姓名
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" id="name">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    身份证号
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" id="name_card">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="aui-btn aui-btn-block real" id="now_real"><p>立即认证</p></div>
+</div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    apiready = function(){
+        fnReady();
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        var id_name = $api.byId('name');
+        var id_card = $api.byId('name_card');
+        var reg = /(^\d{15}$)|(^\d{17}(\d|X)$)/
+
+        $api.byId('now_real').onclick = function(){
+            if(id_name.value ==""){
+                api.alert({
+                    title: '信息提示',
+                    msg: "姓名不能为空"
+                });
+            }else if(id_card.value == ""){
+                api.alert({
+                    title: '信息提示',
+                    msg: "身份证不能为空"
+                });
+            }else if(reg.test(id_card.value) == false){
+                api.alert({
+                    title: '信息提示',
+                    msg: "身份证格式不正确"
+                });
+            }else if(id_name.value != ""&& id_card.value != "" &&reg.test(id_card.value) == true){
+                console.log(id_name.value+id_card.value);
+                api.ajax({
+                    url:INTERFACE['NAME_AUTHENTICATION'],
+                    method:'post',
+                    dataType:'json',
+                    data:{
+                        values:{user_id:user_id,user_password: password,user_name:id_name.value,user_member:id_card.value}
+                    }
+                },function(ret,err){
+                    console.log(JSON.stringify(ret));
+                    if(ret.result == 1){
+                        api.openWin({
+                            name:'real-succ',
+                            url:'./real-succ.html',
+                            bounces:false,
+                            vScrollBarEnabled : false
+                        });
+                    }else if(ret.result == 0){
+                        api.alert({
+                            title: '信息提示',
+                            msg: ret.msg
+                        });
+                    }
+                });
+            };
+        };
+    };
+
+</script>
+</html>

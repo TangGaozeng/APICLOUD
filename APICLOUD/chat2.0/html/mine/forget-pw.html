@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>忘记支付密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="find-pw forget-pw">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back" href="#">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">找回支付密码</div>
+    </header>
+    <section class="aui-content">
+        <ul class="aui-list no-border-t no-border-b">
+            <li class="aui-list-header aui-font-size-14">
+                请绑定持卡人的银行卡以找回密码
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-15">
+                        持卡人
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" class="aui-font-size-14" placeholder="**轩">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-15">
+                        卡号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="card-num" type="text" class="aui-font-size-14" placeholder="请输入卡号">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </section>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        $api.byId('card-num').oninput = function () {
+            if(this.value){
+                api.openWin({
+                    name : 'forget-pw2',
+                    url : '../mine/forget-pw2.html',
+                    bounces : false,
+                    vScrollBarEnabled : false
+                });
+                api.parseTapmode();
+            }
+        }
+
+
+    }
+
+
+
+</script>
+</html>

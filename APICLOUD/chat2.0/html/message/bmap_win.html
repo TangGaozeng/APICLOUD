@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+  <title>APP</title>
+  <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+</head>
+<style type="text/css">
+  .active {
+    background-color: #f4f4f4;
+  }
+</style>
+<body>
+<header class="aui-bar aui-bar-nav aui-bar-info" id="header">
+  <a class="aui-btn aui-btn-info aui-pull-left" tapmode onclick="closeWin()">
+    <span class="aui-iconfont aui-icon-close"></span>
+  </a>
+  <div class="aui-title" onclick="sendLocation()">发送</div>
+</header>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript">
+  apiready = function(){
+    api.parseTapmode();
+    var header = $api.byId('header');
+    $api.fixStatusBar(header);
+    var statusBarAppearance = api.statusBarAppearance;
+    if(statusBarAppearance){
+      api.setStatusBarStyle({
+        style: 'light'
+      });
+    }
+    var headerPos = $api.offset(header);
+    api.openFrame({
+      name: 'bmap_frame',
+      url: 'widget://html/message/bmap_frame.html',
+      bounces: false,
+      rect: {
+        x: 0,
+        y: headerPos.h,
+        w: 'auto',
+        h: 'auto'
+      },
+      pageParam:api.pageParam
+    });
+  };
+  function closeWin(){
+    api.closeWin();
+  }
+
+  function sendLocation(){
+    api.execScript({
+      frameName:"bmap_frame",
+      script:'sendUserLocation()'
+    });
+  }
+</script>
+</html>

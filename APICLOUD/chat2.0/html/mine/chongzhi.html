@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>充值</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="chongzhi">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">充值</div>
+    </header>
+    <ul class="aui-list ul-my1">
+        <li class="aui-list-item">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media wechat-avatar">
+                    <img src="../../image/mine/zhifubao.png" alt="">
+                </div>
+                <label class="aui-list-item-inner">
+                    <div class="aui-list-item-left fs-14">
+                        支付宝支付
+                    </div>
+                    <div class="aui-list-item-right">
+                        <input class="aui-radio" type="radio" name="zhifu" checked="" id="zhifubao">
+                    </div>
+                </label>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media wechat-avatar">
+                    <img src="../../image/mine/weixin.png" alt="">
+                </div>
+                <label class="aui-list-item-inner">
+                    <div class="aui-list-item-left fs-14">
+                        微信支付
+                    </div>
+                    <div class="aui-list-item-right">
+                        <input class="aui-radio" type="radio" name="zhifu">
+                    </div>
+                </label>
+            </div>
+        </li>
+    </ul>
+    <div class="cz-detail aui-content">
+        <b class="fs-14">充值金额</b>
+        <span class="fs-14">￥
+            <input class="fs-14" type="text" value="0.01" id="feeNum">
+        </span>
+    </div>
+    <footer class="aui-bar aui-bar-tab aui-bar-nav">
+        <div class="aui-title" id="goNext">确认充值</div>
+    </footer>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    apiready = function () {
+        fnReady();
+
+
+        $api.byId('goNext').onclick = function () {
+            var feeNum = $api.byId('feeNum').value;
+            if($api.byId('zhifubao').checked){
+                api.ajax({
+                    url: INTERFACE['ALIPAY_CONFIG'],
+                    method: 'post',
+                    dataType: 'json',
+                    data: {
+                        values:{
+                            user_id:user_id,
+                            user_password:password,
+                            total_fee: feeNum,
+                            subject: '支付宝充值',
+                            body: '这是一次支付宝充值'
+                        }
+                    },
+                    timeout: AJAX.TIMEOUT,
+                }, function(ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                       if(ret.result==1){
+                           var aliPay = api.require('aliPay');
+                           aliPay.payOrder({
+                               orderInfo: ret.data.alipay_config
+                           }, function(ret, err) {
+                               console.log(JSON.stringify(ret));
+                               if(ret.statusCode=='9000'){
+                                   api.sendEvent({
+                                       name: 'money_change'
+                                   });
+                                   api.openWin({
+                                       name : 'cz-succ',
+                                       url : '../mine/cz-succ.html',
+                                       bounces : false,
+                                       vScrollBarEnabled : false
+                                   });
+                                   api.parseTapmode();
+                               }else{
+                                   api.openWin({
+                                       name : 'cz-fail',
+                                       url : '../mine/cz-fail.html',
+                                       bounces : false,
+                                       vScrollBarEnabled : false,
+                                       pageParam: ret
+                                   });
+                                   api.parseTapmode();
+                               }
+                           });
+                       }
+                    } else {
+                        AJAX.ERROR(err);
+                    }
+                });
+            }else{
+                api.alert({
+                    title: '暂不支持微信充值！'
+                });
+            }
+
+
+
+
+
+
+        };
+    }
+</script>
+</html>

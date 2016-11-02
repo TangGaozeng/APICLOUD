@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>资金账户</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="my-asset">
+
+    <section id="header" class="aui-content">
+        <div class="aui-bar aui-bar-nav">
+            <a class="aui-btn aui-pull-left back">
+                <span class="aui-iconfont aui-icon-left ifs-22"></span>
+            </a>
+            <div class="aui-title fs-18">资金账户</div>
+            <!--<a href="#" class="aui-btn aui-pull-right">
+                <img src="../../image/mine/icon-more.png" alt="">
+            </a>-->
+        </div>
+        <div class="asset-tit">
+            总资产
+            <span>(元)</span>
+            <img src="../../image/mine/wenhao.png" alt="">
+        </div>
+        <div class="asset-tit asset-tit2" id="moneyCount">0.00</div>
+    </section>
+    <div class="my-nav">
+        <div id="difference">
+            <span id="leave_amount">0.00</span>
+            <span>余额</span>
+        </div>
+        <p class="borderH1"></p>
+        <div id="frozen-record">
+            <span id="frozen_amount">0.00</span>
+            <span>冻结</span>
+        </div>
+        <p class="borderH1"></p>
+        <div id="reward-record">
+            <span id="reward">0.00</span>
+            <span>奖励</span>
+        </div>
+    </div>
+
+
+    <ul class="aui-list ul-my1">
+        <li class="aui-list-item">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media wechat-avatar">
+                    <img src="../../image/mine/transtion_record.png" alt="">
+
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow" id="transaction-record">
+                    <div class="aui-list-item-left aui-font-size-14">交易记录</div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media wechat-avatar">
+                    <img src="../../image/mine/bankcard.png" alt="" class="mt-2">
+
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow" id="add-bankcard">
+                    <div class="aui-list-item-left aui-font-size-14">银行卡</div>
+                    <div class="aui-list-item-right aui-font-size-14">绑定银行卡</div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media wechat-avatar">
+                    <img src="../../image/mine/lock1.png" alt="">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow" id="pw-manager">
+                    <div class="aui-list-item-left aui-font-size-14">密码管理</div>
+                    <div class="aui-list-item-right aui-font-size-14" id="passwordTips">设置支付密码</div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript">
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+//    var payPassword = localStorage.getItem('payPassword');
+
+
+    apiready = function () {
+
+        fnReady();
+        api.showProgress({
+            title: '数据加载中...',
+            text: ''
+        })
+        api.ajax({
+            url: INTERFACE['MINE_INDEX'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret.data));
+                if(ret.data!=''&&ret.data!=undefined){
+                    $api.byId('moneyCount').innerHTML = Math.ceil(ret.data.moneyCount)!=0 ? (ret.data.moneyCount+'').substr(0,4) : '0.00';
+                    $api.byId('leave_amount').innerHTML = Math.ceil(ret.data.leave_amount)!=0 ? (ret.data.leave_amount+'').substr(0,4) : '0.00';
+                    $api.byId('reward').innerHTML = Math.ceil(ret.data.reward)!=0 ? (ret.data.reward+'').substr(0,4) : '0.00';
+                    $api.byId('frozen_amount').innerHTML = Math.ceil(ret.data.frozen_amount)!=0 ? (ret.data.frozen_amount+'').substr(0,4) : '0.00';
+                }
+                api.hideProgress();
+                ClickGoPage();
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    function ClickGoPage(){
+        $api.byId('frozen-record').onclick = function () {
+            api.openWin({
+                name : 'frozen_money',
+                url : './frozen_money.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        };
+        $api.byId('reward-record').onclick = function () {
+            api.openWin({
+                name : 'reward-record',
+                url : '../mine/reward-record.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        };
+
+       //检验是否绑卡
+        api.ajax({
+            url: INTERFACE['CHECK_BIND_CARD'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                $api.byId('add-bankcard').onclick = function () {
+                    console.log(JSON.stringify(ret.data));
+                    if(ret.data!=''&&ret.data!=undefined){
+                        if(ret.data.is_bind){
+                            api.openWin({
+                                name : 'my-bankcard',
+                                url : '../mine/my-bankcard.html',
+                                bounces : false,
+                                vScrollBarEnabled : false
+                            });
+                            api.parseTapmode();
+                        }
+                        else{
+                            checkRealName();
+                        }
+                    }else{
+                        api.alert({
+                            title: '请求数据失败！'
+                        })
+                    }
+                };
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+
+
+
+
+        //判断是否已设置支付密码
+        api.ajax({
+            url: INTERFACE['CHECK_IS_PAYPASS'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret));
+            if (ret) {
+                $api.byId('pw-manager').onclick = function () {
+                    if(ret.result!=0){
+                        api.openWin({
+                            name : 'pw-manager',
+                            url : '../mine/pw-manager.html',
+                            bounces : false,
+                            vScrollBarEnabled : false
+                        });
+                        api.parseTapmode();
+                    }
+                    else{
+                        api.openWin({
+                            name : 'setting-pw',
+                            url : '../mine/setting-pw.html',
+                            bounces : false,
+                            vScrollBarEnabled : false
+                        });
+                        api.parseTapmode();
+                    }
+                };
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+
+
+        $api.byId('transaction-record').onclick = function(){
+            api.openWin({
+                name:'transaction_record',
+                url:'./transaction_record.html',
+                bounces:false,
+                vScrollBarEnabled:false
+            });
+            api.parseTapmode();
+        };
+        $api.byId('difference').onclick = function(){
+            api.openWin({
+                name:'difference',
+                url:'./difference.html',
+                bounces:false,
+                vScrollBarEnabled:false
+            });
+            api.parseTapmode();
+        }
+    }
+
+    //检验是否实名认证
+    function checkRealName(){
+        api.ajax({
+            url: INTERFACE['IS_NAME_AUTHENTICATION'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret));
+            if (ret) {
+                if(ret.result!=0){
+                    api.openWin({
+                        name : 'bind_bankCard',
+                        url : '../mine/bind_bankCard.html',
+                        bounces : false,
+                        vScrollBarEnabled : false
+                    });
+                    api.parseTapmode();
+
+                }
+                else{
+                    api.openWin({
+                        name : 'real-name',
+                        url : '../mine/real-name.html',
+                        bounces : false,
+                        vScrollBarEnabled : false
+                    });
+                    api.parseTapmode();
+                }
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+</script>
+</html>

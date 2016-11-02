@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>创建聊天</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css"/>
+</head>
+<body class="create_groupchat_normal">
+<footer id="footer" class="aui-bar aui-bar-tab flex pl-10 pr-10">
+    <div class="col-70 text-left fs-15">已选择:<span id="chosenTotal">100</span>人</div>
+    <div id="okBtn" class="col-30 text-center fs-15 color-f">确定&nbsp;(<span id="chosenNum">0</span>/500)</div>
+</footer>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var num = 0;
+        var okBtn = document.getElementById('okBtn');
+
+        //存储选中的人数
+        if (!localStorage.getItem('isChosenNum')) {
+            localStorage.setItem('isChosenNum', 0)
+        }
+
+        init();
+
+        //更新人数和按钮的背景色
+        function init() {
+            num = localStorage.getItem('isChosenNum');
+            document.getElementById('chosenNum').innerHTML = num;
+            document.getElementById('chosenTotal').innerHTML = num;
+            if (num > 0) {
+                okBtn.style.backgroundColor = '#879efa';
+            } else {
+                okBtn.style.backgroundColor = '#c3cffd';
+            }
+        }
+
+        //监听选择的成员
+        api.addEventListener({
+            name: 'chosenMember'
+        }, function (ret, err) {
+            init();
+        });
+
+        //确定按钮的事件
+        okBtn.onclick = function () {
+            if (num > 0) {
+                var user_id = getSelfUserId();
+                var user_password = getSelfUserPwd();
+                var chosenPersonStr = '';
+                var chosenDepartStr = '';
+                var group_name = '';
+                var group_identify = 0;
+                var adver = localStorage.getItem('chosenCompanyGroupPhoto');
+                var imgPath = adver ? "widget://" + adver.substring(6) : '';
+                var fromType = localStorage.getItem('fromType');
+                if (localStorage.getItem('createGroupType') == 'normal') {
+                    group_name = randomString(8);
+                    group_identify = 3;
+                }
+                if (localStorage.getItem('createGroupType') == 'company') {
+                    group_name = localStorage.getItem('inputCompanyGroupName');
+                    group_identify = 2;
+                }
+                //var company_id = (selectSqlSync('user', "select company_id from chosenDepartList where user_type = 'department'").data)[0].company_id;
+                var company_id = localStorage.getItem('create_group_company_id');
+
+                //获取已选择的单个成员
+                var ret1 = selectSqlSync('user', "select * from chosenPersonList where user_type = 'person'");
+                if (ret1.status) {
+                    var data1 = ret1.data;
+                    for (var i in data1) {
+                        var user_mobile = data1[i].user_mobile;
+                        if (user_mobile != '') {
+                            if (i == 0) {
+                                chosenPersonStr = user_mobile;
+                            } else {
+                                chosenPersonStr += (',' + data1[i].user_mobile);
+                            }
+                        }
+                    }
+                    var chosenPersonArr = chosenPersonStr.split("-");
+                    chosenPersonStr = chosenPersonArr.join('');
+                    console.log(chosenPersonStr);
+                }
+                //获取已选择的部门
+                var ret2 = selectSqlSync('user', "select * from chosenDepartList where user_type = 'department'");
+                if (ret2.status) {
+                    var data2 = ret2.data;
+                    for (var i in data2) {
+                        var department_id = data2[i].department_id;
+                        if (department_id != '') {
+                            if (i == 0) {
+                                chosenDepartStr = department_id;
+                            } else {
+                                chosenDepartStr += (',' + data2[i].department_id);
+                            }
+                        }
+
+                    }
+                    console.log(chosenDepartStr);
+                }
+                var param = {user_id:user_id,user_password:user_password,user_mobile_str:chosenPersonStr,group_name:group_name,group_identify:group_identify,type:fromType,company_id:company_id,department_id_str:chosenDepartStr};
+                console.log(JSON.stringify(param));
+                //建群请求
+                api.ajax({
+                    url: INTERFACE['CREATE_GROUP'],
+                    method: 'post',
+                    dataType: 'json',
+                    data: {
+                        values: param,
+                        files: {adver: imgPath}
+                    },
+                    timeout: AJAX.TIMEOUT,
+                }, function (ret, err) {
+                    if (ret) {
+                        createGroupSucc(ret);
+                    } else {
+                        AJAX.ERROR(err);
+                    }
+                });
+            }
+        };
+
+        //创建群成功后的回调
+        function createGroupSucc(ret) {
+            if (ret.result == 1 || ret.data != '') {
+
+                var pageParam = {
+                    groupId: ret.data.social_group_id,
+                    justCreate: true//创建群聊后，用户可能马上进入群聊设置页面，将该群置顶。但此时app本地数据库该群聊消息，所以无法保存群的设置，
+                                    //为了处理这种情况，创建成功马上自动发一条消息，让本地数据库有记录，方便存储群设置。
+                };
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'middle'
+                });
+                executeSqlSync('user', 'delete from chosenPersonList');
+                executeSqlSync('user', 'delete from chosenDepartList');
+                localStorage.removeItem('createGroupType');
+                localStorage.setItem('isChosenNum', 0);
+                api.sendEvent({
+                    name: 'chosenMember'
+                });
+                api.openWin({
+                    name: 'groupchat',
+                    url: './groupchat.html',
+                    pageParam: pageParam
+                });
+                api.parseTapmode();
+            } else {
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'middle'
+                });
+            }
+            console.log(JSON.stringify(ret));
+        }
+    }
+</script>
+</body>
+</html>

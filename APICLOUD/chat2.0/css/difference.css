@@ -1,0 +1,50 @@
+
+.difference img {
+    height: 88px;
+    width: 70px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 112px;
+}
+
+.difference section {
+    text-align: center;
+}
+
+.difference section p {
+    color: #2f2f2f;
+}
+
+.difference .aui-bar {
+    background: #4877e7;
+}
+
+.difference .chongzhi {
+    width: 275px;
+    height: 45px;
+    margin: 0 auto;
+    color: #fff;
+    background: #4877e7;
+    margin-top: 36px;
+    line-height: 45px;
+    padding: 0;
+}
+
+.difference .zt {
+    width: 275px;
+    margin: 0 auto;
+    height: 45px;
+    border-color: #879efa;
+    color: #879efa;
+    margin-top: 16px;
+    line-height: 45px;
+    padding: 0;
+}
+
+.difference .mr-t-33 {
+    margin-top: 33px;
+    font-size: 18px;
+    line-height: 45px;
+    padding: 0;
+}
+

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>群公告</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="group_announce">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <a class="aui-btn aui-pull-left" id="closeThis">关闭</a>
+        <div class="aui-title fs-18">群公告</div>
+        <a href="#" class="aui-btn aui-pull-right fs-15 pr-20">
+            <span id="reAnnounce">修改</span>
+            <span id="confirmChange">确定</span>
+        </a>
+    </header>
+</body>
+</html>
+<script type="text/html" id="content">
+
+    <section class="aui-content">
+        <div class="announce-tit fs-14">
+            {{group_info.group_master}} 更新于{{group_info.create_date}}
+            <span class="announce-tit-tips">0人未读</span>
+        </div>
+        <p class="notice" id="noticeTxt">{{group_info.group_notice}}</p>
+        <textarea name="" id="writePad" cols="30" rows="10" placeholder="">{{group_info.group_notice}}</textarea>
+        <div class="aui-bar" id="reWriteWrap">
+            <div class="aui-bar-btn" id="reWrite" tapmode>重新编辑</div>
+        </div>
+    </section>
+    <div class="shield"></div>
+    <div class="alert-box">
+        <div class="alert-tit">确定修改群公告？</div>
+        <div class="alert-select">
+            <div class="alert-btn" id="exit">取消</div>
+            <div class="alert-btn" id="confirm">确定</div>
+        </div>
+    </div>
+</script>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript">
+
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+
+    apiready = function () {
+        fnReady();
+        groupData = api.pageParam;
+        myHttpRequest();
+
+        $api.byId('closeThis').onclick = function () {
+            console.log('hehe')
+            api.closeToWin({
+                name: 'groupinfo'
+            });
+            /*api.closeWin({
+                name: 'group_announce_null'
+            });
+            api.closeWin({
+                name: 'group_announce_write'
+            });*/
+            /*api.openWin({
+                name : 'groupinfo',
+                url : '../message/groupinfo.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();*/
+        };
+
+    };
+
+    function myHttpRequest(){
+        api.ajax({
+            url: INTERFACE['GET_GROUP_INFO'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password,
+                    social_group_id: groupData.groupId
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret.data));
+                var html = template("content",ret.data);
+                $api.append($api.domAll('body')[0], html);
+                afterTemplate();
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+    function afterTemplate(){
+        $api.css($api.byId('writePad'),'display: none');
+        $api.css($api.byId('confirmChange'),'display: none');
+        $api.byId('reAnnounce').onclick = function () {
+            this.style.display = 'none';
+            $api.css($api.byId('noticeTxt'),'display: none');
+            $api.css($api.byId('confirmChange'),'display: block');
+            $api.css($api.byId('writePad'),'display: block');
+            $api.css($api.byId('reWriteWrap'),'display: block');
+            $api.byId('reWrite').onclick = function () {
+                $api.byId('writePad').value='';
+            }
+
+            $api.byId('confirmChange').onclick = function(){
+                var groupAnnounce = $api.byId('writePad').value;
+                $api.css($api.domAll('.shield')[0],'display: block');
+                $api.css($api.domAll('.alert-box')[0],'display: block');
+                $api.byId('exit').onclick = function () {
+                    location.reload();
+                };
+                $api.byId('confirm').onclick = function () {
+                    api.ajax({
+                        url: INTERFACE['MDF_GROUP_NOTICE'],
+                        method: "post",
+                        dataType: "json",
+                        data: {
+                            values: {
+                                user_id: user_id,
+                                user_password: password,
+                                social_group_id: groupData.groupId,
+                                group_notice: groupAnnounce
+                            }
+                        },
+                        timeout: AJAX.TIMEOUT
+                    }, function (ret, err) {
+                        if (ret) {
+                            console.log(JSON.stringify(ret));
+                            if(ret.result==1){
+                                api.alert({
+                                    title: '修改群消息成功！'
+                                });
+                                location.reload();
+
+                            }
+
+                        } else {
+                            console.log(JSON.stringify(err));
+                            AJAX.ERROR(err);
+                        }
+                    });
+                }
+
+
+            }
+
+        };
+    }
+
+
+
+</script>

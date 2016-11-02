@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>创建企业群选择头像</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="bg-white-color company_group_select_photo">
+<div class="content">
+    <div class="firstDiv">
+        <img id="companyLogo" src="../../image/message/head_03.png">
+        <p class="color-2f"><span id="companyName">中晟达微旅旅行社有限公司</span><span>企</span></p>
+    </div>
+    <div class="secDiv">选择群头像:</div>
+    <div class="scrollBox">
+        <div class="imgBox flex">
+            <div class="imgWarp active">
+                <img id="defaultLogo" src="../../image/comorgpho/img1.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img2.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img3.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img4.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img5.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img6.jpg" alt="">
+            </div>
+        </div>
+        <div class="imgBox flex">
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img7.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img8.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img9.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img10.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img11.jpg" alt="">
+            </div>
+            <div class="imgWarp">
+                <img src="../../image/comorgpho/img1.jpg" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var pageParam = api.pageParam;
+        var imgWarp = document.getElementsByClassName('imgWarp');
+        var orgLogo = document.getElementById('companyLogo');
+        var gou = '<span><i class="iconfont">&#xe634;</i></span>';
+        document.getElementById('companyName').innerText = pageParam.company_name;
+        orgLogo.setAttribute('src',pageParam.company_logo);
+        document.getElementById('defaultLogo').setAttribute('src',pageParam.company_logo);
+        imgWarp[0].innerHTML += gou;
+        for(var i in imgWarp){
+            imgWarp[i].onclick = function () {
+                for(var j in imgWarp){
+                    var _this = imgWarp[j];
+                    if($api.hasCls(_this, 'active')){
+                        $api.removeCls(_this, 'active');
+                        _this.removeChild(_this.lastChild);
+                    };
+                }
+                this.innerHTML += gou;
+                $api.addCls(this, 'active');
+                var selectPicSrc = $api.dom(this, 'img').getAttribute('src');
+                orgLogo.setAttribute('src',selectPicSrc);
+                localStorage.setItem('chosenCompanyGroupPhoto',selectPicSrc);
+            }
+        }
+    }
+</script>
+</body>
+</html>

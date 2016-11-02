@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>好友资料</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/chat.css"/>
+</head>
+<body class="bg-gray-color">
+<div class="aui-content" id="friend_info_box">
+
+</div>
+
+<footer class="aui-bar aui-bar-tab" id="footBar">
+    <div class="aui-bar-tab-item" tapmode>
+        <div class="aui-bar-tab-label">加好友</div>
+    </div>
+    <div class="aui-bar-tab-item" tapmode>
+        <div id="sendMsgBtn" class="aui-bar-tab-label" tapmode>发消息</div>
+    </div>
+</footer>
+<script src="../../script/api.js"></script>
+<script src="../../script/mui.js"></script>
+<script src="../../script/aui-tab.js"></script>
+<script src="../../script/template.js"></script>
+<script src="../../script/common.js"></script>
+<script id="we-were-just-friend" type="text/html">
+    <div class="userTxBox">
+        <div class="touxiang">
+            <img src={{ data[0].photo}} class="img-responsive" alt="">
+        </div>
+        <p class="userNc">{{ data[0].real_name }}</p>
+    </div>
+
+    <ul class="aui-list aui-list-in userInfo2">
+        <li class="aui-list-header">
+            个人信息
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title" onclick="showPhoneSelect('{{ data[0].user_mobile}}')">
+                    <span>联系方式</span>
+                    <span>{{data[0].user_mobile}}</span>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <span>邮箱</span>
+                    <span>{{data[0].email}}</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</script>
+<script id="we-were-partner-too" type="text/html">
+    <div class="userTxBox">
+        <div class="touxiang">
+            <img src={{ photo }} class="img-responsive" alt="">
+        </div>
+        <p class="userNc">{{data[0].real_name}}</p>
+    </div>
+    <ul class="aui-list aui-list-in companyBox">
+        {{each data as value i}}
+        <li class="aui-list-item aui-list-item-middle">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title flex">
+                    <img src={{value.company_logo}} class="companyLogo" alt="">
+                    <div class="companyName">{{value.componey_name}}</div>
+                    <img src="../../image/message/qyrzicon.png" class="companyRz" alt="">
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    <div class="aui-tab companyTab" id="tab">
+        {{each data as value i}}
+        {{if i == 0}}
+        <div class="aui-tab-item aui-active">{{value.company_name}}</div>
+        {{else}}
+        <div class="aui-tab-item">{{value.company_name}}</div>
+        {{/if}}
+        {{/each}}
+    </div>
+    {{each data as value i}}
+    <ul class="aui-list aui-list-in userInfo1 {{if i ==0}} active {{/if}}" id="usr_info_ul_{{i}}">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <span>姓名</span>
+                    <span>{{value.real_name}}</span>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <span>电话</span>
+                    <span>{{value.user_mobile}}</span>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <span>部门</span>
+                    <span>{{value.department_name}}</span>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <span>职位</span>
+                    <span>{{value.position_name }}</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+    {{/each}}
+    <ul class="aui-list aui-list-in userInfo2">
+        <li class="aui-list-header">
+            个人信息
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title" onclick="showPhoneSelect('{{ data[0].user_mobile}}')">
+                    <span>联系方式</span>
+                    <span>{{ data[0].user_mobile }}</span>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">
+                    <span>邮箱</span>
+                    <span>{{data[0].email}}</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</script>
+<script type="text/javascript">
+    var pageParam;
+    apiready = function () {
+//        pageParam = api.pageParam.data ? api.pageParam.data : api.pageParam;
+        pageParam = api.pageParam;
+        var userInfo = localStorage.getItem('user');
+        var user_id_me = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        var user_id_friend = pageParam.user_id;
+
+        api.ajax({
+            url: INTERFACE['PERSON_INFO'],
+            method: 'post',
+            dataType: 'json',
+            data: {
+                values: {user_id: user_id_me, user_password: password, person_user_id: user_id_friend}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                showFriendInfo(ret);
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    };
+
+    function showFriendInfo(ret) {
+        //从最简单的情况考虑起，两个人仅仅是好友，不在同一个公司
+        console.log(JSON.stringify(ret));
+        var html;
+        if (ret.is_belong == 0 && ret.result == 1) {
+            html = template("we-were-just-friend", ret);
+            $api.append($api.byId('friend_info_box'), html);
+        } else if (ret.is_belong == 1 && ret.result == 1){
+            html = template("we-were-partner-too", ret);
+            $api.append($api.byId("friend_info_box"), html);
+//            tab切换
+            var tab = new auiTab({
+                element: document.getElementById("tab")
+            }, function (ret) {
+                console.log(ret.index);
+                var index = ret.index - 1;
+                var uls = document.getElementsByClassName('userInfo1');
+                for (var i in uls) {
+                    $api.removeCls(uls[i], 'active');
+                }
+                var id = 'usr_info_ul_' + index;
+                $api.addCls(document.getElementById(id), 'active');
+            });
+        }
+    }
+
+    //发消息
+    $api.byId('sendMsgBtn').onclick = function () {
+        api.openWin({
+            name: 'onetoone',
+            url: './onetoone.html',
+            vScrollBarEnabled: false,
+            pageParam: pageParam
+        });
+        api.parseTapmode();
+    };
+
+    function showPhoneSelect(phone) {
+        api.actionSheet({
+            cancelTitle: '取消',
+            buttons: ["复制", "拨打电话", "保存到手机通讯录"]
+        }, function (ret, err) {
+            var index = ret.buttonIndex;
+            if (index == 1) {
+                //复制电话号码
+                var clipBoard = api.require('clipBoard');
+                clipBoard.set({
+                    value: '' + phone
+                });
+                api.toast({msg: "复制成功"})
+            } else if (index == 2) {
+                //拨打电话
+                api.call({
+                    type: 'tel_prompt',
+                    number: '' + phone
+                })
+            } else if (index == 3) {
+                //保存到手机上
+                var contacts = api.require('contacts');
+                contacts.add({
+                    phones: [{
+                        '住宅': '12345678'
+                    }, {
+                        '工作': '' + phone
+                    }],
+                    email: 'zhengcuan@api.com',
+                    company: '柚子科技',
+                    title: '工程师',
+                    note: '无'
+                }, function (ret, err) {
+                    if (ret) {
+                        api.toast({msg: "已保存到通讯录", location: "bottom", duration: 1500});
+                    } else {
+                        api.toast({msg: "保存失败,请允许权限并重试", location: "bottom", duration: 1500});
+                    }
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>

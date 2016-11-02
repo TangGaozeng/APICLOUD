@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>建群搜索成员</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/group_search.css"/>
+</head>
+<body>
+<header id="header" class="aui-bar aui-bar-nav">
+    <div class="aui-searchbar">
+        <div class="aui-searchbar-input aui-border-radius">
+            <i class="aui-iconfont aui-icon-search"></i>
+            <form action="javascript:search();">
+                <input type="text" placeholder="输入手机号或姓名搜索" id="search-input">
+            </form>
+        </div>
+        <div class="aui-searchbar-cancel back fs-15 color-f" tapmod>取消</div>
+    </div>
+</header>
+<script src="../../script/api.js"></script>
+<script src="../../script/then.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        fnReady();
+        var header = $api.byId('header');
+        var pageParam = api.pageParam;
+        api.openFrame({
+            name: 'create_group_search_frame',
+            url: './create_group_search_frame.html',
+            rect: {
+                x: 0,
+                y: $api.offset(header).h,
+                w: 'auto',
+                h: api.winHeight - $api.offset(header).h - 45
+            },
+            pageParam: pageParam,
+            bounces: false,
+            vScrollBarEnabled: false
+        });
+        api.openFrame({
+            name: 'count_chosen_frame',
+            url: './count_chosen_frame.html',
+            rect: {
+                x : 0,
+                y : api.winHeight - 45,
+                w : 'auto',
+                h : 45
+            },
+            bounces: false,
+            vScrollBarEnabled: false
+        });
+        
+        //监听输入框的输入事件
+        (function listenInputEvent() {
+            var search_input = document.getElementById('search-input');
+            search_input.focus();
+            search_input.oninput = function () {
+                if(this.value.length > 0){
+                    api.sendEvent({
+                        name:'keywords',
+                        extra:{
+                            keywords: this.value
+                        }
+                    })
+                }
+            }
+        })();
+    }
+</script>
+</body>
+</html>

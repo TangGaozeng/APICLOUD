@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>余额</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/difference.css">
+</head>
+<body class="bg-gray-color difference">
+<!--<div class="">-->
+<!--<div>-->
+<div class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-pull-left aui-btn back">
+        <span class="aui-iconfont aui-icon-left fs-22"> </span>
+    </a>
+    <div class="aui-title fs-18"><strong>余额</strong></div>
+    <!--<div class="aui-pull-right aui-btn"><i class="aui-iconfont aui-icon-menu"></i></div>-->
+</div>
+<section class="aui-content">
+    <img src="../../image/mine/money.png">
+    <p class="mr-t-33 fs-18">我的余额(元)</p>
+    <p class="fs-30" id="feeNum">0.00</p>
+    <div class="aui-btn aui-btn-block chongzhi fs-18" id="go-chongzhi">充值</div>
+    <!--<div class="aui-btn aui-btn-block aui-btn-outlined zt" id="go-zhuangzhang">转账</div>-->
+    <div class="aui-btn aui-btn-block aui-btn-outlined zt" id="go-tixian">提现</div>
+</section>
+<!--</div>-->
+<!--</div>-->
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    apiready = function () {
+        fnReady();
+        api.ajax({
+            url: INTERFACE['MINE_INDEX'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret.data));
+                if(ret.data!=''&&ret.data!=undefined){
+                    $api.byId('feeNum').innerHTML = Math.ceil(ret.data.moneyCount)!=0 ? (ret.data.moneyCount+'').substr(0,4) : '0.00';
+                }
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+
+        $api.byId('go-chongzhi').onclick = function () {
+            api.openWin({
+                name: 'chongzhi',
+                url: '../mine/chongzhi.html',
+                bounces: false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+        /*$api.byId('go-zhuangzhang').onclick = function () {
+         api.openWin({
+         name : 'communication',
+         url : '../mine/communication.html',
+         bounces : false,
+         vScrollBarEnabled : false
+         });
+         api.parseTapmode();
+         };*/
+        $api.byId('go-tixian').onclick = function () {
+            api.openWin({
+                name:'widthdraw',
+                url:'./widthdraw.html',
+                bounces:false,
+                vScrollBarEnabled: false
+            });
+            api.parseTapmode();
+        };
+
+    }
+</script>
+</html>

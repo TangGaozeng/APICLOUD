@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>交易记录</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/transaction-record.css">
+</head>
+<body class="bg-gray-color transaction-record" >
+<div id="content"></div>
+<img src="../../image/mine/no_data.png" id="no-data" class="no-data">
+<script id="transaction_record_template" type="text/html">
+    {{each data as value}}
+    <ul class="aui-list">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-left">
+                    {{if value.finance_type == '1'}}
+                    <p>充值</p>
+                    {{else if value.finance_type == '2'}}
+                    <p>提现</p>
+                    {{else if value.finance_type == '3'}}
+                    <p>收款</p>
+                    {{else if value.finance_type == '4'}}
+                    <p>付款</p>
+                    {{/if}}
+                    <span>{{value.create_date}}</span>
+                </div>
+                <div class="aui-list-item-right">
+                    <p>{{value.amount.substr(0,4)}}</p>
+                    {{if value.finance_status == '0'}}
+                    <span>审核中</span>
+                    {{else if value.finance_status == '1'}}
+                    <span>成功</span>
+                    {{else if value.finance_status == '2'}}
+                    <span>撤销</span>
+                    {{else if value.finance_status == '3'}}
+                    <span class="waring">拒绝</span>
+                    {{/if}}
+                </div>
+            </div>
+        </li>
+    </ul>
+    {{/each}}
+</script>
+<div class="select" id="select_z"></div>
+<div class="selectbox" id="selectbox">
+    <div class="aui-row">
+        <div class="aui-col-xs-3 transaction">
+            <div class="aui-grid-label ">充值</div>
+        </div>
+        <div class="aui-col-xs-3 transaction">
+            <div class="aui-grid-label">提现</div>
+        </div>
+        <div class="aui-col-xs-3 transaction">
+            <div class="aui-grid-label">收款</div>
+        </div>
+        <div class="aui-col-xs-3 transaction">
+            <div class="aui-grid-label">付款</div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script>
+    apiready = function(){
+        fnReady();
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        var transactions = $api.domAll('.transaction');
+        var selectbox = $api.byId('selectbox');
+        var mask = $api.byId('mask');
+        var select_z = $api.byId('select_z');
+        var int = 0;
+        api.showProgress({
+            title : '加载中...',
+            modal : true
+        });
+        //筛选记录
+        api.addEventListener({
+           name:'texts',
+        },function(ret,err){
+            if(ret.value.texts == '收起'){
+                $api.css(selectbox,'display:block');
+                $api.css(select_z,'display:block');
+            }else{
+                $api.css(selectbox,'display:none');
+                $api.css(select_z,'display:none');
+            };
+        });
+        for(var i=0;i<transactions.length;i++){
+            transactions[i].index = i;
+            transactions[i].onclick = function(){
+                int = this.index+1;
+                $api.css(selectbox,'display:none');
+                $api.css(select_z,'display:none');
+                api.sendEvent({
+                    name:'sub_text',
+                    extra:{
+                        sub_text:"筛选"
+                    }
+                });
+                api.ajax({
+                    url:INTERFACE['TRANSACTION_RECORD'],
+                    method:'post',
+                    dataType:'json',
+                    data:{
+                        values:{user_id:user_id,user_password:password,type:int,page:0,pagesize:10}
+                    },
+                    timeout: AJAX.TIMEOUT
+                },function(ret,err){
+                    if(ret&&ret.data.length != 0){
+                        console.log(JSON.stringify(ret));
+                        transaction_succ(ret);
+                    }else{
+                        AJAX.ERROR(err);
+                    }
+                });
+                api.parseTapmode();
+            };
+        };
+
+        api.ajax({
+            url:INTERFACE['TRANSACTION_RECORD'],
+            method:'post',
+            dataType:'json',
+            data:{
+                values:{user_id:user_id,user_password:password,type:0,page:0,pagesize:10}
+            },
+            timeout: AJAX.TIMEOUT
+        },function(ret,err){
+            api.hideProgress();
+            if(ret && ret.data.length != 0){
+                console.log(JSON.stringify(ret));
+                transaction_succ(ret);
+                if(ret.data == ""){
+                    $api.css($api.byId('no-data'),'display:block');
+                };
+            }else{
+                AJAX.ERROR(err);
+                $api.css($api.byId('no-data'),'display:block');
+            }
+        });
+
+        api.setRefreshHeaderInfo({
+            visible:true,
+            bgColor:'#ccc',
+            textColor:'#6f7378',
+            textDown:'下拉刷新...',
+            textUp:'松开刷新...',
+            showTime:true
+        },function(ret,err){
+            console.log('ok');
+            if(ret){
+                api.ajax({
+                    url:INTERFACE['TRANSACTION_RECORD'],
+                    method:'post',
+                    dataType:'json',
+                    data:{
+                        values:{user_id:user_id,user_password:password,type:0,page:0,pagesize:20}
+                    },
+                    timeout: AJAX.TIMEOUT
+                },function(ret,err){
+                    if(ret&&ret.data.length != 0){
+                        console.log(JSON.stringify(ret));
+                        transaction_succ(ret);
+                        api.refreshHeaderLoadDone();
+                    }else{
+                        AJAX.ERROR(err)
+                    }
+                });
+            }else{
+                api.alert({
+                    title: '错误提示',
+                    msg: '刷新失败'
+                });
+            }
+        });
+        //点击页面任意点取消此次筛选
+        $api.byId('select_z').onclick = function(){
+            $api.css(selectbox,'display:none');
+            $api.css(select_z,'display:none');
+            api.sendEvent({
+                name:'sub_text',
+                extra:{
+                    sub_text:"筛选"
+                }
+            });
+        };
+    };
+    function transaction_succ(data){
+        var html = template('transaction_record_template',data);
+        document.getElementById('content').innerHTML = html;
+    };
+</script>
+</html>

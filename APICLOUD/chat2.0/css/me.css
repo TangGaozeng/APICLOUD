@@ -1,0 +1,49 @@
+		.me .aui-bar{
+			background:#4877e7
+		}
+		.me .content{
+			width:90%;
+			background: #fff;
+			margin: 0 auto;
+			margin-top:69px;
+			text-align: center;
+			border-radius: 5px;
+		}
+		 .me .content .head-img{
+		   position: relative;padding-top:38px;
+		}
+		.me .content .head-img img{
+			width:120px;
+			margin:auto;
+			display: block;
+			border-radius: 50%;
+			border:10px solid #fff;
+			position:absolute;
+			top:0;
+			left: 0;
+			right: 0;
+			bottom:0;
+			margin-top:-50px;
+		}
+		.me .content .name{
+			margin-top:46px;
+			font-size:17px;
+			color:#2f2f2f; 
+		}
+		.me .content .here{
+			margin-top:21px;
+			font-size: 15px;
+			color:#b8bec7;
+		}
+		.me .content .two-img img{
+			width:200px ;
+			margin-top:27px;
+		}
+		.me .content button{
+			width:100%;
+			background: #32a7b9;
+			font-size: 15px;
+			height:38px;
+			margin-top:20px;
+			color:#fff;
+		}

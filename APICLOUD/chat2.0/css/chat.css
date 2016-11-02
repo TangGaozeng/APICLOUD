@@ -1,0 +1,539 @@
+.normal .mingpian{
+    min-width: 150px;
+}
+.normal .mingpian .msgTop{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px dashed #b8cdff;
+}
+.normal .mingpian .msgTop img{
+    width: 43px;
+    height: 43px;
+    margin-top: 8px;
+    margin-right: 11px;
+    border-radius: 50%;
+}
+.normal .mingpian .msgBottom{
+    height: 25px;
+    line-height: 25px;
+    font-size: 13px;
+    padding-left: 5px;
+    color: #868686;
+}
+.normal .ditu img{
+    max-width: 100%;
+}
+.normal .ditu p{
+    background-color: #7a7a78;
+    color: #fff;
+}
+.voice .yuyin{
+    width: 50px;
+    height: 15px;
+    padding: 0 15px;
+}
+.voice .yuyin img{
+    width: 12px;
+    height: 15px;
+}
+.voice.aui-chat-right .yuyin img{
+    float: right;
+}
+.voice.aui-chat-left .timedot{
+    float: left;
+    margin-left: 15px;
+}
+.voice.aui-chat-right .timedot{
+    float: right;
+    margin-right: 15px;
+}
+.voice .timedot{
+    color: #868686;
+}
+.voice .timedot span.reddot{
+    display: block;
+    width: 8px;
+    height: 8px;
+    margin: 0 auto 8px auto;
+    background-color: #f00;
+    border-radius: 50%;
+}
+.voice .timedot span.timenum{
+    font-size: 13px;
+}
+.voice .yuyin img.active{
+    animation: myfirst 1s linear  infinite;
+    -webkit-animation: myfirst 1s linear infinite;
+}
+@keyframes myfirst {
+    from {width: 9px;}
+    to {width: 12px}
+}
+@-webkit-keyframes myfirst {
+    from {width: 9px;}
+    to {width: 12px}
+}
+.userTxBox{
+    width: 100%;
+    height: 180px;
+    padding-top: 16px;
+    background-color: #4977e7;
+}
+.userTxBox .touxiang img{
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 5px solid #fff;
+}
+.userTxBox .userNc{
+    height: 21px;
+    line-height: 21px;
+    margin-top: 16px;
+    text-align: center;
+    font-size: 17px;
+    color: #fff;
+}
+.companyBox.aui-list.aui-list-in .aui-list-item-inner:after{
+    height: 0;
+}
+.companyBox .aui-list-item-title {
+    height: 50px;
+    line-height: 50px;
+}
+.companyBox .aui-list-item-title .companyLogo{
+    width: 23px;
+    height: 23px;
+    margin-top: 13px;
+}
+.companyBox .aui-list-item-title .companyName{
+    font-size: 14px;
+    color: #2f2f2f;
+    margin: 0 14px 0 10px;
+}
+.companyBox .aui-list-item-title .companyRz{
+    width: 60px;
+    height: 20px;
+    margin-top: 15px;
+}
+.aui-list-item-arrow:before{
+    border: 1px solid #abb4bc;
+    border-top: none;
+    border-right: none;
+}
+.companyTab{
+    margin-top: 16px;
+}
+.companyTab .aui-tab-item{
+    font-size: 14px;
+    color: #868686;
+}
+.companyTab .aui-tab-item.aui-active {
+    color: #4877e7;
+    border-bottom: 2px solid #4877e7;
+}
+.userInfo2{
+    margin-top: 16px;
+    margin-bottom: 120px;
+}
+.userInfo2.aui-list .aui-list-header{
+    height: 45px;
+    line-height: 45px;
+    padding: 0 0 0 15px;
+    font-size: 15px;
+    color: #4877e7;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+.aui-list-item{
+    height: 45px;
+    line-height: 45px;
+}
+#footBar{
+    height: 50px;
+    line-height: 50px;
+    background-color: #fff;
+    color: #4877e7;
+}
+#footBar .aui-bar-tab-label{
+    font-size: 15px;
+}
+.aui-list .aui-list-item-title{
+    width: 100%;
+}
+.aui-list .aui-list-item-title span:first-child{
+    font-size: 15px;
+    color: #2f2f2f;
+}
+.aui-list .aui-list-item-title span:last-child{
+    float: right;
+    font-size: 14px;
+    color: #868686;
+}
+.msgListUl{
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    background-color: #fff;
+}
+.msgListUl:before{
+    /*top: -1px;
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;*/
+}
+.msgListUl:after{
+    /*position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;*/
+}
+.msgListUl .msg-list-item{
+    height: 66px;
+    line-height: 66px;
+    position: relative;
+    overflow: hidden;
+    *padding: 11px 15px;
+    -webkit-touch-callout: none;
+}
+.msgListUl .msg-list-item:last-child:after{
+    height: 0;
+
+}
+.msgListUl .msg-list-item:after{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 15px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+.msg-list-item > .slider-right-box{
+    position: absolute;
+    top: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    height: 100%;
+    right: 0;
+    -webkit-transition: -webkit-transform 0ms ease;
+    transition: -webkit-transform 0ms ease;
+    transition: transform 0ms ease;
+    transition: transform 0ms ease, -webkit-transform 0ms ease;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+}
+.msg-list-item > .slider-right-box .del-btn{
+    position: relative;
+    left: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 0 30px;
+    color: #fff;
+    border: 0;
+    border-radius: 0;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+        align-items: center;
+    -webkit-transition: -webkit-transform 300ms ease;
+    transition: -webkit-transform 300ms ease;
+    transition: transform 300ms ease;
+    transition: transform 300ms ease, -webkit-transform 300ms ease;
+    background-color: #f7585e;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42;
+    margin-bottom: 0;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+    background-clip: padding-box;
+}
+.msg-list-item > .slider-right-box .del-btn:after{
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    width: 600%;
+    height: 100%;
+    content: '';
+    background: inherit;
+}
+.msg-list-item > .msg-item-content{
+    -webkit-transition: -webkit-transform 300ms ease;
+    transition: -webkit-transform 300ms ease;
+    transition: transform 300ms ease;
+    transition: transform 300ms ease, -webkit-transform 300ms ease;
+    position: relative;
+    background-color: #fff;
+}
+.msgListUl .msg-list-item .slider-right-box .del-btn{
+     transform: translate(0px, 0px);
+    -webkit-transform: translate(0px, 0px);
+ }
+.msgListUl .msg-list-item .msg-item-content{
+    transform: translate(0px, 0px);
+    -webkit-transform: translate(0px, 0px);
+}
+#msgListBox .aui-searchbar{
+    height: 46px;
+    line-height: 46px;
+    position: relative;
+    background: transparent;
+}
+.msgListUl .msg-item-content .userphoto{
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border-radius: 50%;
+    margin-left: 15px;
+    margin-right: 12px;
+    margin-top: 8px;
+}
+.msgListUl .msg-item-content .quntouxiang{
+    width: 50px;
+    height: 50px;
+    margin-left: 15px;
+    margin-right: 12px;
+    margin-top: 8px;
+}
+.msgListUl .msg-item-content .name_lastmsg{
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    overflow: hidden;
+    height: 50px;
+    margin-top: 8px;
+}
+.name_lastmsg .friname{
+    height: 27px;
+    line-height: 27px;
+}
+.name_lastmsg .lastmsg{
+    height: 18px;
+    line-height: 18px;
+    overflow: hidden;
+}
+.msgListUl .msg-item-content .time_redot{
+    overflow: hidden;
+    height: 50px;
+    margin-top: 8px;
+    margin-right: 15px;
+}
+.time_redot .datetime{
+    height: 27px;
+    line-height: 27px;
+}
+.time_redot .reddot{
+    min-width: 19px;
+    text-align: center;
+    line-height: 1;
+    padding: 3px;
+    background-color: #f00;
+    float: right;
+    border-radius: 50%;
+}
+.time_redot .xit_reddot{
+    width: 10px;
+    height: 10px;
+    line-height: 10px;
+    background-color: #f00;
+    float: right;
+    border-radius: 50%;
+}
+.icon-qun{
+    font-size: 26px;
+    font-weight: lighter;
+}
+.groupInfo .headBox{
+    width: 100%;
+    height: 171px;
+    padding-top: 33px;
+    background-color: #fff;
+}
+.groupInfo .headBox .groupLogo{
+    display: block;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto;
+}
+.groupInfo .headBox .groupName{
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+}
+.groupInfo .headBox .groupName span:first-child{
+    font-size: 17px;
+    color: #5f6574;
+}
+.groupInfo .headBox .groupName span:last-child{
+    width: 30px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    padding: 0;
+    font-size: 12px;
+}
+.groupInfo .groupMember{
+    width: 100%;
+    height: 96px;
+    margin-top: 15px;
+    padding: 0 12.5px;
+}
+.groupInfo .groupMember p{
+    height: 42px;
+    line-height: 42px;
+}
+.groupInfo .groupMember p .group_member_num{
+    margin-right: 10px;
+    color: #879efa;
+}
+.groupInfo .groupMember .member_tx_box{
+    height: 54px;
+    line-height: 54px;
+}
+.member_tx_box .userTx{
+    width: 10.7%;
+    text-align: center;
+}
+.member_tx_box .userTx img{
+    max-width: 100%;
+}
+.member_tx_box .border_radius{
+    border-radius: 50%;
+    font-size: 44px;
+    font-weight: lighter;
+}
+.member_tx_box .add_group_member{
+    background-color: #2bcbed;
+}
+.member_tx_box .less_group_member{
+    background-color: #879efa;
+}
+.groupInfo .groupoutline{
+    margin: 15px 0;
+}
+.groupoutline .aui-list-item-right .aui-label-info{
+    background-color: #ff7e44;
+}
+.groupoutline .aui-list .aui-list-item-inner:after{
+    height: 0;
+}
+.groupoutline .aui-list.aui-list-in .aui-list-item:after{
+    width: 100%;
+    height: 1px;
+    background-color: #d8d9dd;
+    display: block;
+    content: '';
+    position: absolute;
+    top: auto;
+    right: auto;
+    bottom: 0;
+    left: 0;
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+}
+.switchBox .aui-switch:checked{
+    border-color: #4cda64;
+    background-color: #4cda64;
+}
+.groupInfo .cleanRecord{
+    width: 100%;
+    height: 45px;
+    line-height: 45px;
+    padding-left: 12.5px;
+    background-color: #fff;
+    margin: 15px auto 65px auto;
+}
+.groupInfo .del_quit{
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    z-index: 50;
+    table-layout: fixed;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background-color: #f7585e;
+    font-size: 17px;
+    color: #fff;
+}
+#friend_info_box .userInfo1{
+    display: none;
+}
+#friend_info_box .userInfo1.active{
+    display: block;
+}
+.me .aui-bar{
+    background:#4877e7
+}
+.me .content{
+    width:90%;
+    background: #fff;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 5px;
+}
+.me .content .head-img{
+    position: relative;padding-top:38px;
+}
+.me .content .head-img img{
+    width:120px;
+    height: 120px;
+    margin:auto;
+    display: block;
+    border-radius: 50%;
+    border:10px solid #fff;
+    position:absolute;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom:0;
+    margin-top:-50px;
+}
+.me .content .name{
+    margin-top:46px;
+    font-size:17px;
+    color:#2f2f2f;
+}
+.me .content .here{
+    margin-top:10px;
+    font-size: 15px;
+    color:#b8bec7;
+}
+.me .content .two-img{
+    width:100%;
+}
+.me .content .two-img img{
+    width: 69.5%;
+    margin-top: -5px;
+}
+.me .content button{
+    width:100%;
+    background: #32a7b9;
+    font-size: 15px;
+    height:38px;
+    margin:20px 0;
+    color:#fff;
+}
+/*# sourceMappingURL=chat.css.map */

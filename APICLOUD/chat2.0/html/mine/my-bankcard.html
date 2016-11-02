@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>我的银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="my-bankcard">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back" href="#">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">我的银行卡</div>
+        <a href="#" class="aui-btn aui-pull-right" id="addBankCard">
+            <img src="../../image/mine/my-bankcard.png" alt="">
+        </a>
+    </header>
+
+    <section class="aui-content" id="bankcard-wrap">
+  <!--      <div class="my-card">
+            <div class="card-tit clearfix">
+                <div class="bank-logo">
+                    <img src="../../image/mine/jianshe.png" alt="">
+                </div>
+                <p>建设银行</p>
+            </div>
+            <div class="card-num">
+                <span>5689</span><span>5848</span><span>5874</span><span>6216</span>
+            </div>
+            <span class="card-lose">解绑</span>
+        </div>
+        <div class="my-card">
+            <div class="card-tit clearfix">
+                <div class="bank-logo">
+                    <img src="../../image/mine/gongshang.png" alt="">
+                </div>
+                <p>工商银行</p>
+            </div>
+            <div class="card-num">
+                <span>5689</span><span>5848</span><span>5874</span><span>6216</span>
+            </div>
+            <span class="card-lose">解绑</span>
+        </div>
+-->
+    </section>
+    <div class="shield"></div>
+    <div class="alert-box">
+        <div class="alert-tit">确定解绑？</div>
+        <div class="alert-select">
+            <div class="alert-btn" id="exit">取消</div>
+            <div class="alert-btn" id="confirm">确定</div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/common.js"></script>
+    <script type="text/javascript" src="../../script/template.js"></script>
+    <script type="text/javascript" src="../../script/rong_cloud.js"></script>
+    <script id="bankCard" type="text/html">
+        {{each data as value}}
+        <div class="my-card">
+            <div class="card-tit clearfix">
+                <div class="bank-logo">
+                    <img src="{{value.bank_logo}}" alt="">
+                </div>
+                <p>{{value.bank_name}}</p>
+            </div>
+            <div class="card-num">
+                <span>{{value.bank_number.substr(0,4)}}</span><span>{{value.bank_number.substr(4,4)}}</span><span>{{value.bank_number.substr(8,4)}}</span><span>{{value.bank_number.substr(12,4)}}</span>
+                {{if value.bank_number.substr(16,4)}}
+                <span>{{value.bank_number.substr(16,4)}}</span>
+                {{/if}}
+            </div>
+            <span class="card-lose delBankCard" bankid="{{value.bank_card_id}}">解绑</span>
+        </div>
+        {{/each}}
+    </script>
+
+    <script type="text/javascript">
+
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        apiready = function () {
+            fnReady();
+            inItListen();
+            showBankCard();
+
+            api.showProgress({
+                title: '数据加载中...',
+                text: '请稍候...'
+            })
+            $api.byId('addBankCard').onclick = function(){
+                api.openWin({
+                    name : 'bind_bankCard',
+                    url : '../mine/bind_bankCard.html',
+                    bounces:false,
+                    vScrollBarEnabled:false
+                });
+                api.parseTapmode();
+            };
+
+        };
+
+        function showBankCard(){
+            api.ajax({
+                url: INTERFACE['GET_BANK_CARD_LIST'],
+                method: "post",
+                dataType: "json",
+                data: {
+                    values: {user_id: user_id, user_password: password}
+                },
+                timeout: AJAX.TIMEOUT
+            }, function (ret, err) {
+                if (ret) {
+                    console.log(JSON.stringify(ret));
+                    if(ret.data){
+                        api.hideProgress();
+                        console.log(JSON.stringify(ret.data));
+                        console.log(ret.data[0].bank_logo);
+                        var html = template("bankCard",ret);
+                        $api.byId('bankcard-wrap').innerHTML = html;
+                        afterTemplate();
+                    }
+                    else{
+                        api.hideProgress();
+                    }
+
+                } else {
+                    console.log(JSON.stringify(err));
+                    AJAX.ERROR(err);
+                    api.hideProgress();
+                }
+            });
+        }
+
+        function afterTemplate(){
+            //解绑
+            for(i=0;i<$api.domAll('.delBankCard').length;i++){
+                $api.domAll('.delBankCard')[i].onclick = function () {
+                    var bank_card_id = this.getAttribute("bankid");
+                    console.log(bank_card_id);
+                    $api.css($api.domAll('.shield')[0],'display: block');
+                    $api.css($api.domAll('.alert-box')[0],'display: block');
+                    $api.byId('confirm').onclick = function () {
+                        api.ajax({
+                            url: INTERFACE['DEL_BANK_CARD'],
+                            method: "post",
+                            dataType: "json",
+                            data: {
+                                values: {user_id: user_id, user_password: password, bank_card_id:bank_card_id}
+                            },
+                            timeout: AJAX.TIMEOUT
+                        }, function (ret, err) {
+                            if (ret) {
+                                console.log(JSON.stringify(ret));
+                                if(ret.result==1){
+                                    location.reload();
+                                }
+
+                            } else {
+                                console.log(JSON.stringify(err));
+                                AJAX.ERROR(err);
+                            }
+                        });
+                    }
+                    $api.byId('exit').onclick = function () {
+                        $api.css($api.domAll('.shield')[0],'display: none');
+                        $api.css($api.domAll('.alert-box')[0],'display: none');
+                    }
+
+                }
+            }
+
+        }
+
+        function inItListen(){
+            api.addEventListener({
+                name: 'bank_card_change'
+            }, function (ret, err) {
+                showBankCard();
+            });
+        }
+
+    </script>
+</body>
+</html>

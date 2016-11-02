@@ -1,0 +1,34 @@
+.mui-content{
+    background: transparent;
+}
+.t-logo{
+    width: 100%;
+    height: 158px;
+    padding-top: 35px;
+}
+.t-logo .logoBox{
+    width: 88px;
+    height: 88px;
+    line-height: 88px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    color: #fff;
+    text-align: center;
+}
+#loginBtn{
+    display: block;
+    width: 93.33%;
+    height: 45px;
+    line-height: 45px;
+    border-radius: 7px;
+    background-color: #879efb;
+    margin: 25px auto;
+}
+.mui-input-row input{
+    padding-left: 20px;
+}
+.otherBox{
+    width: 93.33%;
+    margin: 0 auto;
+}

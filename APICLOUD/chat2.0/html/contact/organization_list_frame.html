@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>organization</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/organization.css" />
+</head>
+<body class="org_temp_1 bg-gray-color" id="org_depart_staff">
+<script id="depart_staff_template" type="text/html">
+    {{if department_list != '' || department_list != []}}
+    <!--部门-->
+    <ul class="department aui-list aui-list-in">
+        {{each department_list as value}}
+        <li class="aui-list-item aui-list-item-middle" data-companyId={{value.company_id}} data-departmentId={{value.department_id}} data-departName={{value.department_name}}>
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title fs-15 color-2f">{{value.department_name}}</div>
+                <div class="aui-list-item-title aui-pull-right fs-14">{{value.total}}</div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+    {{if staff_list != '' || staff_list != []}}
+    <!--单个个人-->
+    <ul class="singleitem aui-list aui-media-list">
+        {{each staff_list as value}}
+        <li class="aui-list-item aui-list-item-middle" data-userId={{value.user_id}}>
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media">
+                    <img src={{value.photo}} class="aui-img-round">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title fs-15 color-2f flex">{{value.real_name}}
+                            {{if value.is_manager == 1}}<div class="adminer">管理员</div>{{/if}}
+                        </div>
+                    </div>
+                    <div class="aui-list-item-text fs-13 color-86">{{value.department_name}}</div>
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+</script>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var pageParam = api.pageParam;
+        var company_id = pageParam.company_id;
+        var company_name = pageParam.company_name;
+        var department_id = pageParam.department_id;
+        var department_name = pageParam.department_name;
+        var user_id = getSelfUserId();
+        var user_password = getSelfUserPwd();
+        var type = 1;
+        var object_id = '';
+
+        getDepartmentList(user_id,user_password,company_id,department_id,type,object_id,getDepartmentListSucc);
+
+        //获取我所属公司的部门列表成功后的回调函数
+        function getDepartmentListSucc(ret) {
+            if(ret.result == 1 && ret.data != ''){
+                sentCompanyOrDepartName(company_id,company_name,department_id,department_name);
+                var data = ret.data;
+                var html = template('depart_staff_template',data);
+                console.log(data)
+                document.getElementById('org_depart_staff').innerHTML = html;
+                department_click();
+                staff_click();
+            }
+        }
+
+        //部门列表点击事件处理函数
+        function department_click() {
+            var department_items = $api.domAll($api.dom('.department'),'.aui-list-item');
+            for(var i in department_items){
+                department_items[i].onclick = function () {
+                    company_id = this.getAttribute('data-companyId');
+                    department_id = this.getAttribute('data-departmentId');
+                    department_name = this.getAttribute('data-departName');
+                    getDepartmentList(user_id,user_password,company_id,department_id,type,object_id,getDepartmentListSucc);
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //个人列表点击事件处理函数
+        function staff_click() {
+            var department_items = $api.domAll($api.dom('.singleitem'),'.aui-list-item');
+            for(var i in department_items){
+                department_items[i].onclick = function () {
+                    var user_id_friend = this.getAttribute('data-userId');
+                    console.log(user_id_friend);
+                    api.openWin({
+                        name : 'friendinfo',
+                        url : '../message/friendinfo.html',
+                        vScrollBarEnabled : false,
+                        pageParam: {
+                            user_id: user_id_friend
+                        }
+                    });
+                    api.parseTapmode();
+                }
+            }
+        }
+
+        //监听点击导航栏的事件
+        api.addEventListener({
+            name: 'openOrganizationPage'
+        }, function(ret, err) {
+            company_id = ret.value.company_id;
+            department_id = ret.value.department_id;
+            department_name = ret.value.department_name;
+            getDepartmentList(user_id,user_password,company_id,department_id,type,object_id,getDepartmentListSucc);
+        });
+    }
+</script>
+</body>
+</html>

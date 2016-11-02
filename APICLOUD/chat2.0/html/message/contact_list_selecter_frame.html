@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>手机通讯录</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+    <style type="text/css">
+        .aui-list-item .aui-checkbox{border-radius: 50%;margin-top: 20px;margin-right: 12.5px}
+    </style>
+</head>
+<body class="bg-gray-color">
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in" id="ul-FriendList">
+        <script id="FriendList" type="text/html">
+            {{each list as _list i}}
+            {{i}}
+            {{each _list as value j}}
+            <li class="aui-list-item" data-userType="person" data-userMobile={{value.phone}} data-userId={{value.id}}>
+                <label><input class="aui-checkbox" type="checkbox" name="radio"></label>
+                <div class="txBox">
+                    <img src="../../image/message/txltx.png" alt="">
+                </div>
+                <div class="aui-list-item-inner flex flex-dir-row">
+                    <div class="left">
+                        <p>{{value.title}}</p>
+                        <p>{{value.phone}}</p>
+                    </div>
+                </div>
+            </li>
+            {{/each}}
+            {{/each}}
+        </script>
+    </ul>
+</div>
+<script src="../../script/mui.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/template.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/then.js"></script>
+<script type="text/javascript" src="../../script/SHA1.js"></script>
+<script type="text/javascript">
+    var _data;
+    var _user_id = getSelfUserId();
+    var _file_search = '';
+
+    apiready = function () {
+        is_login();
+        fnInit();
+        getLocalContacts();
+    };
+
+    function fnInit() {
+        api.addEventListener({
+            name: 'searchInputValue'
+        }, function (ret, err) {
+            var SearchValue = ret.value;
+            if(SearchValue){
+                //数字搜索
+                if(/^[0-9]*$/.test(SearchValue)){
+                    _file_search = ' and contact_phone like \'' + SearchValue + '%\' limit 10';
+                }else{
+                    //文字搜索
+                    _file_search = ' and user_name like \'%' + SearchValue + '%\' limit 10';
+                }
+            }else{
+                _file_search = '';
+            }
+
+            getLocalContacts();
+
+        });
+
+    }
+
+
+    //2.获取本地DB - 通讯录
+    function getLocalContacts() {
+
+        //如果搜索值为空时，可能会由于数据多，则进度条显示
+        if(!_file_search){
+            //加载提示
+            api.showProgress({
+                title: '加载中...',
+                modal: true
+            });
+        }
+
+        // 1.获取数据
+        var sql =  'SELECT * FROM contact where user_id =' + _user_id + _file_search;
+        var userRow = selectSqlSync('user',sql);
+        var _LocalContact = userRow.data;
+
+        /* 联系人,按照拼音,升序排列. */
+        _LocalContact = _LocalContact.sort(function (contactA, contactB) {
+            if (contactA["firstChar"].toUpperCase() < contactB["firstChar"].toUpperCase()) {
+                return -1;
+            }
+            return 1;
+        });
+
+
+        /* 将联系人,按照拼音首字母分组. */
+        var listContacts = {};
+        for (var idx in _LocalContact) {
+            var contact = _LocalContact[idx];
+            var listContact = {
+                id: contact.contact_id,
+                img: 'widget://image/message/txltx.png',
+                title: contact.user_name,
+                phone: contact.contact_phone,
+                add: contact.is_friend
+            };
+            var firstChar = contact.firstChar.substring(0, 1).toUpperCase();
+            if ("无名氏" === contact.name || !firstChar.match(/[A-Z]/)) {
+                if ("undefined" === typeof listContacts["#"]) {
+                    listContacts["#"] = [];
+                }
+                listContacts["#"].push(listContact);
+                continue;
+            }
+            if ("undefined" === typeof listContacts[firstChar]) {
+                listContacts[firstChar] = [];
+            }
+            listContacts[firstChar].push(listContact);
+        }
+
+        _data = {
+            list: listContacts
+        };
+
+        console.log(JSON.stringify(_data));
+
+        var html = template('FriendList', _data);
+        document.getElementById('ul-FriendList').innerHTML = html;
+
+        recordChosen('aui-list-item');
+        localStorage.setItem('createGroupType','normal');
+        localStorage.setItem('fromType',1);
+
+        //加载关闭
+        api.hideProgress();
+
+    }
+</script>
+</body>
+</html>

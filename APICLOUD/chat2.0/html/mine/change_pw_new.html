@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>修改支付密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="username-safe setting-pw">
+<header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-btn aui-pull-left back">
+        <span class="aui-iconfont aui-icon-left ifs-22"></span>
+    </a>
+    <div class="aui-title fs-18">修改支付密码</div>
+</header>
+<section class="aui-content">
+    <ul class="aui-list no-border-t no-border-b">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    原支付密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" class="aui-font-size-14" placeholder="" id="pwYet">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    新支付密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" class="aui-font-size-14" placeholder="请输入6位字符" id="pwNew1">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    确认密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" class="aui-font-size-14" placeholder="" id="pwNew2">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <input type="hidden" id="rsa_modulus" value="D15AA98C75B32630C8191CDF9156F55091053C101C58965B2A1A00C3404553B8D953E81BEB22A46200911BE4BDE7A9BB839D01F6819379B60C68725AA479CF1C081E300F1D5DE197FCDE3CADF68F5A5CCC97BEA93F0B2C857691BBE9E28D2BC1F25B7BEBA950D3507376C442B8E6E163018C4800A2B33CE28A53863713AFA133">
+    <input type="hidden" id="rsa_exponent" value="10001">
+    <input type="hidden" id="rsa_maxDigits" value="130">
+    <div class="aui-bar">
+        <div class="aui-bar-btn" id="confirm">确认</div>
+    </div>
+</section>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/rsa.min.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+
+    apiready = function () {
+        fnReady();
+        var flag = 1;
+
+        $api.byId('pwNew1').onblur = function () {
+            var reg = /^[A-Za-z0-9]{6}$/;
+            if(reg.test(this.value)){
+//                return flag = 1;
+            }
+            else{
+                api.alert({
+                    title: '错误提示',
+                    msg: '请输入6位字符！'
+                });
+//                this.focus();
+            }
+
+        }
+        $api.byId('pwNew2').onblur = function () {
+
+            console.log(this.value);
+            if(this.value==$api.byId('pwNew1').value){
+                return flag = 1;
+            }else{
+                api.alert({
+                    title: '错误提示',
+                    msg: '两次密码输入不一致，请重新输入！'
+                });
+//                this.focus();
+                return flag = 0;
+            }
+
+        }
+        $api.byId('confirm').onclick = function () {
+            var pwYet = $api.byId('pwYet').value;
+            var pwNew = $api.byId('pwNew2').value;
+            if(flag!=0){
+                api.ajax({
+                    url: INTERFACE['CHANGE_PAY_PW'],
+                    method: "post",
+                    dataType: "json",
+                    data: {
+                        values: {
+                            user_id: user_id,
+                            user_password: password,
+                            oldPassword: UtilService.doEncrypt(pwYet),
+                            newPayPassword: UtilService.doEncrypt(pwNew)
+                        }
+                    },
+                    timeout: AJAX.TIMEOUT
+                }, function (ret, err) {
+                    console.log(JSON.stringify(ret));
+                    if (ret) {
+                        if(ret.result!=0){
+                            localStorage.setItem("payPassword",UtilService.doEncrypt(pwNew));
+                            api.openWin({
+                                name : 'change_pw_succ',
+                                url : '../mine/change_pw_succ.html',
+                                bounces : false,
+                                vScrollBarEnabled : false
+                            });
+                            api.parseTapmode();
+                        }
+                        else{
+                            api.alert({
+                                title: '错误提示',
+                                msg: ret.msg
+                            });
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                        AJAX.ERROR(err);
+                    }
+                });
+            }else{
+                api.alert({
+                    title: '错误提示',
+                    msg: '请检查输入！'
+                });
+            }
+        }
+
+    };
+
+
+</script>
+</html>

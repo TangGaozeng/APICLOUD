@@ -1,0 +1,574 @@
+/*选择群聊类型*/
+.create_group_index .main{
+    padding-top: 22px;
+}
+.create_group_index .main .company-chat{
+    margin-top: 22px;
+}
+.create_group_index .main .chat,
+.main .company-chat{
+    width:94%;
+    height:92px;
+    background: #fff;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    border-radius:2px;
+}
+.create_group_index .main .chat .chat-left{
+    line-height:57px;
+    width:57.5px;
+    height:57.5px;
+    border-radius: 50%;
+    background: #ff5e5e;
+    text-align:center;
+    position: absolute;
+    left:12.5px;
+    top:17.25px;
+}
+.create_group_index .main .chat .chat-left span{
+    width:4px;
+    height:4px;
+    background:#ff5e5e;
+}
+.create_group_index .main .company-chat .company-chat-left{
+    line-height:57px;
+    width:57.5px;
+    height:57.5px;
+    border-radius: 50%;
+    background: #64c582;
+    text-align:center;
+    position: absolute;
+    left:12.5px;
+    top:17.25px;
+}
+.create_group_index .main .chat .chat-left img,
+.create_group_index .main .company-chat .company-chat-left img{
+    width:36.5px;
+}
+.create_group_index .main .chat .chat-top,
+.create_group_index .main .company-chat .company-chat-top{
+    height:100px;
+    width:10px;
+    background:#3385ff;
+    -webkit-transform: rotateZ(45deg);
+    transform:rotateZ(45deg);
+    position: absolute;
+    left:-5px;
+    top:-45px;
+}
+.create_group_index .main .chat .chat-right,
+.create_group_index .main .company-chat .company-chat-right{
+    width:70%;
+    margin-left:100px;
+    margin-top:18px;
+}
+.create_group_index .main .chat .chat-right div,
+.create_group_index .main .company-chat .company-chat-right div{
+    font-size:15px;
+}
+.create_group_index .main .chat .chat-right p,
+.create_group_index .main .company-chat .company-chat-right p{
+    margin-top: 5px;
+    font-size: 14px;
+    color:#b0b7c1;
+}
+/*创建聊天*/
+.create_groupchat_normal .search_row{
+    position: relative;
+    height: 46px;
+    background-color: #f7f7f8;
+    color: #b0b7c1;
+}
+.create_groupchat_normal .search_row .aui-searchbar-input{
+    height: 29px;
+    line-height: 29px;
+    margin: 0 19px;
+}
+.create_groupchat_normal .contact_friend_box{
+    height: 120px;
+    margin-bottom: 15px;
+}
+.create_groupchat_normal .contact_friend_box .item{
+    width: 85px;
+    height: 120px;
+}
+.create_groupchat_normal .contact_friend_box .item-left{
+    margin-right: 70px;
+}
+.create_groupchat_normal .contact_friend_box .item .item-inner-top{
+    height: 78px;
+    line-height: 78px;
+}
+.create_groupchat_normal .item .item-inner-top img{
+    width: 34px;
+    height: 34px;
+}
+.create_groupchat_normal .aui-list .aui-list-header{
+    background-color: #fff;
+    padding: 0 0 0 10px;
+    height: 45px;
+    line-height: 45px;
+    position: relative;
+}
+.create_groupchat_normal .aui-list .aui-list-header:after{
+    width: 100%;
+    height: 1px;
+    background-color: #d8d9dd;
+    display: block;
+    content: '';
+    position: absolute;
+    top: auto;
+    right: auto;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    pointer-events: none;
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+}
+.create_groupchat_normal .aui-list.aui-list-in .aui-list-item-inner:after{
+    background-color: #d8d9dd;
+}
+.create_groupchat_normal .yjrqy .aui-list-item{
+    background-color: #f7f7f8;
+}
+.create_groupchat_normal .yjrqy .aui-list-item-title {
+    width: 100%;
+    height: 26px;
+    line-height: 26px;
+}
+.create_groupchat_normal .yjrqy .company_logo{
+    width: 26px;
+}
+.create_groupchat_normal .yjrqy .company_name{
+    margin: 0 8px;
+}
+.create_groupchat_normal .yjrqy .qi_icon{
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    border-radius: 2px;
+    font-size: 11px;
+    margin-top: 6px;
+    background-color: #4877e7;
+}
+.create_groupchat_normal .yjrqy .icon-jiantouzhedie{
+    position: absolute;
+    right: 0;
+    font-size: 14px;
+    color: #d8d9dd;
+}
+.create_groupchat_normal .yjrqy.aui-list:after{
+    height: 0;
+}
+.create_groupchat_normal .often_contact_header{
+    height: 45px;
+    line-height: 45px;
+    padding-left: 10px;
+    padding-right: 15px;
+    background-color: #fff;
+    margin-top: 15px;
+    position: relative;
+}
+.create_groupchat_normal .often_contact_header #sjx{
+    position: absolute;
+    top: 19px;
+    right: 15px;
+    width:0;
+    height:0;
+    border-left:7px solid transparent;
+    border-right:7px solid transparent;
+    border-top:7px solid #d8d9dd;
+}
+.create_groupchat_normal .often_contact_header #sjx.dow{
+    transform:rotate(-90deg);
+    -webkit-transform:rotate(-90deg);
+}
+.create_groupchat_normal .often_contact_list .aui-list-item{
+    padding-right: 10px;
+}
+.create_groupchat_normal .aui-list.aui-select-list .aui-list-item-inner{
+    padding: 0;
+    height: 45px;
+    line-height: 45px;
+}
+.create_groupchat_normal .aui-list-item .up{
+    width: 35px;
+    height: 35px;
+    vertical-align: middle;
+    margin: 0 12px;
+}
+.create_groupchat_normal .aui-list-item .un{
+    display: inline-block;
+    min-width: 60px;
+}
+.create_groupchat_normal .aui-list-item label{
+    font-weight: normal;
+    width: 100%;
+}
+.create_groupchat_normal .often_contact_list .aui-list-item:after{
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    width: 85%;
+    left: 11%;
+}
+.create_groupchat_normal #footer{
+    height: 45px;
+    line-height: 45px;
+}
+.create_groupchat_normal #footer.aui-bar{
+    display: flex;
+    display: -webkit-flex;
+    z-index: 10;
+}
+.create_groupchat_normal #footer.aui-bar div{
+    height: 45px;
+    line-height: 45px;
+}
+.create_groupchat_normal #footer.aui-bar div.col-70{
+    color: #4877e7;
+}
+.create_groupchat_normal #footer.aui-bar div.col-30{
+    height: 35px;
+    line-height: 35px;
+    border-radius: 4px;
+    margin-top: 5px;
+    background-color: #c3cffd;
+}
+/*通讯录*/
+.communication{
+    overflow-x: hidden;
+}
+.communication .aui-searchbar{
+    position: relative;
+}
+.communication .aui-searchbar .aui-searchbar-input{
+    text-indent: 22%;
+}
+.communication .aui-list.mb-20{
+    margin-bottom: 20px;
+}
+.communication .aui-list .aui-list-item-label-icon.wode{
+    width: 28px;
+    background: url(../../image/mine/wode-mine.png) left center no-repeat;
+    background-size: 21px 20px;
+}
+.communication .aui-list .aui-list-item.border-ml-10:after{
+    margin-left: 10px;
+}
+.communication .aui-list .aui-list-item.border-ml-20:after{
+    margin-left: 5%;
+}
+.communication .aui-list .list-down:before{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 0;
+    height: 0;
+    margin-top: -0.2rem;
+    border-top: 7px solid #aab3bb;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    transform: rotate(-90deg);
+}
+.communication .aui-list .list-down.active:before{
+    transform: rotate(0);
+}
+
+.communication .aui-list .aui-list-item-arrow:before{
+    right: 22px;
+}
+.communication .aui-list .aui-list-item-inner.block{
+    display: block;
+    line-height: 50px;
+}
+.communication .aui-list .aui-list-item-label-icon.company{
+    width: 28px;
+    background: url(../img/weilv-logo.png) left center no-repeat;
+    background-size: 25px 20px;
+}
+.communication .aui-list .company-logo{
+    display: inline-block;
+    background: #4877e7;
+    border-radius: 3px;
+    font-style: normal;
+    color: #fff;
+    font-size: 12px;
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
+    position: relative;
+    top: -2px;
+}
+.communication .aui-list label{
+    font-weight: 100;
+    width: 100%;
+    position: relative;
+}
+.communication .aui-list label .aui-checkbox{
+    border-radius: 50%;
+}
+.communication .aui-list label span{
+    display: inline-block;
+}
+.communication .aui-list input{
+    margin-right: 14px;
+}
+.communication .aui-list .friends{
+    width: 35px;
+    margin: 0 14px 0 0;
+}
+.communication .aui-list .friends img{
+    width: 100%;
+}
+.communication .aui-list .name{
+    font-size: 14px;
+    width: 60px;
+}
+.communication .aui-list .job{
+    font-size: 14px;
+    color: #868686;
+}
+.communication .aui-list .manager{
+    width: 44px;
+    height: 20px;
+    font-size: 11px;
+    line-height: 20px;
+    text-align: center;
+    color: #fff;
+    background: #ff7d45;
+    border-radius: 3px;
+    position: absolute;
+    top: 23%;
+    right: 0;
+}
+.communication .aui-list .manager2{
+    background: #4877e7;
+}
+.communication footer .aui-bar-tab-item:nth-child(1){
+    text-align: left;
+    padding-left: 10px;
+    font-size: 14px;
+    color: #c3cfff;
+}
+.communication footer .aui-bar-tab-item:nth-child(2){
+    text-align: right;
+}
+.communication footer .btn{
+    display: inline-block;
+    width: 110px;
+    height: 35px;
+    line-height: 35px;
+    font-size: 14px;
+    color: #fff;
+    background: #c3cfff;
+    margin-right: 15px;
+    border-radius: 4px;
+}
+
+/*选择联系人*/
+.choose-group .aui-list .contact{
+    width: 60px;
+    position: relative;
+    margin-right: 8px;
+    font-size: 15px;
+    color: #868686;
+}
+.choose-group .aui-list-item-inner.flex-start{
+    justify-content: flex-start;
+}
+.choose-group .aui-list .contact.aui-list-item-arrow:before,.choose-group .aui-list .contact-inner.aui-list-item-arrow:before{
+    width: 8px;
+    height: 8px;
+    right: 0;
+    margin-top: -5px;
+}
+.choose-group .aui-list .contact-inner{
+    font-size: 15px;
+    color: #4877e7;
+    position: relative;
+}
+.choose-group .aui-list input{
+    margin-right: 14px;
+}
+.choose-group .aui-list label span{
+    font-size: 15px;
+}
+.choose-group .aui-list .name{
+    width: auto;
+    margin-right: 5px;
+}
+
+.aui-list-item-arrow.blue:before{
+    border: 1px solid #4877e7;
+    border-top: none;
+    border-right: none;
+}
+
+.choose-group2  .aui-list .contact-inner2{
+    color: #2f2f2f;
+    padding-right: 14px;
+    margin-right: 10px;
+}
+.choose-group .aui-list label{
+    width: auto;
+}
+.choose-group .aui-list .next{
+    width: 70px;
+    right: 0;
+    color: #4877e7;
+    position: absolute;
+    font-size: 15px;
+    margin-top: 11px;
+}
+.aui-list .aui-list-item:after{
+    width: 95%;
+}
+.communication #org_depart_staff{
+    margin-top: -1px;
+}
+.choose-group .aui-list .aui-list-item-inner label .friends.img img{
+    border-radius: 50%;
+    vertical-align: middle;
+}
+.create_group_index .popup .cont{
+    width: 74.5%;
+    border-radius: 4px;
+}
+.create_group_index .popup .cont .aui-list-header{
+    background-color: #fff;
+    height: 48px;
+    line-height: 48px;
+    padding: 0;
+}
+.create_group_index .popup .cont .aui-list-header:after{
+    height: 1px;
+    background-color: #4877e7;
+    display: block;
+    content: '';
+    position: absolute;
+    top: auto;
+    right: auto;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    pointer-events: none;
+}
+.create_group_index .popup .cont .aui-list-item{
+    padding-left: 8%;
+}
+.create_group_index .popup .cont .aui-list-item:after{
+    background-color: #b7b7b7;
+    margin-left: 5%;
+    width: 90%;
+}
+.create_group_index .popup .cont .aui-list-item-inner{
+    height: 60px;
+    line-height: 60px;
+    padding: 0;
+}
+.create_group_index .popup .aui-radio{
+    margin-right: 8px;
+}
+.company_group_select_photo .content div.firstDiv {
+    height: 348px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #f7f7f8;
+}
+.company_group_select_photo .content div.firstDiv img {
+    width: 196px;
+    height: 196px;
+}
+.company_group_select_photo .content div.firstDiv p {
+    margin-top: 33.5px;
+    font-size: 16px;
+}
+.company_group_select_photo .content div.firstDiv p span:last-child {
+    width: 14px;
+    height: 14px;
+    background: #4877e7;
+    font-size: 10px;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px;
+}
+.company_group_select_photo .content div.secDiv {
+    font-size: 15px;
+    height: 80px;
+    line-height: 80px;
+    padding-left: 12px;
+    width: 100%;
+    color: #b0b7c1;
+}
+.company_group_select_photo .content .scrollBox{
+    width: 100%;
+    overflow: hidden;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+.company_group_select_photo .content .scrollBox::-webkit-scrollbar {
+    display: none;
+}
+.company_group_select_photo .content .imgBox{
+    /*(68 * 6) + (15 * 6)*/
+    width: 498px;
+    /*(68 * 2) + (20 * 2)*/
+    height: 88px;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    min-width: 100%;
+    white-space: nowrap;
+    -webkit-justify-content: space-around;
+    justify-content: space-around;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+}
+.company_group_select_photo .content .imgWarp{
+    position: relative;
+    width: 68px;
+    height: 68px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.company_group_select_photo .content .imgWarp.active{
+    border: 2px solid #4cd661;
+    border-radius: 5px;
+}
+.company_group_select_photo .content .imgWarp.active img{
+    border-radius: 4px;
+}
+.company_group_select_photo .content .imgWarp img{
+    max-width: 100%;
+}
+.company_group_select_photo .content .imgWarp span{
+    position: absolute;
+    display: block;
+    line-height: 1;
+    right: -10px;
+    bottom: -10px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+.company_group_select_photo .content .imgWarp .iconfont{
+    color: #4cd661;
+    font-size: 19px;
+}
+.company_group_input_name .content .inputBox{
+    padding: 0 2.7%;
+}
+.company_group_input_name .inputBox input{
+    background-color: #f1f2f6;
+    border-radius: 3px;
+    padding-left: 10px;
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>login</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mui.css">
+    <link rel="stylesheet" type="text/css" href="../../css/login.css">
+</head>
+<body class="bg-gray-color">
+    <div class="mui-content">
+        <div class="t-logo">
+            <div class="logoBox bg-blue-color">
+                LOGO
+            </div>
+        </div>
+        <form class="mui-input-group" id="loginForm">
+            <div class="mui-input-row">
+                <input type="number" name="mobileNum" id="mobileNum" placeholder="请输入手机号码" autocomplete="off">
+            </div>
+            <div class="mui-input-row">
+                <input type="password" name="password" id="password" placeholder="请输入登录密码" autocomplete="off">
+            </div>
+            <input type="hidden" id="rsa_modulus" value="D15AA98C75B32630C8191CDF9156F55091053C101C58965B2A1A00C3404553B8D953E81BEB22A46200911BE4BDE7A9BB839D01F6819379B60C68725AA479CF1C081E300F1D5DE197FCDE3CADF68F5A5CCC97BEA93F0B2C857691BBE9E28D2BC1F25B7BEBA950D3507376C442B8E6E163018C4800A2B33CE28A53863713AFA133">
+            <input type="hidden" id="rsa_exponent" value="10001">
+            <input type="hidden" id="rsa_maxDigits" value="130">
+        </form>
+        <div id="loginBtn" class="fs-18 color-f text-center">登录</div>
+        <div class="otherBox flex flex-dir-row jsf-con-between">
+            <a class="open-win" win="regist_2">忘记密码</a>
+            <a class="open-win" win="regist_1">新用户注册</a>
+        </div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/validate.js"></script>
+    <script src="../../script/rsa.min.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+        apiready = function(){
+            api.parseTapmode();
+            fnReadyOpenWin();
+            var mobileNum = $api.byId("mobileNum");
+            var password = $api.byId("password");
+            var loginBtn = $api.byId("loginBtn");
+            var isVerifyPass;
+
+            //检测本地是否有登录过的账号
+            if (localStorage.getItem('mobile')) {
+                mobileNum.value = localStorage.getItem('mobile');
+            }
+
+            //表单验证
+            var validator = new FormValidator('loginForm', [{
+                name: 'mobileNum',
+                display: '手机号',
+                rules: 'required|exact_length[11]|valid_mobile'
+            }, {
+                name: 'password',
+                display: '密码',
+                rules: 'required|min_length[6]|max_length[20]'
+            }], function(errors, event) {
+                if (errors.length > 0) {
+                    api.alert({
+                        title: '错误提示',
+                        msg: '手机号或密码错误，请重新输入',
+                    });
+                    isVerifyPass = false;
+                }else{
+                    isVerifyPass = true;
+                }
+            });
+
+            //点击登陆按钮
+            loginBtn.onclick = function(evt){
+                validator._validateForm(evt);
+                if(isVerifyPass){
+                    api.ajax({
+                        url: INTERFACE['LOGIN'],
+                        method: 'post',
+                        dataType: 'json',
+                        data: {
+                            values:{user_mobile: mobileNum.value,user_password: UtilService.doEncrypt(password.value)}
+                        },
+                        timeout: AJAX.TIMEOUT,
+                    }, function(ret, err) {
+                        if (ret) {
+                            success(ret);
+                        } else {
+                            AJAX.ERROR(err);
+                        };
+                    });
+                };
+            };
+
+            //请求成功的回调函数
+            function success(data){
+                if(data.result == 1 && data.data){
+                    api.toast({
+                        msg : data.msg,
+                        duration : 1500,
+                        location : 'bottom'
+                    });
+                    //将返回的用户信息，输入的用户名和密码存储在本地
+                    localStorage.setItem('user', JSON.stringify(data));
+                    localStorage.setItem('mobile',mobileNum.value);
+                    localStorage.setItem('password',UtilService.doEncrypt(password.value));
+                    var user_photo = data.data.photo;
+                    var user_id = data.data.user_id;
+                    if(user_photo && !localStorage.getItem('Photo'+user_id)){
+                        downloadMyPhotoAndSaveLocal(data.data.user_id,user_photo,goToMain);
+                    }else{
+                        goToMain();
+                    }
+                }
+            }
+            
+            function goToMain() {
+                api.sendEvent({
+                    name: 'event_login'
+                });
+
+                api.openWin({
+                    name : 'main',
+                    url : '../main.html',
+                    bounces : false,
+                    vScrollBarEnabled : false,
+                    reload:true //登陆之后,main页必须强制刷新
+                });
+            }
+        };
+    </script>
+</body>
+</html>

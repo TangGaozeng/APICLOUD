@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>一对一聊天</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/chat.css"/>
+</head>
+<body class="bg-gray-color">
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/rong_cloud.js"></script>
+<script type="text/javascript" src="../../script/ui_chat_box.js"></script>
+<script type="text/javascript" src="../../script/business_card_dialog.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript" src="../../script/wv-showindicator.js"></script>
+
+<section class="aui-chat">
+    <div class="aui-chat-header">2016年7月13日</div>
+    <ul id="content"></ul>
+</section>
+
+<script id="single-chat-send-voice-li" type="text/html">
+    <li class="aui-chat-item aui-chat-right voice">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx2.png"/>
+        </div>
+        <div class="aui-chat-inner" onclick="api.startPlay({path:'{{ret.value.message.voicePath}}'})">
+            <div class="aui-chat-name">{{ user.data.user_id }}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                <div class="yuyin">
+                    <img src="../../image/message/yuyinicon_right.png" class="active" alt="">
+                </div>
+            </div>
+            <div class="timedot">
+                <span class="reddot"></span>
+                <span class="timenum">{{ret.value.message.duration}}</span>"
+            </div>
+        </div>
+    </li>
+</script>
+
+<script id="single-chat-send-other-li" type="text/html">
+    <div class="aui-chat-item aui-chat-right normal">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx2.png"/>
+        </div>
+        <div class="aui-chat-inner">
+            <div class="aui-chat-name">{{ user.data.user_id}}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                {{if ret.value.objectName === "RC:TxtMsg"}}
+                {{transEmotion ret.value.message}}
+                {{else if ret.value.objectName == "RC:ImgMsg"}}
+                <img class="imageSrc" src="{{ ret.value.message }}" onclick="imageGalleryFire(this)"/>
+                {{else if ret.value.objectName == "RC:LBSMsg"}}
+                <img
+                        src="http://api.map.baidu.com/staticimage?center={{ ret.value.message.longitude }},{{ ret.value.message.latitude }}&width=400&height=280&zoom=15&copyright=1"
+                        onclick="reopenBMap('{{ ret.value.message.longitude }}','{{ ret.value.message.latitude }}','{{ ret.value.message.poi }}')"/>
+                {{ ret.value.message.poi }}
+                {{else if ret.value.objectName == "RC:CmdNtf" }}
+                <!--发送名片时-->
+                {{if ret.value.name == "business_card" }}
+                <div class="mingpian" onclick="openPersonInfo('{{ ret.value.data }}')">
+                    <div class="msgTop">
+                        <img src="../../image/message/tx2.png" alt="">
+                        <span> {{ret.value.data}}</span>
+                    </div>
+                    <p class="msgBottom">名片</p>
+                </div>
+
+                <!--发送转账时-->
+                {{else if ret.value.name == "transfer_money" }}
+                {{ ret.value.data }}
+                <!--其他自定义消息-->
+                {{/if}}
+                {{/if}}
+            </div>
+            <div class="aui-chat-status">
+                <i class="aui-iconfont aui-icon-correct aui-text-success"></i>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="single-chat-receive-voice-li" type="text/html">
+    <div class="aui-chat-item aui-chat-left voice">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx1.png"/>
+        </div>
+        <div class="aui-chat-inner" onclick="api.startPlay({path:'{{ret.value.result.message.content.voicePath}}'})">
+            <div class="aui-chat-name">{{ ret.value.result.message.targetId }}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                <div class="yuyin">
+                    <img src="../../image/message/yuyinicon_left.png" class="active" alt="">
+                </div>
+            </div>
+            <div class="timedot">
+                <span class="reddot"></span>
+                <span class="timenum">{{ ret.value.result.message.content.duration }}</span>"
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="single-chat-receive-other-li" type="text/html">
+    <div class="aui-chat-item aui-chat-left normal">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx1.png"/>
+        </div>
+        <div class="aui-chat-inner">
+            <div class="aui-chat-name">{{ ret.value.result.message.targetId }}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                {{ if ret.value.result.message.objectName == "RC:TxtMsg" }}
+                {{transEmotion ret.value.result.message.content.text}}
+                {{ else if ret.value.result.message.objectName == "RC:ImgMsg" }}
+                <img class="imageSrc" src="{{ ret.value.result.message.content.imageUrl }}"
+                     onclick="imageGalleryFire(this)"/>
+                {{ else if ret.value.result.message.objectName == "RC:LBSMsg" }}
+                <img
+                        src="http://api.map.baidu.com/staticimage?center={{ ret.value.result.message.content.longitude }},{{ ret.value.result.message.content.latitude }}&width=400&height=280&zoom=15&copyright=1"
+                        onclick="reopenBMap('{{ ret.value.result.message.content.longitude }}','{{ ret.value.result.message.content.latitude }}','{{ ret.value.result.message.content.poi }}')"/>
+                {{ ret.value.result.message.content.poi }}
+                {{ else if ret.value.result.message.objectName == "RC:CmdNtf" }}
+                <!-- 发送名片-->
+                {{if ret.value.result.message.content.name == "business_card" }}
+                <div class="mingpian" onclick="openPersonInfo('{{ret.value.result.message.content.data }}')">
+                    <div class="msgTop">
+                        <img src="../../image/message/tx2.png" alt="">
+                        <span>{{ ret.value.result.message.content.data }}</span>
+                    </div>
+                    <p class="msgBottom">名片</p>
+                </div>
+                <!-- 发送转账 -->
+                {{else if ret.value.result.message.content.name == "transfer_money" }}
+                {{ ret.value.result.message.content.data }}
+                <!-- 其他可能 -->
+                {{/if}}
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="history-chat-send-voice-li" type="text/html">
+    <li class="aui-chat-item aui-chat-right voice">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx2.png"/>
+        </div>
+        <div class="aui-chat-inner" onclick="api.startPlay({path:'{{ret.content.voicePath}}'})">
+            <div class="aui-chat-name">{{ user.data.user_id }}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                <div class="yuyin">
+                    <img src="../../image/message/yuyinicon_right.png" class="active" alt="">
+                </div>
+            </div>
+            <div class="timedot">
+                <span class="reddot"></span>
+                <span class="timenum">{{ ret.content.duration }}</span>"
+            </div>
+        </div>
+    </li>
+</script>
+
+<script id="history-chat-send-other-li" type="text/html">
+    <div class="aui-chat-item aui-chat-right normal">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx2.png"/>
+        </div>
+        <div class="aui-chat-inner">
+            <div class="aui-chat-name">{{ user.data.user_id}}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                {{if ret.objectName == "RC:TxtMsg"}}
+                {{transEmotion ret.content.text}}
+                {{else if ret.objectName == "RC:ImgMsg"}}
+                <img class="imageSrc" src="{{ ret.content.thumbPath }}" onclick="imageGalleryFire(this)"/>
+                {{else if ret.objectName == "RC:LBSMsg"}}
+                <img
+                        src="http://api.map.baidu.com/staticimage?center={{ ret.content.longitude }},{{ ret.content.latitude }}&width=400&height=280&zoom=15&copyright=1"
+                        onclick="reopenBMap('{{ ret.content.longitude }}','{{ ret.content.latitude }}','{{ ret.content.poi }}')"
+                />
+                {{ ret.content.poi }}
+                {{else if ret.objectName == "RC:CmdNtf"}}
+                <!--消息name是名片时-->
+                {{if ret.content.name == "business_card"}}
+                <div class="mingpian" onclick="openPersonInfo('{{ ret.content.data }}')">
+                    <div class="msgTop">
+                        <img src="../../image/message/tx2.png" alt="">
+                        <span>{{ ret.content.data }}</span>
+                    </div>
+                    <p class="msgBottom">名片</p>
+                </div>
+
+                <!--消息name是转账时-->
+                {{else if ret.content.name == "transfer_money" }}
+                {{ ret.content.data }}
+                <!--其他类型消息-->
+                {{/if}}
+                {{/if}}
+            </div>
+            <div class="aui-chat-status">
+                <i class="aui-iconfont aui-icon-correct aui-text-success"></i>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="history-chat-receive-voice-li" type="text/html">
+    <div class="aui-chat-item aui-chat-left voice">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx1.png"/>
+        </div>
+        <div class="aui-chat-inner" onclick="api.startPlay({path:'{{ret.content.voicePath}}'})">
+            <div class="aui-chat-name">{{ ret.targetId }}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                <div class="yuyin">
+                    <img src="../../image/message/yuyinicon_left.png" class="active" alt="">
+                </div>
+            </div>
+            <div class="timedot">
+                <span class="reddot"></span>
+                <span class="timenum">{{ ret.content.duration }}</span>"
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="history-chat-receive-other-li" type="text/html">
+    <div class="aui-chat-item aui-chat-left normal">
+        <div class="aui-chat-media">
+            <img src="../../image/message/tx1.png"/>
+        </div>
+        <div class="aui-chat-inner">
+            <div class="aui-chat-name">{{ ret.targetId }}</div>
+            <div class="aui-chat-content">
+                <div class="aui-chat-arrow"></div>
+                {{if ret.objectName == "RC:TxtMsg"}}
+                {{transEmotion ret.content.text}}
+                {{else if ret.objectName == "RC:ImgMsg"}}
+                <img class="imageSrc" src="{{ ret.content.thumbPath }}" onclick="imageGalleryFire(this)"/>
+                {{else if ret.objectName == "RC:LBSMsg"}}
+                <img
+                        src="http://api.map.baidu.com/staticimage?center={{ ret.content.longitude }},{{ ret.content.latitude }}&width=400&height=280&zoom=15&copyright=1"
+                        onclick="reopenBMap('{{ ret.content.longitude }}','{{ ret.content.latitude }}','{{ ret.content.poi }}')"/>
+                {{ ret.content.poi }}
+                {{else if ret.objectName == "RC:CmdNtf" }}
+                <!--名片-->
+                {{if ret.content.name == "business_card" }}
+                <div class="mingpian" onclick="openPersonInfo('{{ ret.content.data }}')">
+                    <div class="msgTop">
+                        <img src="../../image/message/tx2.png" alt="">
+                        <span> {{ret.content.data}}</span>
+                    </div>
+                    <p class="msgBottom">名片</p>
+                </div>
+                {{else if ret.content.name == "transfer_money" }}
+                {{ret.content.data}}
+                <!--其他可能-->
+                {{/if}}
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var rongInstance;
+    var targetId;
+    var loginUser;
+    var emotionDatas;
+    var imageBrowser;
+    var businessDialog;
+    var Indicator;//录音提示
+    apiready = function () {
+        var pageParam = api.pageParam;
+        rongInstance = api.require("rongCloud2");
+        imageBrowser = api.require("imageBrowser");
+        loginUser = JSON.parse(localStorage.getItem("user"));
+        businessDialog = new businessDialog();
+        Indicator = new Indicator();
+        console.log(loginUser.data.user_id);
+        console.log(pageParam.user_id + " " + pageParam.user_img + " " + pageParam.user_name);
+        targetId = api.pageParam.user_id;
+        UIChatBox.getEmotionsPath(function (emotion) {
+            emotionDatas = emotion;
+        });
+
+        //如果已经聊过天，就在界面上显示20条历史记录
+        getLatestMessages(targetId);
+        //聊天界面做三件事情
+        //1.更新自己的UI
+        //2.将消息发送到融云服务器
+        //3.如果后台消息targetId == 当前id，更新聊天界面UI
+        api.addEventListener({
+            name: "sendMessage"
+        }, function (ret) {
+            console.log(JSON.stringify(ret));
+            sendMessageToRongCloud(ret);
+            //1.自己发送消息时，更新UI
+            if (ret.value.objectName == "RC:VcMsg") {
+                appendToHTML("single-chat-send-voice-li", processSendedData(ret));
+            } else {
+                appendToHTML("single-chat-send-other-li", processSendedData(ret));
+            }
+        });
+
+        api.addEventListener({
+            name: "receivedMessage"
+        }, function (ret) {
+            console.log(JSON.stringify(ret));
+            if (ret.value.result.message.targetId == targetId && ret.value.result.message.conversationType == "PRIVATE") {
+                if (ret.value.result.message.objectName == "RC:VcMsg") {
+                    appendToHTML("single-chat-receive-voice-li", processReceivedData(ret));
+                } else {
+                    appendToHTML("single-chat-receive-other-li", processReceivedData(ret));
+                }
+                _scrollToEnd();
+            }
+        });
+
+        api.addEventListener({
+            name:"sendUserCard"
+        },function(ret){
+            businessDialog.show({msg: "确定发送" + targetId + "的名片吗"}, businessCardCallback);
+            api.sendEvent({name: 'scrollToBottom'});//通知页面滚滚滚
+        });
+
+        api.addEventListener({
+            name:"startRecording"
+        },function(ret){
+            if(ret){
+                Indicator.create({
+                    title:"正在录音",
+                    html:'<img src="../../image/mark_red.png" width="48" height="48">'
+                });
+            }
+        });
+
+        api.addEventListener({
+            name:"endRecording"
+        },function(ret){
+            if(ret){
+                Indicator.hide();
+            }
+        });
+
+        api.addEventListener({
+            name: "scrollToBottom"
+        }, function (ret) {
+            setTimeout(function () {
+                _scrollToEnd();
+            }, 50);
+        });
+    };
+
+
+    function sendMessageToRongCloud(ret) {
+        var data = ret.value;
+        console.log(JSON.stringify(data));
+        switch (data.objectName) {
+            case "RC:TxtMsg":
+                rongInstance.sendTextMessage({
+                    conversationType: "PRIVATE",
+                    targetId: '' + data.targetId,
+                    text: '' + data.message,
+
+                }, function (ret) {
+                    if (ret.status == 'prepare') {
+                        console.log(JSON.stringify(ret));
+                    }
+                });
+                break;
+
+            case "RC:ImgMsg":
+                rongInstance.sendImageMessage({
+                    conversationType: "PRIVATE",
+                    targetId: data.targetId,
+                    imagePath: '' + data.message
+                });
+                break;
+
+            case "RC:VcMsg":
+                rongInstance.sendVoiceMessage({
+                    conversationType: "PRIVATE",
+                    targetId: '' + data.targetId,
+                    voicePath: '' + data.message.path,
+                    duration: '' + data.message.duration
+                });
+                break;
+
+            case "RC:LBSMsg":
+                rongInstance.sendLocationMessage({
+                    conversationType: "PRIVATE",
+                    targetId: '' + data.targetId,
+                    latitude: Number(data.message.latitude),
+                    longitude: Number(data.message.longitude),
+                    poi: '' + data.message.poi,
+                    imagePath: '' + api.wgtRootDir + '/image/location1.png',
+                    extra: ""
+                }, function (ret, err) {
+                    if (ret.status == 'prepare') {
+                        console.log(JSON.stringify(ret));
+                    }
+                });
+                break;
+
+            case "RC:CmdNtf":
+                rongInstance.sendCommandNotificationMessage({
+                    conversationType: "PRIVATE",
+                    targetId: '' + data.targetId,
+                    name: "" + data.name,
+                    data: data.data
+                }, function (ret, err) {
+                    if (ret.status == "prepare") {
+                        console.log(JSON.stringify(ret));
+                    }
+                });
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    function processSendedData(ret) {
+        return {
+            user: loginUser,
+            ret: ret
+        }
+    }
+
+    function processReceivedData(ret) {
+        return {ret: ret};
+    }
+
+    function appendToHTML(templateId, data) {
+        var html = template(templateId, data);
+        return $api.append($api.byId('content'), html);
+    }
+
+    //获取某一会话的20条最新消息记录
+    function getLatestMessages(targetId) {
+        rongInstance.getLatestMessages({
+            conversationType: "PRIVATE",
+            targetId: '' + targetId,
+            count: 20
+        }, function (ret, err) {
+            if (ret && ret.status == 'success') {
+                //将获得的历史消息更新到UI上
+                console.log(JSON.stringify(ret));
+                if (ret.result.length == 0) {
+                    return;
+                }
+
+                var messageList = ret.result.sort(getSortFun('asc', 'sentTime'));
+                for (var messageId in messageList) {
+                    if (messageList[messageId].senderUserId == loginUser.data.user_id) {
+                        //判断是否是语音消息
+                        if (messageList[messageId].objectName == "RC:VcMsg") {
+                            appendToHTML("history-chat-send-voice-li", processHistorySendData(messageList[messageId]));
+                        } else {
+                            appendToHTML("history-chat-send-other-li", processHistorySendData(messageList[messageId]));
+                        }
+                    } else {
+                        if (messageList[messageId].objectName == 'RC:VcMsg') {
+                            appendToHTML("history-chat-receive-voice-li", processHistoryReceiveData(messageList[messageId]));
+                        } else {
+                            appendToHTML("history-chat-receive-other-li", processHistoryReceiveData(messageList[messageId]));
+                        }
+                    }
+                    console.log(JSON.stringify(messageList[messageId]));
+                    _scrollToEnd();
+                }
+            }
+        });
+    }
+
+    //排序函数
+    function getSortFun(order, sortBy) {
+        var ordAlpah = (order == 'asc') ? '>' : '<';
+        var sortFun = new Function('a', 'b', 'return a.' + sortBy + ordAlpah + 'b.' + sortBy + '?1:-1');
+        return sortFun;
+    }
+
+    function processHistorySendData(data) {
+        console.log(JSON.stringify(data));
+        return {
+            user: loginUser,
+            ret: data
+        }
+    }
+
+    function processHistoryReceiveData(data) {
+        console.log(JSON.stringify(data));
+        return {
+            ret: data
+        }
+    }
+
+    template.helper('transEmotion', function (text) {
+        return UIChatBox.transText(text, emotionDatas);
+    });
+
+
+    // 滚动到底部
+    function _scrollToEnd() {
+        document.getElementsByTagName('body')[0].scrollTop = document.getElementsByTagName('body')[0].scrollHeight;
+    }
+
+    // 图片轮播展示
+    function imageGalleryFire(el){
+        var showImagesSrc = [];
+        var imagesList = Array.prototype.slice.call(document.querySelectorAll(".imageSrc"));
+        imagesList.forEach(function(item){
+            showImagesSrc.push(item.src);
+        });
+        var index = showImagesSrc.indexOf(el.src);
+        console.log(index);
+        console.log(showImagesSrc);
+        imageBrowser.openImages({
+            imageUrls:showImagesSrc,
+            showList:false,
+            activeIndex:index
+        });
+    }
+
+    function businessCardCallback() {
+        api.sendEvent({
+            name: "sendMessage",
+            extra: {
+                targetId: targetId,
+                objectName: "RC:CmdNtf",
+                conversationType: "PRIVATE",
+                name: "business_card",
+                data: targetId
+            }
+        })
+    }
+
+    function openPersonInfo(friend){
+        api.openWin({
+            name : 'friendinfo',
+            url : './friendinfo.html',
+            vScrollBarEnabled : false,
+            pageParam: {
+                user_id: friend
+            }
+        });
+        api.parseTapmode();
+    }
+
+    function reopenBMap(lon,lat,poi){
+        api.openWin({
+            name: "baidu_map",
+            url: "widget://html/message/bmap_win_reopen.html",
+            pageParam: {
+                lon:lon,
+                lat:lat,
+                poi:poi
+            }
+        });
+    }
+</script>
+</body>
+</html>

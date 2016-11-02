@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>个人中心</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+	<link rel="stylesheet" href="../../css/aui.2.0.css">
+	<link rel="stylesheet" href="../../css/mine.css">
+</head>
+<body>
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" tapmode id="mydata_back">
+           <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">个人资料</div>
+    </header>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        fnReady();
+        fnReadyFrame();
+        //点击向frame传输一个数据
+        $api.byId('mydata_back').onclick = function(){
+            api.sendEvent({
+                name:"mydata_back",
+                extra:{
+                    mydata_back:1
+                }
+            });
+            api.closeToWin({
+                name:'main'
+            });
+        };
+        //监听手机物理返回键 点击向frame传输一个数据
+        api.addEventListener({
+            name : 'keyback'
+        }, function(ret, err) {
+            api.sendEvent({
+                name:"mydata_back",
+                extra:{
+                    mydata_back:1
+                }
+            });
+            //返回前一个页面
+            api.closeToWin({
+                name:'main'
+            });
+        });
+        //监听地区的frame压面
+        api.addEventListener({
+            name:'all_address'
+        },function(ret,err){
+            if(ret){
+                console.log(JSON.stringify(ret));
+               var  province = ret.value.province;
+               var city = ret.value.city;
+               var area = ret.value.area;
+               var all_name = ret.value.province_name+"-"+ ret.value.city_name +"-"+ret.value.area_name;
+                //把得到的数据广播到frame页面
+                api.sendEvent({
+                    name:'two_all_address',
+                    extra:{
+                        province:province,
+                        city:city,
+                        area:area,
+                        all_name:all_name
+                    }
+                });
+            };
+        });
+    };
+</script>
+</html>

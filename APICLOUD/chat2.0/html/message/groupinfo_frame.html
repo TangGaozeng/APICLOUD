@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>群信息</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/chat.css"/>
+</head>
+<body class="bg-gray-color groupInfo">
+<div id="content"></div>
+
+<script id="group-infos" type="text/html">
+    <div id="group-header" class="headBox">
+        <img src="{{ data.group_info.group_avatar }}" class="groupLogo" alt="群头像">
+        <p class="groupName"><span>{{ data.group_info.group_name }}</span><span
+            class="aui-label aui-label-warning">部门</span></p>
+    </div>
+    <div class="groupMember bg-white-color">
+        <p onclick="openGroupMember()"><span class="color-2f fs-15">群成员</span>
+            <i class="aui-iconfont aui-icon-right aui-pull-right"></i>
+            <span class="aui-pull-right group_member_num fs-14">{{ data.total_group_member }}</span>
+        </p>
+
+        <div class="member_tx_box flex flex-dir-row jsf-con-between alg-itm-center">
+            {{ each data.group_member_list as member key }}
+            <div class="userTx"><img src="{{ data.group_member_list[key].photo }}" alt="">
+                <!--onclick="openFriendInfo('{{member.user_name}}')"-->
+                                     <!--onclick="api.toast({msg:'你点击了: ' + '{{key}}' + ',值是: ' + '{{member.user_name}}'})">-->
+            </div>
+            {{ /each }}
+            <div class="userTx"><img src="../../image/message/addgroupmember.png" alt="" onclick="addSomeoneToGroup()"></div>
+            {{if data.isMaster}}
+            <div class="userTx"><img src="../../image/message/lessgroupmember.png" alt="" onclick="deleteSomeoneFromGroup()"></div>
+            {{/if}}
+        </div>
+    </div>
+    <div class="groupoutline">
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">
+                        <span>群名称</span>
+                        <span>{{ data.group_info.group_name }}</span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <span>企业群</span>
+                    <div class="aui-list-item-right">
+                        <div class="aui-label aui-label-info">部门</div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner" id="groupNotice">
+                    <div class="aui-list-item-title">
+                        <span>群公告</span>
+                        <i class="aui-iconfont aui-icon-right aui-pull-right"></i>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+</script>
+
+<div class="switchBox">
+    <ul class="aui-list aui-list-in">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">置顶聊天</div>
+                <div class="aui-list-item-right">
+                    <input id="setToTop" type="checkbox" class="aui-switch">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">消息免打扰</div>
+                <div class="aui-list-item-right">
+                    <input id="quietMsg" type="checkbox" class="aui-switch">
+                </div>
+            </div>
+        </li>
+
+    </ul>
+</div>
+<div class="cleanRecord" id="clearMessages">清空聊天记录</div>
+<div class="del_quit" id="quitMyGroup">删除并退出</div>
+
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/template.js"></script>
+<script type="text/javascript" src="../../script/rong_cloud.js"></script>
+<script type="text/javascript" src="../../script/delete_someone_dialog.js"></script>
+
+<script type="text/javascript">
+    var groupData;
+    var rongInstance;
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var deleteMemberDialog;
+    apiready = function () {
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '请求中...',
+            text: '请稍候...',
+            modal: false
+        });
+        fnInitListener();
+        rongInstance = api.require("rongCloud2");
+        groupData = api.pageParam;
+        console.log(JSON.stringify(groupData));
+        deleteMemberDialog = new deleteMemberDialog();
+
+        myHttpRequest(1);
+
+
+        //获取群设置 并显示
+        //获取当前会话是否置顶
+        var isSetToTop = false;
+        rongInstance.getConversation({
+            conversationType: "GROUP",
+            targetId: "" + groupData.groupId
+        }, function (ret, err) {
+            isSetToTop = ret.result.isTop;
+            console.log(isSetToTop);
+            $api.byId("setToTop").checked = isSetToTop;
+        });
+
+
+        //当前消息是否开启了免打扰
+        var quiteMsg = "";
+        rongInstance.getConversationNotificationStatus({
+            conversationType: "GROUP",
+            targetId: "" + groupData.groupId
+        }, function (ret, err) {
+            quiteMsg = ret.result.notificationStatus;
+            console.log(ret.result.notificationStatus);
+
+            hadSetQuite = (quiteMsg == "DO_NOT_DISTURB");
+            $api.byId("quietMsg").checked = hadSetQuite;
+        });
+
+        console.log($api.byId("setToTop").checked);
+        console.log($api.byId("quietMsg").checked);
+        function fnInitListener(){
+            api.addEventListener({
+                name: 'group_notice_change'
+            },function(ret,err){
+                myHttpRequest(0);
+            })
+        }
+    };
+
+    //点击群详情，发送Ajax请求，将数据获取到，再追加到页面上。
+    function myHttpRequest(flag){
+        api.ajax({
+            url: INTERFACE["GET_GROUP_INFO"],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {user_id: user_id, user_password: password, social_group_id: groupData.groupId}
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            api.hideProgress();
+            if (ret) {
+                console.log(JSON.stringify(ret));
+                if(ret.result!=1){
+                    api.toast({msg:"服务器响应信息: " + ret.msg});
+                    return;
+                }
+                groupData.data = ret.data;
+                groupData.data.isMaster = (ret.data.group_info.group_master == user_id);//群主是否是当前登录用户
+                if(flag==1){
+                    appendToHTML("group-infos", groupData);
+                }
+                goGroupNotice(ret);
+
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    function appendToHTML(templateId, data) {
+        var html = template(templateId, data);
+        return $api.append($api.byId('content'), html);
+    }
+
+    function openFriendInfo(targetId){
+        console.log(targetId);
+        api.openWin({
+            name : 'friendinfo',
+            url : '../message/friendinfo.html',
+            vScrollBarEnabled : false,
+            pageParam: {
+                user_id: targetId
+            }
+        });
+        api.parseTapmode();
+    }
+
+    //通过监听“置顶聊天”/“消息免打扰”，调用融云相关方法，动态变更群聊设置。
+    //置顶，rong.setConversationToTop()
+    //消息免打扰，rong.setConversationNotificationStatus()
+
+    $api.byId("setToTop").onchange = function () {
+        var had_checked = this.checked;
+        rongInstance.setConversationToTop({
+            conversationType: "GROUP",
+            targetId: "" + groupData.groupId,
+            isTop: had_checked
+        }, function (ret, err) {
+            api.toast({msg: ret.status});
+            //获取当前会话是否置顶
+            rongInstance.getConversation({
+                conversationType: "GROUP",
+                targetId: '' + groupData.groupId
+            }, function (ret, err) {
+                console.log(ret.result.isTop);
+            });
+        })
+    };
+
+    $api.byId("quietMsg").onchange = function () {
+        var had_checked = this.checked;
+        var status = (had_checked == true) ? "DO_NOT_DISTURB" : "NOTIFY";
+        console.log("call the quietMsg function " + had_checked + " status " + status);
+        rongInstance.setConversationNotificationStatus({
+            conversationType: "GROUP",
+            targetId: '' + groupData.groupId,
+            notificationStatus: status
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret));
+        });
+    };
+
+
+    $api.byId("clearMessages").onclick = function(){
+        rongInstance.clearMessages({
+            conversationType: 'GROUP',
+            targetId:'' + groupData.groupId
+        },function(ret){
+            if(ret){
+                api.toast({
+                    msg:"清除成功",
+                    location:"bottom",
+                    duration:1000
+                });
+            }
+        });
+        //清空后，还要通知一下message_frame页面更新
+        api.sendEvent({
+            name:"freshConversationList"
+        });
+    };
+
+    function openGroupMember(){
+        api.openWin({
+            name:"group_members",
+            url:"group_members_win.html",
+            pageParam:groupData
+        });
+    }
+
+    function addSomeoneToGroup(){
+        //根据群的类型跳转到不同页面。普通群跳转到好友列表进行选择，企业群跳转到组织架构进行选择
+        //group_identify==2说明是企业群
+        console.log("addSomeoneToGroup");
+        if(groupData.data.group_info.group_identify == 2){
+            console.log("企业群");
+        }else if(groupData.data.group_info.group_identify == 3){
+            console.log("普通群");
+            //跳转到add_groupchat_normal_win.html
+            api.openWin({
+                name:"add_groupchat_normal",
+                url:"add_groupchat_normal.html",
+                pageParam:groupData.groupId //将群id带过去
+            });
+
+        }
+    }
+
+    //群主才有权限踢人
+    function deleteSomeoneFromGroup(){
+        groupData.deleteSomeone = true;
+        api.openWin({
+            name:"group_members",
+            url:"group_members_win.html",
+            pageParam:groupData
+        });
+    }
+
+    $api.byId("quitMyGroup").onclick = function(){
+        deleteMemberDialog.show({msg: "确定退出该群吗?"}, deleteMemberCallback);
+    }
+
+    function deleteMemberCallback() {
+        console.log("开始退出");
+        api.showProgress({
+            style: 'default',
+            animateType: "fade",
+            title: "退群中",
+            text: "马上就好了"
+        });
+        // 发一个请求，删除掉人员
+        api.ajax({
+            url: SERVER_API.signOutGroup,
+            method: 'post',
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password,
+                    social_group_id: groupData.groupId
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            api.hideProgress();
+            if (ret.result != 1) {
+                serverResponseMsg(ret);
+            }
+            if (ret.result == 1 && ret.data != []) {
+                console.log(JSON.stringify(ret));
+                //1.清空本地db记录
+                rongInstance.removeConversation({
+                    conversationType:"GROUP",
+                    targetId:groupData.groupId
+                },function(ret){
+                    if(ret){
+                        //1.发一个事件更新列表
+                        api.sendEvent({name:"freshConversationList"});
+                        //2.跳转到main.html
+                        api.closeToWin({
+                            name:"main"
+                        });
+                    }
+                });
+
+            }
+        });
+        //如果是从删除人员页面进来的，点击返回键的时候还得重新请求群信息
+        reallyDeleteSomeone = true;
+    }
+
+    function goGroupNotice(ret){
+        $api.byId('groupNotice').onclick = function () {
+            if(ret.data.group_info.group_notice==''){
+                api.openWin({
+                    name: 'group_announce_null',
+                    url: '../message/group_announce_null.html',
+                    pageParam: groupData,
+                    bounces: false,
+                    vScrollBarEnabled: false
+                });
+                api.parseTapmode();
+            }else{
+                api.openWin({
+                    name: 'group_announce',
+                    url: '../message/group_announce.html',
+                    pageParam: groupData,
+                    bounces: false,
+                    vScrollBarEnabled: false
+                });
+                api.parseTapmode();
+            }
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>选择地区</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <link rel="stylesheet" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/mine.css">
+</head>
+<body class="bg-gray-color select-address">
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in" id="content">
+    </ul>
+</div>
+<script id="sub_address_template" type="text/html">
+    {{each data as value}}
+        <li class="aui-list-item flex flex-dir-col address" >
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title" >{{value.region_name}}</div>
+            </div>
+        </li>
+        <div class="sub-menu">
+
+        </div>
+    {{/each}}
+</script>
+<script id="area_address_template" type="text/html">
+    {{each data as value}}
+         <div class="fs-13 area aui-border-b" style="color:#6f7378">{{value.region_name}}</div>
+    {{/each}}
+</script>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script>
+    apiready = function() {
+        fnReady();
+        var userInfo = localStorage.getItem('user');
+        var user_id = JSON.parse(userInfo).data.user_id;
+        var password = localStorage.getItem('password');
+        var province;
+        var province_name;
+        var city;
+        var area;
+        var city_name;
+        var area_name;
+//        api.addEventListener({
+//            name:'address',
+//        },function(ret,err){
+//            if(ret){
+//                province = ret.value.address;
+//                province_name = ret.value.province;
+//                console.log(province);
+//            }
+//        });
+        api.showProgress({
+            title : '加载中...',
+            modal : true
+        });
+        api.addEventListener({
+            name:'province',
+        },function(ret,err){
+            if(ret){
+                province = ret.value.province;
+                province_name = ret.value.province_name;
+            }
+        });
+        //延时500毫秒执行
+        setTimeout(function(){
+            //获取省下面的市
+            api.ajax({
+                url:INTERFACE['select_address'],
+                method:'post',
+                dataType:'json',
+                data:{
+                    values:{user_id: user_id,user_password: password,type:1,region_id:province}
+                },
+                bounces:false,
+                timeout: AJAX.TIMEOUT,
+            },function(ret,err){
+                api.hideProgress();
+                if (ret&&ret.data.length != 0) {
+                    var myList = JSON.stringify(ret);
+                    console.log(myList);
+                    var html = template('sub_address_template',ret);
+                    document.getElementById('content').innerHTML = html;
+                    var address = $api.domAll('.address');
+                    var sub_menus =$api.domAll('.sub-menu');
+                    var flag = true;
+                    //循环遍历市
+                    for(var i=0;i<ret.data.length;i++){
+                        address[i].index = i;
+                        //点击当前选中的市
+                        address[i].onclick = function(){
+                            var index = this.index;
+                            city = ret.data[index].region_id;
+                            city_name = ret.data[index].region_name;
+                            if(flag){
+                                $api.css(sub_menus[index],"display:block");
+                                //获取区县
+                                api.ajax({
+                                    url:INTERFACE['select_address'],
+                                    method:'post',
+                                    dataType:'json',
+                                    data:{
+                                        values:{user_id: user_id,user_password: password,type:1,region_id:city}
+                                    },
+                                    bounces:false,
+                                    timeout: AJAX.TIMEOUT,
+                                },function(ret,err){
+                                    if (ret) {
+                                        var myList = JSON.stringify(ret);
+                                        console.log(myList);
+                                        //把获取到的区县渲染在模板上
+                                        var text = template('area_address_template',ret);
+                                        $api.domAll('.sub-menu')[index].innerHTML = text;
+
+                                        var areas = $api.domAll('.sub-menu')[index].getElementsByClassName('area');
+                                       //遍历选中的城市市下面的区县
+                                        for(var k=0;k<areas.length;k++){
+                                            areas[k].index = k;
+                                            areas[k].onclick = function(){
+                                                var mask = this.index;
+                                                console.log(this.index);
+                                                console.log(mask);
+                                                console.log(JSON.stringify(ret.data[mask]));
+                                                area = ret.data[mask].region_id;
+                                                area_name = ret.data[mask].region_name;
+                                                api.openWin({
+                                                    name:'mydata',
+                                                    url:'./mydata.html',
+                                                    bounces : false,
+                                                    vScrollBarEnabled : false
+                                                });
+                                                //广播省、市、区的id以及名字到win页面
+                                                api.sendEvent({
+                                                    name:"all_address",
+                                                    extra:{
+                                                        province:province,
+                                                        province_name:province_name,
+                                                        city:city,
+                                                        city_name:city_name,
+                                                        area:area,
+                                                        area_name:area_name
+                                                    }
+                                                });
+                                            };
+                                        };
+                                    } else {
+                                        AJAX.ERROR(err);
+                                    };
+                                });
+                                flag = false;
+                            }else{
+                                //再次点击隐藏
+                                $api.css(sub_menus[index],"display:none");
+                                flag = true;
+                            };
+
+                        };
+                    };
+                } else {
+                    AJAX.ERROR(err);
+                };
+            });
+        },500);
+    };
+</script>
+</html>

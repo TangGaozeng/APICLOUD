@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>忘记支付密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="find-pw forget-pw2">
+    <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-btn aui-pull-left back" href="#">
+            <span class="aui-iconfont aui-icon-left ifs-22"></span>
+        </a>
+        <div class="aui-title fs-18">忘记支付密码</div>
+    </header>
+    <section class="aui-content">
+        <ul class="aui-list no-border-t no-border-b">
+            <li class="aui-list-header aui-font-size-14">
+                请选择银行卡类型
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        卡类型
+                    </div>
+                    <div class="aui-list-item-input aui-list-item-arrow flex">
+                        <select name="" id="">
+                            <option>招商银行</option>
+                            <option>农业银行</option>
+                        </select>
+                        <select name="" id="">
+                            <option>储蓄卡</option>
+                            <option>信用卡</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="aui-list no-border-t no-border-b">
+            <li class="aui-list-header aui-font-size-14">
+                请填写银行预留信息
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" class="aui-font-size-14" placeholder="* 杰（请输入完整姓名）">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        证件类型
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" class="aui-font-size-14" placeholder="身份证">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        证件号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" class="aui-font-size-14" placeholder="请输入银卡预留手机号">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <label for="agree-xy" class="agree-xy">
+            <input type="checkbox" class="aui-checkbox" id="agree-xy" checked>
+            <span>同意 《用户协议》</span>
+        </label>
+        <div class="aui-bar">
+            <div class="aui-bar-btn" id="goNext">下一步</div>
+        </div>
+    </section>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        $api.byId('goNext').onclick = function () {
+
+            api.openWin({
+                name : 'set-pw-phone',
+                url : '../mine/set-pw-phone.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+
+        }
+
+
+    }
+
+
+
+</script>
+</html>

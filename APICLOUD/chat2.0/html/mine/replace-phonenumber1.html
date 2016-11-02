@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+	<title>更换手机号</title>
+	<link rel="stylesheet" href="../../css/custyle.css">
+	<link rel="stylesheet" href="../../css/aui.2.0.css">
+	<link rel="stylesheet" href="../../css/replace-phonenumber.css">
+</head>
+<body class="phonenumber-one">
+	<header class="aui-bar aui-bar-nav" id="header">
+		 <a class="aui-pull-left aui-btn back">
+	       <span class="aui-iconfont aui-icon-left fs-22"> </span>
+	    </a>
+		<div class="aui-title fs-18">更换手机号码</div>
+	</header>
+	<section class="aui-content">
+		<img src="../../image/mine/big-phone_08.png" alt="">
+		<p class="my-phone" id="mobileNum"><span>你的手机号：</span>13548646577</p>
+		<div>
+			<div class="aui-btn aui-btn-block aui-btn-sm" id="change-confirm">更换手机号</div>
+			<span>更换手机号后，登录手机号和企业通讯录号码均改变</span>
+		</div>
+	</section>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+	var userInfo = localStorage.getItem('user');
+	var user_id = JSON.parse(userInfo).data.user_id;
+	var password = localStorage.getItem('password');
+	var mobileNum = JSON.parse(userInfo).data.user_name;
+	document.getElementById('mobileNum').innerHTML = '<span>你的手机号：</span>' + mobileNum;
+	apiready = function () {
+		fnReady();
+		$api.byId('change-confirm').onclick = function () {
+			api.openWin({
+				name : 'yz-password',
+				url : '../mine/yz-password.html',
+				bounces : false,
+				vScrollBarEnabled : false
+			});
+			api.parseTapmode();
+		}
+		api.ajax({
+			url: INTERFACE['MY_DATA'],
+			method: "post",
+			dataType: "json",
+			data: {
+				values: {user_id: user_id, user_password: password}
+			},
+			timeout: AJAX.TIMEOUT
+		}, function (ret, err) {
+			if (ret) {
+				console.log(JSON.stringify(ret.data));
+				localStorage.setItem('user_mobile',ret.data.userInfo.user_mobile)
+				document.getElementById('mobileNum').innerHTML = '<span>你的手机号：</span>' + ret.data.userInfo.user_mobile;
+
+			} else {
+				console.log(JSON.stringify(err));
+				AJAX.ERROR(err);
+			}
+		});
+
+	};
+
+
+</script>
+</html>

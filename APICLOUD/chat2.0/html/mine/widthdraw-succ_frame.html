@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>验证完成</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/widthdraw.css">
+</head>
+<body class="bg-gray-color widthdraw-succ">
+<section class="aui-content">
+    <img src="../../image/mine/cz-succ.png" alt="">
+    <p>提现申请提交成功</p>
+    <span>预计1~2个工作日到账</span>
+    <div class="aui-btn aui-btn-block" id="confirm">确定</div>
+</section>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        fnReady();
+        $api.byId('confirm').onclick = function () {
+            api.openWin({
+                name : 'main',
+                url : '../main.html',
+                bounces : false,
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+    };
+
+</script>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>创建聊天</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="create_groupchat_normal bg-gray-color">
+<!--搜索框-->
+<!--<div class="search_row aui-searchbar" id="search">
+    <div class="aui-searchbar-input aui-border-radius">
+        <i class="aui-iconfont aui-icon-search"></i>
+        <form action="javascript:search();">
+            <input type="search" placeholder="搜索名字、拼音、手机号" id="search-input">
+        </form>
+    </div>
+</div>-->
+<!--手机通讯录,我的好友-->
+<div class="contact_friend_box bg-white-color flex jsf-con-center">
+    <div class="item item-left" onclick="goToContactPage();">
+        <div class="item-inner-top flex jsf-con-center alg-itm-center">
+            <img src="../../image/message/create_groupchat_normal_phone.png" alt="">
+        </div>
+        <div class="item-inner-bottom fs-15 text-center color-2f">手机通讯录</div>
+    </div>
+    <div class="item item-right" onclick="goToMyFriendPage();">
+        <div class="item-inner-top flex jsf-con-center alg-itm-center">
+            <img src="../../image/message/create_groupchat_normal_heart.png" alt="">
+        </div>
+        <div class="item-inner-bottom fs-15 text-center color-2f">我的好友</div>
+    </div>
+</div>
+<!--现已加入企业-->
+<ul class="yjrqy aui-list aui-list-in">
+    <li class="aui-list-header">
+        <div class="fs-15 color-2f">现已加入企业</div>
+    </li>
+    <div id="alreadyJoinOrg">
+        <script id="myJoinOrgList" type="text/html">
+            {{each data as value}}
+            <li class="my_org_list aui-list-item" data-companyId={{value.company_id}} data-companyName={{value.company_name}}>
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title flex">
+                        <img src={{value.company_logo}} class="company_logo" alt="">
+                        <div class="company_name fs-15 color-2f">{{value.company_name}}</div>
+                        <div class="qi_icon color-f text-center">企</div>
+                        <div class="iconfont icon-jiantouzhedie"></div>
+                    </div>
+                </div>
+            </li>
+            {{/each}}
+        </script>
+    </div>
+</ul>
+<!--常用联系人-->
+<div class="often_contact_header" id="often_contact_header">
+    <span class="fs-15 color-2f">常用联系人</span>
+    <span id="sjx" class="aui-pull-right fs-14"></span>
+</div>
+<div class="communication">
+    <ul id="often_contact_list" class="often_contact_list aui-list aui-select-list">
+        <script id="myOftenContactList" type="text/html">
+            {{each data as value}}
+            <li class="ofn_cnt_list aui-list-item" data-userId={{value.user_id}} data-userMobile={{value.user_mobile}} data-userType="person">
+                <div class="aui-list-item-inner">
+                    <label><input class="aui-checkbox" type="checkbox" name="radio">
+                        <img src={{value.photo}} alt="" class="up">
+                        <span class="un fs-14 color-2f">{{value.user_name}}</span>
+                        <!--<span class="uj fs-13 color-86">{{value.real_name}}</span>-->
+                    </label>
+                </div>
+            </li>
+            {{/each}}
+        </script>
+    </ul>
+</div>
+
+<script src="../../script/api.js"></script>
+<script src="../../script/then.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+
+    var user_id = getSelfUserId();
+    var user_password = getSelfUserPwd();
+
+
+    apiready = function () {
+
+        oftenContact_zhedie();
+
+        getMyCompanyList();
+
+        getMyOftenContactList();
+
+    };
+
+    //常用联系人折叠
+    function oftenContact_zhedie() {
+        $api.byId("often_contact_header").onclick = function () {
+            $api.toggleCls($api.byId('sjx'), 'dow');
+            $api.toggleCls($api.byId('often_contact_list'),'display-none');
+            api.parseTapmode();
+        };
+    }
+
+    //打开我所属公司的组织架构页面
+    function openMyOrgPage() {
+        var orgList = document.getElementsByClassName('my_org_list');
+        for(var i in orgList){
+            orgList[i].onclick = function () {
+                var company_id = this.getAttribute('data-companyId');
+                var department_id = 0;
+                var company_name = this.getAttribute('data-companyName');
+                api.openWin({
+                    name : 'select_group_member',
+                    url : './select_group_member.html',
+                    vScrollBarEnabled : false,
+                    pageParam : {company_id:company_id,department_id:department_id,company_name:company_name,department_name:''},
+                });
+                api.parseTapmode();
+            }
+        }
+    }
+
+    //获取我的公司列表
+    function getMyCompanyList() {
+        api.ajax({
+            url: INTERFACE['MY_ORGANIZATION'],
+            method: 'post',
+            data: {values: {user_id:user_id,user_password:user_password}},
+            timeout: AJAX.TIMEOUT,
+        }, function(ret, err) {
+            if (ret) {
+                if(ret.result == 1 && ret.data != []){
+                    var html = template('myJoinOrgList',ret);
+                    document.getElementById('alreadyJoinOrg').innerHTML = html;
+                    openMyOrgPage();
+                }
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    //获取我的常用联系人列表
+    function getMyOftenContactList() {
+        api.ajax({
+            url: INTERFACE['OFTEN_CONTACT_LIST'],
+            method: 'post',
+            data: {values: {user_id:user_id,user_password:user_password,limit1:0,limit2:10}},
+            timeout: AJAX.TIMEOUT,
+        }, function(ret, err) {
+            if (ret) {
+                if(ret.result == 1 && ret.data != []){
+                    var html = template('myOftenContactList',ret);
+                    document.getElementById('often_contact_list').innerHTML = html;
+                    recordChosen('ofn_cnt_list');
+
+                    //区别企业群和普通群
+                    localStorage.setItem('createGroupType','normal');
+                }
+            } else {
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    //跳转到通讯录去选择人建群
+    function goToContactPage(){
+        api.openWin({
+            name : 'contact_list_selecter',
+            url : './contact_list_selecter.html',
+            vScrollBarEnabled : false
+        });
+        api.parseTapmode();
+    }
+
+    //跳转到我的好友去选择人建群
+    function goToMyFriendPage() {
+        api.openWin({
+            name : 'my_friend_selecter',
+            url : './my_friend_selecter.html',
+            vScrollBarEnabled : false
+        });
+        api.parseTapmode();
+    }
+</script>
+</body>
+</html>

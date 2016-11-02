@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>organization</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/organization.css" />
+</head>
+<body class="org_temp_1 bg-gray-color">
+<header id="header" class="aui-bar aui-bar-nav aui-bar-light">
+    <a class="aui-pull-left aui-btn back">
+        <span class="iconfont fanhui"></span>
+    </a>
+    <div class="aui-title fs-18 color-f">南京哪玩儿有限责任公司</div>
+    <a class="aui-pull-right aui-btn">
+        <span>更多</span>
+    </a>
+</header>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var header = $api.byId('header'), footer = $api.byId('footer');
+        var pageParam = api.pageParam;
+        fnReady();
+        api.openFrame({
+            name: 'organization_common_frame',
+            url: './organization_common_frame.html',
+            rect: {
+                x: 0,
+                y: $api.offset(header).h,
+                w: 'auto',
+                h: 100
+            },
+            bounces: false,
+            vScrollBarEnabled: false,
+            pageParam: pageParam
+        });
+        api.openFrame({
+            name: 'organization_list_frame',
+            url: './organization_list_frame.html',
+            rect: {
+                x: 0,
+                y: $api.offset(header).h+100,
+                w: 'auto',
+                h: 'auto'
+            },
+            bounces: false,
+            vScrollBarEnabled: false,
+            pageParam: pageParam
+        });
+    }
+</script>
+</body>
+</html>

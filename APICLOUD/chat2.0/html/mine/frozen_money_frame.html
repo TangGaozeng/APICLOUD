@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+	<title>冻结资金</title>
+	<link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+   	<link rel="stylesheet" href="../../css/frozen_record.css">
+</head>
+<body class="bg-gray-color frozen-record">
+<ul class="aui-list"  id="content"></ul>
+<img src="../../image/mine/no_data.png" id="no-data" class="no-data">
+<script id="frozen_record_template" type="text/html">
+	{{each data as value}}
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-left">
+					{{if value.finance_type == "1"}}
+					<div>充值</div>
+					{{else if value.finance_type == "2"}}
+					<div>提现</div>
+					{{else if value.finance_type == "3"}}
+					<div>收款</div>
+					{{else if value.finance_type == "4"}}
+					<div>付款</div>
+					{{/if}}
+					<p>{{value.create_date}}</p>
+				</div>
+				<div class="aui-list-item-right">
+					<div>+{{value.amount}}</div>
+					<p class="waring">
+						{{if value.finance_status == "0"}}
+							审核中
+						{{else if value.finance_status == "1"}}
+							成功
+						{{else if value.finance_status == "2"}}
+							撤销
+						{{else if value.finance_status == "3"}}
+						    拒绝
+						{{/if}}
+					</p>
+				</div>
+			</div>
+		</li>
+	{{/each}}
+</script>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/template.js"></script>
+<script type="text/javascript">
+apiready = function () {
+	fnReady();
+	var userInfo = localStorage.getItem('user');
+	var user_id = JSON.parse(userInfo).data.user_id;
+	var password = localStorage.getItem('password');
+	console.log(password);
+	api.showProgress({
+		title : '加载中...',
+		modal : true
+	});
+	api.ajax({
+		url: INTERFACE['FROZEN_RECORD'],
+		method: "post",
+		dataType: 'json',
+		report: true,
+		data: {
+			values: {user_id: user_id, user_password: password,type:0}
+		}
+	}, function (ret, err) {
+		api.hideProgress();
+		if (ret&&ret.body.data.length != 0) {
+			console.log(JSON.stringify(ret));
+			var list = JSON.stringify(ret.body.data);
+			console.log(list);
+			var html = template('frozen_record_template',ret.body);
+			console.log(html);
+			document.getElementById('content').innerHTML = html;
+			if(ret.data == ""){
+				$api.css($api.byId('no-data'),'display:block');
+			};
+		} else {
+			AJAX.ERROR(err);
+			$api.css($api.byId('no-data'),'display:block');
+		};
+	});
+	//下拉刷新
+	api.setRefreshHeaderInfo({
+		visible:true,
+		bgColor:'#ccc',
+		textColor:'#6f7378',
+		textDown:'下拉刷新...',
+		textUp:'松开刷新...',
+		showTime:true
+	},function(ret,err){
+		console.log('ok');
+		if(ret){
+			api.ajax({
+				url: INTERFACE['FROZEN_RECORD'],
+				method: "post",
+				dataType: 'json',
+				report: true,
+				data: {
+					values: {user_id: user_id, user_password: password,type:0}
+				}
+			}, function (ret, err) {
+				if (ret&&ret.body.data.length != 0) {
+					console.log(JSON.stringify(ret));
+					var list = JSON.stringify(ret.body.data);
+					console.log(list);
+					var html = template('frozen_record_template',ret.body);
+					console.log(html);
+					document.getElementById('content').innerHTML = html;
+					api.refreshHeaderLoadDone();
+				} else {
+					AJAX.ERROR(err);
+				};
+			});
+		}else{
+			api.alert({
+				title: '错误提示',
+				msg: '刷新失败'
+			});
+		}
+	});
+};
+</script>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>friendvalid</title>
+		<link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/addfriends.css">
+	</head>
+	<body class="bg-gray-color">
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-light">
+			<a class="aui-pull-left aui-btn back"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title">
+				朋友验证
+			</div>
+			<a class="aui-pull-right aui-btn" onclick="fnSendAdd()"> <span>发送</span> </a>
+		</header>
+		<div class="aui-content">
+			<p class="validTip">
+				你需要发送验证申请，等待对方通过
+			</p>
+			<input type="text" name="validfriend" id="validmessage" value="">
+			<i class="clearInput aui-iconfont aui-icon-close aui-pull-right"></i>
+		</div>
+		<script src="../../script/api.js"></script>
+		<script src="../../script/common.js"></script>
+		<script type="text/javascript">
+			apiready = function() {
+				fnReady();
+				fnInit();
+				getInfo();
+			};
+			var _friend_phone;
+			var _validmessage;
+			var _user_info;
+			function fnInit() {
+				//api.pageParam.realName
+			}
+
+			//获取用户信息
+			function getInfo() {
+				_user_info = JSON.parse(localStorage.getItem('user'));
+				//	console.log(JSON.stringify(_user_info));
+				_friend_phone = api.pageParam.phone;
+				var _real_name = _user_info.data.real_name;
+				_validmessage = $api.byId('validmessage');
+				$api.attr(_validmessage, 'value', '我是' + _real_name);
+			}
+
+			//发送
+			function fnSendAdd() {
+				is_login();
+				var _data = {
+					'user_id' : _user_info.data.user_id,
+					'user_password' : localStorage.getItem('password'),
+					'my_mobile' : _user_info.data.user_mobile,
+					'friend_mobile' : _friend_phone,
+					'type' : 1,
+					'content' : $api.attr(_validmessage, 'value')
+				};
+				//console.log(JSON.stringify(_data));
+				ajaxRequest(INTERFACE['APPLY_ADD_FRIEND'], _data, function(ret, err) {
+					if (ret) {
+						api.toast({
+							msg : ret.msg,
+							duration : 3000,
+							location : 'middle'
+						});
+						// 发送要触发的event
+						api.sendEvent({
+							name : 'event_sendAddResultTag',
+							extra : {
+								phone : _friend_phone
+							}
+						});
+						//返回 “通讯录添加好友列表”
+						api.closeWin({
+							duration : 3000
+						});
+					}
+					//console.log(JSON.stringify(ret));
+				})
+			}
+		</script>
+	</body>
+</html>

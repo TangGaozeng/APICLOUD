@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>填写群名称</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group_chat.css" />
+</head>
+<body class="bg-white-color company_group_input_name company_group_select_photo">
+<div class="content">
+    <div class="firstDiv bg-white-color">
+        <img id="companyLogo" src="../../image/message/head_03.png">
+        <p class="color-2f"><span id="companyName">中晟达微旅旅行社有限公司</span><span>企</span></p>
+    </div>
+    <div class="inputBox">
+        <input type="text" name="group_name" placeholder="输入企业群名称" onblur="saveCompanyName(this);"/>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var orgLogo = document.getElementById('companyLogo');
+    orgLogo.setAttribute('src',localStorage.getItem('chosenCompanyGroupPhoto'));
+
+    function saveCompanyName(obj) {
+        var company_group_name = obj.value;
+        localStorage.setItem('inputCompanyGroupName',company_group_name);
+    }
+</script>
+</body>
+</html>

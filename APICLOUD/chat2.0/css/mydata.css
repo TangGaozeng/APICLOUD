@@ -1,0 +1,114 @@
+
+		.mydata .aui-bar{
+			background:#4877e7;
+			height:45px;
+		}
+		.mydata .aui-list {
+			margin-top:15px; 
+		}
+		.mydata .aui-list li{
+			height:62.5px;
+		}
+		.mydata .ul-one li:nth-of-type(1) .aui-list-item-right img{
+			width:55px;
+			border-radius: 50%;
+			display: block;
+			line-height: 62.5px;
+			margin-right: 13.5px;
+		}
+         .mydata .ul-one{
+            border: none;
+        }
+        .mydata .ul-one li:nth-of-type(3) .aui-list-item-right img{
+            width:28px;
+            display: block;
+            line-height: 62.5px;
+            margin-right: 13.5px;
+        }
+       .mydata .ul-one .aui-list-item-right p{
+             font-size: 14px;
+            line-height: 62.5px;
+            margin-right:13.5px;
+            color:#b0b7c1;
+        }
+        .mydata .ul-two .aui-list-item-right p{
+            font-size: 14px;
+            line-height: 62.5px;
+            color:#b0b7c1;
+        }
+        .mydata .ul-three .aui-list-item-right p{
+            font-size: 14px;
+            line-height: 62.5px;
+            color:#b0b7c1;
+        }
+		.mydata .aui-list-item-arrow:before{
+			width:8px;
+			height:8px;
+			border-color:#abb4bc;
+		}
+		.mydata .aui-list .aui-list-item-title{
+			font-size: 15px;
+            color:#2f2f2f;
+		}
+        .mydata .ul-two img{
+            width:28px;
+            display: block;
+            line-height: 62.5px;
+            margin-right: 13.5px;
+        }
+        .mydata .item-botton{
+            width: 0;
+            height: 0;
+            border-left:6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #cbd1d6;
+        }
+         .mydata #selectCompany div div:nth-of-type(1){
+            color:#4877e7;
+        }
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~选择公司~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        .mydata .select-company,.mydata .select-head,.mydata .sex{
+            display: none;
+            width:302px;
+            height:153px;
+            background: #fff;
+            z-index:100;
+            margin:auto;
+            position: fixed;
+            left:0;
+            top:0;
+            right: 0;
+            bottom:0;
+            border-radius:8px;
+        }
+        .mydata .select-company div:nth-of-type(1),.mydata .select-head div:nth-of-type(1),.mydata .sex div:nth-of-type(1){
+            width:100%;
+            text-align: center;
+            height:48px;
+            display: flex;align-items:center; 
+            justify-content: center;
+            border-bottom: 2px solid #4877e7;
+        }
+        .mydata .select-company div:nth-of-type(1) p ,.mydata .select-head div:nth-of-type(1) p,.mydata .sex div:nth-of-type(1) p{
+            font-size:17px;
+            color:#5a84e9;
+        }
+        .mydata .select-company div:nth-of-type(2), .mydata .select-head div:nth-of-type(2),.mydata .sex div:nth-of-type(2){
+            width: 100%;
+            height: 51px;
+            border-bottom: 1px solid #b7b7b7;
+            text-align: center;
+        }
+         .mydata .select-company div:nth-of-type(3),.mydata .select-head div:nth-of-type(3),.mydata .sex div:nth-of-type(3){
+            width:100%;;
+            height: 51px;
+            text-align: center;
+        }
+       .mydata .select-company div:nth-of-type(2) p,.mydata .select-head div:nth-of-type(2) p,.mydata .sex div:nth-of-type(2) p{
+            font-size: 15px;
+            line-height: 60px;
+        }
+        .mydata .select-company div:nth-of-type(3) p,.mydata .select-head div:nth-of-type(3) p,.mydata .sex div:nth-of-type(3) p{
+            font-size: 15px;
+             line-height: 60px;
+        }

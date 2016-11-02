@@ -1,0 +1,44 @@
+.frozen-record .aui-bar{
+    background: #4877e7;
+}
+.frozen-record .aui-list-item-inner .aui-list-item-left div,
+.frozen-record .aui-list-item-inner .aui-list-item-right div{
+    font-size: 15px;
+    color:#2f2f2f;
+}
+.frozen-record .aui-list-item-inner .aui-list-item-left p,
+.frozen-record .aui-list-item-inner .aui-list-item-right p{
+    font-size: 12px;
+    color:#6f7378;
+}
+.frozen-record .aui-list-item-right{
+    display: flex;
+    -webkit-display:flex;
+    justify-content: flex-start;
+    flex-direction:column;
+}
+.frozen-record  .aui-list-item-inner .aui-list-item-right p,
+.frozen-record .aui-list-item-inner .aui-list-item-right div{
+    align-self:flex-end;
+}
+.frozen-record .aui-list-item-inner .aui-list-item-left p{
+    width:63px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.aui-list .aui-list-item-inner .aui-list-item-left .waring,
+.aui-list .aui-list-item-inner .aui-list-item-right .waring{
+    color: #ff4a12;
+}
+/*无数据*/
+.no-data{
+    display: none;
+    margin: auto;
+    position: absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    right:0;
+    height:203px;
+    width:203px;
+}

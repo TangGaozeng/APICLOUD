@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>绑定银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="username-safe setting-pw bind_bankCard">
+<header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-btn aui-pull-left back" tapmode>
+        <span class="aui-iconfont aui-icon-left ifs-22"></span>
+    </a>
+    <div class="aui-title fs-18">绑定银行卡</div>
+</header>
+<section class="aui-content">
+    <ul class="aui-list no-border-t no-border-b">
+        <li class="aui-list-item border-ml">
+            <div class="aui-list-item-inner flex-start">
+                <div class="flex-start-left">持卡人</div>
+                <div class="card-info">
+                    <span id="userName">**萍</span>
+                    <span id="idNum">(410***********604)</span>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item border-ml ">
+            <div class="aui-list-item-inner flex-start" id="clickCheck">
+                <div class="flex-start-left">选择银行</div>
+                <div class="click-check" id="clickCheckTxt" tapmode>
+                   点击选择
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item border-ml">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    支行信息
+                </div>
+                <div class="aui-list-item-input">
+                    <input id="branchName" type="text" class="aui-font-size-14" placeholder="">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item border-ml">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    银行卡号
+                </div>
+                <div class="aui-list-item-input">
+                    <input id="cardNum" type="text" class="aui-font-size-14" placeholder="">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="aui-bar">
+        <div class="aui-bar-btn" id="confirm">确认</div>
+    </div>
+</section>
+<div class="choose-bank-name aui-content" id="bankListInfo">
+    <ul class="bank-list">
+        <li class="bank-name">中国工商银行</li>
+        <li class="bank-name">中国建设银行</li>
+        <li class="bank-name">招商银行</li>
+        <li class="bank-name">中国银行</li>
+        <li class="bank-name">广发银行</li>
+        <li class="bank-name">浦发银行</li>
+        <li class="bank-name">平安银行</li>
+        <li class="bank-name">农业银行</li>
+        <li class="bank-name">中国邮政储蓄银行</li>
+        <li class="bank-name">中信银行</li>
+        <li class="bank-name">北京银行</li>
+        <li class="bank-name">光大银行</li>
+        <li class="bank-name">兴业银行</li>
+        <li class="bank-name">民生银行</li>
+    </ul>
+</div>
+<div class="shield" id="shield"></div>
+<div class="alert-box" id="alert-box">银行卡绑定成功!</div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var real_name = JSON.parse(userInfo).data.real_name ? JSON.parse(userInfo).data.real_name : '未认证';
+    var idNum = JSON.parse(userInfo).data.id_card;
+
+    apiready = function () {
+        fnReady();
+        showBankList();
+        $api.byId('userName').innerHTML = real_name;
+        $api.byId('idNum').innerHTML = idNum != '' ?  '(' + idNum.substr(0,3) + '***********' + idNum.substr(15,3) + ')' : '';
+
+        /*$api.byId('cardNum').onblur = function () {
+            validateCardNum($api.byId('cardNum'))
+        };*/
+        $api.byId('confirm').onclick = function () {
+            validateCardNum($api.byId('cardNum'),postMsg);
+        }
+    };
+
+
+    function postMsg(){
+                //确认提交数据
+
+        var bank_name = $api.byId('clickCheckTxt').innerHTML;
+        var bank_branch_name = $api.byId('branchName').value;
+        var bank_number = $api.byId('cardNum').value;
+
+        api.ajax({
+            url: INTERFACE['BIND_BANK_CARD'],
+            method: "post",
+            dataType: "json",
+            data: {
+                values: {
+                    user_id: user_id,
+                    user_password: password,
+                    real_name: real_name,
+                    bank_name: bank_name,
+                    bank_branch_name: bank_branch_name,
+                    bank_number: bank_number
+                }
+            },
+            timeout: AJAX.TIMEOUT
+        }, function (ret, err) {
+            if (ret) {
+                console.log(JSON.stringify(ret));
+                var result = ret.result;
+                api.sendEvent({
+                    name: "bank_card_change"
+                })
+                bindCardSucc(result,goMyBankCard);
+            } else {
+                console.log(JSON.stringify(err));
+                AJAX.ERROR(err);
+            }
+        });
+    }
+
+    function showBankList(){
+        $api.byId('clickCheck').onclick = function () {
+            $api.css($api.byId('shield'),'display:block');
+            $api.css($api.byId('bankListInfo'),'display:block');
+        };
+        for(i=0;i<$api.domAll('.bank-name').length;i++){
+            $api.domAll('.bank-name')[i].onclick = function () {
+                $api.byId('clickCheckTxt').innerHTML = this.innerHTML;
+                $api.css($api.byId('shield'),'display:none');
+                $api.css($api.byId('bankListInfo'),'display:none');
+            }
+        }
+        $api.byId('shield').onclick = function () {
+            $api.css($api.byId('shield'),'display:none');
+            $api.css($api.byId('bankListInfo'),'display:none');
+        }
+    }
+
+    function validateCardNum(obj,callback){
+         //卡号验证
+        var reg = /^\d{16,19}$/;
+        if(!reg.test(obj.value)){
+//                this.focus();
+            $api.css($api.byId('shield'),'display:block');
+            $api.css($api.byId('alert-box'),'display:block');
+            $api.byId('alert-box').innerHTML = '请输入正确卡号！';
+            $api.byId('alert-box').onclick = function () {
+                $api.css($api.byId('shield'),'display:none');
+                $api.css($api.byId('alert-box'),'display:none');
+            }
+        }else{
+            if(callback) callback();
+        }
+
+    }
+    function bindCardSucc(flag,callback){
+        if(flag!=0){
+            $api.css($api.byId('shield'),'display:block');
+            $api.css($api.byId('alert-box'),'display:block');
+            $api.byId('alert-box').innerHTML = '银行卡绑定成功!';
+            callback();
+        }
+        else{
+            $api.css($api.byId('shield'),'display:block');
+            $api.css($api.byId('alert-box'),'display:block');
+            $api.byId('alert-box').innerHTML = '绑定失败,仅限绑定一张银行卡!';
+            document.onclick = function(){
+                api.closeWin({
+                    name: 'bind_bankCard'
+                })
+            }
+        }
+
+
+    }
+    function goMyBankCard(){
+        $api.css($api.byId('shield'),'display:none');
+        $api.css($api.byId('alert-box'),'display:none');
+        api.openWin({
+            name : 'my-bankcard',
+            url : '../mine/my-bankcard.html',
+            bounces : false,
+            vScrollBarEnabled : false
+        });
+        api.parseTapmode();
+        $api.css($api.byId('shield'),'display:none');
+        $api.css($api.byId('alert-box'),'display:none');
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,35 @@
+.reward .aui-bar{
+	background:#4877e7;z-index:1500
+}
+
+.reward .aui-list-item-inner,#trans-cen .aui-list-item-inner{
+	height: 65px;
+}
+ .reward .aui-list-item-inner .aui-list-item-left div,.aui-list-item-inner .aui-list-item-right div{
+	font-size: 15px;
+}
+.reward .aui-list-item-inner .aui-list-item-left p,.aui-list-item-inner .aui-list-item-right p{
+	font-size: 12px;
+	color:#6f7378;
+}
+.reward .aui-list-item-inner .aui-list-item-right{
+	display: flex;
+	justify-content: flex-start;
+	flex-direction:column;
+}
+.reward .aui-list-item-inner .aui-list-item-center{
+	text-align: center;
+}
+.reward .aui-list-item-inner .aui-list-item-center p{
+	font-size: 12px;
+	color: #6f7378;
+}
+.reward .aui-list-item-inner .aui-list-item-right p,.aui-list-item-inner .aui-list-item-right h3{
+		align-self:flex-end;
+}
+.reward .aui-list-item-inner .aui-list-item-right div{
+	color:#2f2f2f;
+}
+.reward .aui-list-item-inner .aui-list-item-right .num-color{
+	color:#23af58;
+}

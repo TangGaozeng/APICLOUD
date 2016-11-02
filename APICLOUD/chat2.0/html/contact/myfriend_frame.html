@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>phonebook</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/contact.css" />
+</head>
+<body class="bg-gray-color" style="height: auto">
+<div class="aui-content" id="myfriend">
+    <div class="aui-searchbar">
+        <div class="aui-searchbar-input aui-border-radius">
+            <i class="aui-iconfont aui-icon-search"></i>
+            <form action="javascript:search();">
+                <input type="text" placeholder="搜索我的好友" id="search-input">
+            </form>
+        </div>
+    </div>
+    <div class="newFriend" id="newFriend">
+        <img src="../../image/contact/newfriend.png" alt="">
+        <span class="tsp">新的好友</span>
+        <span> <i class="aui-iconfont aui-icon-right aui-pull-right"></i></span>
+    </div>
+</div>
+<script src="../../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        $api.byId("newFriend").onclick = function(){
+            api.openWin({
+                name : 'newfriend',
+                url : './newfriend.html',
+                vScrollBarEnabled : false
+            });
+            api.parseTapmode();
+        }
+        
+          $api.byId("search-input").oninput = function(){
+            var _this = this;
+            api.sendEvent({
+                name: 'searchMyFriends',
+                extra: _this.value
+            });
+        }
+    }
+</script>
+</body>
+</html>

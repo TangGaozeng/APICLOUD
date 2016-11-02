@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>手机通讯录</title>
+    <link rel="stylesheet" href="../../css/custyle.css">
+    <link rel="stylesheet" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" href="../../css/addfriends.css">
+</head>
+<body class="bg-gray-color" style="height: auto">
+<div class="aui-content" id="myfriend">
+    <div class="aui-searchbar">
+        <div class="aui-searchbar-input aui-border-radius">
+            <i class="aui-iconfont aui-icon-search"></i>
+
+            <form action="javascript:search();">
+                <input type="text" placeholder="搜索手机通讯录" id="search-input">
+            </form>
+        </div>
+    </div>
+</div>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-list-in" id="ul-FriendList"></ul>
+</div>
+<script src="../../script/mui.js"></script>
+<script src="../../script/api.js"></script>
+<script src="../../script/template.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/then.js"></script>
+<script type="text/javascript" src="../../script/SHA1.js"></script>
+<script id="FriendList" type="text/html">
+    {{each list as _list i}}
+    {{i}}
+    {{each _list as value j}}
+    <li class="aui-list-item">
+        <div class="txBox">
+            <img src="../../image/message/txltx.png" alt="">
+        </div>
+        <div class="aui-list-item-inner flex flex-dir-row">
+            <div class="left">
+                <p>
+                    {{value.title}}
+                </p>
+
+                <p>
+                    {{value.phone}}
+                </p>
+            </div>
+            {{if value.add ==1}}
+            <div class="right ytj">
+                已添加
+            </div>
+            {{else}}
+            <div class="right wtj" phone="{{value.phone}}" realName="{{value.firstName}}" id="{{value.phone}}">
+                添加
+            </div>
+            {{/if}}
+        </div>
+    </li>
+    {{/each}}
+    {{/each}}
+</script>
+<script type="text/javascript">
+    apiready = function () {
+        is_login();
+        fnInit();
+        //1.获取我的好友列表
+        funGetFriend();
+    }
+    var _data;
+    // 接口 - 我的好友关系
+    var _myFriendList = '';
+    // 手机本地联系人
+    var _LocalContact = [];
+    var _user_info, _user_id;
+    //搜索输入的字符串
+    var SearchValue = '';
+    var _file_search = '';
+    function fnInit() {
+        _user_info = JSON.parse(localStorage.getItem('user'));
+        _user_id = _user_info.data.user_id;
+    }
+
+
+    //1.接口 - 获取我的好友列表
+    function funGetFriend() {
+        var _user_password = localStorage.getItem('password');
+        var _user_info = JSON.parse(localStorage.getItem('user'));
+        var _user_id = _user_info.data.user_id;
+
+        var _data = {
+            user_id: _user_id,
+            user_password: _user_password,
+            sort_mode: 1
+        };
+
+        //  console.log(JSON.stringify(_data));
+
+        ajaxRequest(INTERFACE['FRIEND_LIST'], _data, function (ret, err) {
+            if (ret.result == 1) {
+                //加载提示
+                api.showProgress({
+                    title: '加载中...',
+                    modal: true
+                });
+                console.log(JSON.stringify(ret));
+
+                if (ret.result == 1) {
+                    //获取接口-我的好友关系
+                    _myFriendList = ret['data'];
+
+
+                    //接口的结果生成SHA1
+                    var SHAlMyFriendList = SHA1(JSON.stringify(_myFriendList) + _user_id);
+
+                    //读出缓存里的SHA1
+                    var SHA1StoragePhoneBook = localStorage.getItem('SHA1StoragePhoneBook');
+
+                    console.log(SHAlMyFriendList);
+                    console.log(SHA1StoragePhoneBook);
+
+                    if (SHA1StoragePhoneBook != SHAlMyFriendList) {
+                        localStorage.setItem('SHA1StoragePhoneBook', SHAlMyFriendList);
+                        Thenjs.each(_myFriendList, function (defer, value) {
+                            $sql = 'update contact set is_friend = 1  where user_id =' + _user_id + ' and contact_phone = \'' + value.user_mobile + '\'';
+                            var updateContactRow = executeSqlSync('user', $sql);
+                            console.log(JSON.stringify(updateContactRow));
+                        });
+
+                    }
+
+                    //获取通讯 录
+                    getLocalContacts();
+                }
+
+            }
+        })
+
+    }
+
+    $api.byId("search-input").oninput = function () {
+
+        var SearchValue = $api.val(this);
+        console.log(SearchValue);
+        if (SearchValue) {
+            //数字搜索
+            if (/^[0-9]*$/.test(SearchValue)) {
+                _file_search = ' and contact_phone like \'' + SearchValue + '%\' limit 10';
+            } else {
+                //文字搜索
+                _file_search = ' and user_name like \'%' + SearchValue + '%\' limit 10';
+            }
+        } else {
+            _file_search = '';
+        }
+        //2.获取本地DB - 通讯录
+
+            getLocalContacts();
+    }
+
+
+    //2.获取本地DB - 通讯录
+    function getLocalContacts() {
+
+        //如果搜索值为空时，可能会由于数据多，则进度条显示
+        if(!_file_search){
+            //加载提示
+            api.showProgress({
+                title: '加载中...',
+                modal: true
+            });
+        }
+
+
+        var listContacts = {};
+        // 1.获取数据
+        var sql = 'SELECT * FROM contact where user_id =' + _user_id + _file_search;
+        console.log(sql);
+        var userRow = selectSqlSync('user', sql);
+        var _LocalContact = userRow.data;
+        //console.log(JSON.stringify(userRow));
+
+        /* 联系人,按照拼音,升序排列. */
+        _LocalContact = _LocalContact.sort(function (contactA, contactB) {
+            if (contactA["firstChar"].toUpperCase() < contactB["firstChar"].toUpperCase()) {
+                return -1;
+            }
+            return 1;
+        });
+
+
+        /* 将联系人,按照拼音首字母分组. */
+        var listContacts = {};
+        for (var idx in _LocalContact) {
+            var contact = _LocalContact[idx];
+            var listContact = {
+                id: contact.contact_id,
+                img: 'widget://image/message/txltx.png',
+                title: contact.user_name,
+                phone: contact.contact_phone,
+                add: contact.is_friend
+            };
+            var firstChar = contact.firstChar.substring(0, 1).toUpperCase();
+            if ("无名氏" === contact.name || !firstChar.match(/[A-Z]/)) {
+                if ("undefined" === typeof listContacts["#"]) {
+                    listContacts["#"] = [];
+                }
+                listContacts["#"].push(listContact);
+                continue;
+            }
+            if ("undefined" === typeof listContacts[firstChar]) {
+                listContacts[firstChar] = [];
+            }
+            listContacts[firstChar].push(listContact);
+        }
+
+        _data = {
+            list: listContacts
+        };
+
+        var html = template('FriendList', _data);
+        document.getElementById('ul-FriendList').innerHTML = html;
+
+        //添加好友
+        funAddFriend();
+        //加载关闭
+        api.hideProgress();
+        //监听
+        fnInitListener();
+
+
+    }
+
+    //点击 添加好友
+    function funAddFriend() {
+        var wtj = [];
+        wtj = document.getElementsByClassName('wtj');
+        for (var i = 0; i < wtj.length; i++) {
+            wtj[i].onclick = function () {
+                var _pageParam = {};
+                _pageParam.phone = $api.attr(this, 'phone');
+                _pageParam.realName = $api.attr(this, 'realName');
+                //console.log(JSON.stringify(_pageParam));
+                api.openWin({
+                    name: 'friendvalid',
+                    url: './friendvalid.html',
+                    vScrollBarEnabled: false,
+                    pageParam: _pageParam
+                });
+                api.parseTapmode();
+            }
+        }
+    }
+
+
+    function fnInitListener() {
+        //监听 - 通过手机标识 “等待验证”
+        api.addEventListener({
+            name: 'event_sendAddResultTag'
+        }, function (ret, err) {
+            console.log(ret.value.phone);
+            var _phone = $api.byId(ret.value.phone);
+            $api.removeCls(_phone, 'wtj');
+            $api.addCls(_phone, 'ytj');
+            $api.html(_phone, '等待验证');
+        });
+    }
+
+</script>
+</body>
+</html>

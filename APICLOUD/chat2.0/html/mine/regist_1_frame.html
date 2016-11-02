@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>regist_1</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/mui.css">
+    <link rel="stylesheet" type="text/css" href="../../css/regist.css">
+</head>
+<body class="bg-gray-color">
+    <div class="mui-content">
+        <p class="regTip fs-14">我们将发送短信验证码到您的手机号码</p>
+        <form class="mui-input-group">
+            <div class="mui-input-row">
+                <input type="number" id="mobile" placeholder="请输入手机号码">
+            </div>
+            <div class="mui-input-row">
+                <input type="number" id="validCode" placeholder="请输入验证码">
+                <input type="button" id="codeTips" tapmode value="获取验证码" />
+            </div>
+        </form>
+        <div id="regist-1-Btn" tapmode class="fs-18 color-f text-center open-win" win="regist_2">下一步</div>
+    </div>
+    <script src="../../script/mui.js"></script>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+        apiready = function(){
+            var mobile = $api.byId("mobile");
+            var valid = $api.byId("validCode");
+            var codeTip = $api.byId("codeTips");
+            var nextBtn = $api.byId("regist-1-Btn");
+            var pattern = /^1[34578]\d{9}$/;
+
+            //点击获取验证码按钮
+            codeTip.onclick = function(){
+                if (pattern.test(mobile.value)) {
+                    api.ajax({
+                        url: INTERFACE['SMS_CODE'],
+                        method: 'post',
+                        dataType: 'json',
+                        data: {
+                            values:{user_mobile: mobile.value,code_type: 0}
+                        },
+                        timeout: AJAX.TIMEOUT,
+                    }, function(ret, err) {
+                        if (ret) {
+                            getCodeSucc(ret);
+                        } else {
+                            AJAX.ERROR(err);
+                        }
+                    });
+
+                }else{
+                    api.alert({
+                        title: '错误提示',
+                        msg: '手机号码错误，请重新输入'
+                    });
+                }
+            }
+
+            //点击下一步按钮
+            nextBtn.onclick = function(){
+                var code = valid.value;
+                if (code =="" || code.toString().length != 4 || !pattern.test(mobile.value)){
+                    api.alert({
+                        title: '错误提示',
+                        msg: '手机号或验证码错误，请重新输入'
+                    });
+                }else{
+                    localStorage.setItem("registGetCodeMobile",mobile.value);
+                    localStorage.setItem("registValidCodeNum",valid.value);
+                    api.openWin({
+                        name : 'regist_2',
+                        url : './regist_2.html',
+                        bounces : false,
+                        vScrollBarEnabled : false
+                    });
+                }
+            }
+
+            //获取验证码请求成功的回调
+            function getCodeSucc(data){
+                if(data.result == 1){
+                    countdown(data.min_time_span,codeTip);
+                }
+                else {
+                    api.alert({
+                        title: '错误提示',
+                        msg: data.msg
+                    });
+                }
+            }
+
+            //获取验证码倒计时
+            function countdown(i,obj){
+                if (i <= 0) {
+                    obj.disabled = false;
+                    clearTimeout(timer);
+                    obj.value = '获取验证码';
+                } else {
+                    obj.disabled = "disabled";
+                    timer = setTimeout(function () {
+                        i--;
+                        obj.value = i + '秒';
+                        countdown(i,obj);
+                    }, 1000);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

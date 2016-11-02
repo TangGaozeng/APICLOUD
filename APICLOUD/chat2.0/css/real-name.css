@@ -1,0 +1,64 @@
+.real_name .aui-bar{
+	background: #4877e7;
+}
+.real_name .aui-list .aui-list-item-inner{
+	height:45px;
+}
+.real_name .aui-list .aui-list-item-inner .aui-list-item-label{
+	color:#2f2f2f;
+	font-size: 14px;
+}
+.real_name .real{
+	background: #879efb;
+	height:44px;
+	width:285px;
+	margin:45px auto 0 auto;
+}
+.real_name .real p{
+	line-height:22px;
+	color:#fff;
+	font-size: 18px;
+}
+.real_name .aui-list .aui-list-item-inner .name{
+	color:#879efb;
+}
+
+/*~~~~~~~~~认证成功~~~~~~~~~~~*/
+.real-succ .aui-bar{
+	background:#4877e7
+}
+.real-succ .main{
+	text-align: center;
+}
+.real-succ .main img{
+	width:116px;
+	height:105px;
+	display: block;
+	margin: 0 auto;
+	margin-top: 151px;
+}
+.real-succ .main p{
+	font-size: 18px;
+	margin-top: 40px;
+	color: #2f2f2f;
+}
+.real-succ .main span{
+	width:100%;
+	font-size: 14px;
+	margin-top: 17px;
+	color:#6f7378;
+}
+.real-succ .footer-btn{
+	width:290px;
+	height:45px;
+	background: #879efb;
+	border-radius: 8px;
+	text-align: center;
+	margin: 0 auto;
+	margin-top: 30px;
+}
+.real-succ .footer-btn p{
+	line-height: 45px;
+	color: #fff;
+}
+

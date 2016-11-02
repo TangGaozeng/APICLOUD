@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>重置支付密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/custyle.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.2.0.css">
+    <link rel="stylesheet" type="text/css" href="../../css/mine.css">
+</head>
+<body class="username-safe setting-pw">
+<header class="aui-bar aui-bar-nav" id="header">
+    <a class="aui-btn aui-pull-left back">
+        <span class="aui-iconfont aui-icon-left ifs-22"></span>
+    </a>
+    <div class="aui-title fs-18">设置支付密码</div>
+</header>
+<section class="aui-content">
+    <ul class="aui-list no-border-t no-border-b">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner fs-15">
+                <div class="aui-list-item-label">
+                    短信验证码
+                </div>
+                <div class="aui-list-item-input width-auto">
+                    <input type="text" class="aui-font-size-14" id="code" placeholder="">
+                </div>
+                <div class="aui-list-item-right fs-14 yzm" id="getCode" tapmode>
+                    获取验证码
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item border-ml">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    身份证后8位
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" class="aui-font-size-14" id="idCard" placeholder="">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <input type="hidden" id="rsa_modulus" value="D15AA98C75B32630C8191CDF9156F55091053C101C58965B2A1A00C3404553B8D953E81BEB22A46200911BE4BDE7A9BB839D01F6819379B60C68725AA479CF1C081E300F1D5DE197FCDE3CADF68F5A5CCC97BEA93F0B2C857691BBE9E28D2BC1F25B7BEBA950D3507376C442B8E6E163018C4800A2B33CE28A53863713AFA133">
+    <input type="hidden" id="rsa_exponent" value="10001">
+    <input type="hidden" id="rsa_maxDigits" value="130">
+    <div class="aui-bar">
+        <div class="aui-bar-btn" id="goNext" tapmode>下一步</div>
+    </div>
+</section>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/rsa.min.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+    var userInfo = localStorage.getItem('user');
+    var user_id = JSON.parse(userInfo).data.user_id;
+    var password = localStorage.getItem('password');
+    var mobile = JSON.parse(userInfo).data.user_mobile;
+    console.log(mobile);
+    var codeTip = $api.byId("getCode");
+
+    apiready = function () {
+        fnReady();
+
+        codeTip.onclick = function () {
+
+            api.ajax({
+                url: INTERFACE['SMS_CODE'],
+                method: 'post',
+                dataType: 'json',
+                data: {
+                    values: {user_mobile: mobile, code_type: 12}
+                },
+                timeout: AJAX.TIMEOUT,
+            }, function (ret, err) {
+                if (ret) {
+                    console.log(JSON.stringify(ret));
+                    getCodeSucc(ret);
+                } else {
+                    AJAX.ERROR(err);
+                }
+            });
+        }
+
+        $api.byId('goNext').onclick = function () {
+
+            console.log($api.byId('idCard').value + '*****' +$api.byId('code').value);
+
+
+            api.ajax({
+                url: INTERFACE['FORGET_PAY_PASS'],
+                method: "post",
+                dataType: "json",
+                data: {
+                    values: {
+                        user_id: user_id,
+                        user_password: password,
+                        type: 1,
+                        code: $api.byId('code').value,
+                        idCard: $api.byId('idCard').value
+                    }
+                },
+                timeout: AJAX.TIMEOUT
+            }, function (ret, err) {
+                console.log(JSON.stringify(ret));
+                if (ret) {
+                   if(ret.result!=0){
+                       api.openWin({
+                           name : 'resetting2-pw',
+                           url : '../mine/resetting2-pw.html',
+                           bounces : false,
+                           vScrollBarEnabled : false
+                       });
+                       api.parseTapmode();
+
+                   }
+                    else{
+                       api.alert({
+                           title: '错误提示',
+                           msg: ret.msg
+                       });
+                   }
+                } else {
+                    console.log(JSON.stringify(err));
+                    AJAX.ERROR(err);
+                }
+            });
+
+
+        }
+
+    };
+    //获取验证码请求成功的回调
+    function getCodeSucc(data){
+        if(data.result == 1){
+//            sessionStorage.setItem("mobileCode",data.)
+            countdown(data.min_time_span,codeTip);
+        }
+        else {
+            api.alert({
+                title: '错误提示',
+                msg: data.msg
+            });
+        }
+    }
+    //获取验证码倒计时
+    function countdown(i,obj){
+        if (i <= 0) {
+            obj.disabled = false;
+            clearTimeout(timer);
+            obj.innerHTML = '获取验证码';
+        } else {
+            obj.disabled = "disabled";
+            timer = setTimeout(function () {
+                i--;
+                obj.innerHTML = i + '秒';
+                countdown(i,obj);
+            }, 1000);
+        }
+    }
+
+
+
+
+
+</script>
+</html>
